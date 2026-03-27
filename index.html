@@ -19,6 +19,8 @@
             --normal-calorie: #FFD54F;
             --high-calorie: #FF9800;
             --excess-calorie: #EF5350;
+            --exercise: #2196F3;
+            --exercise-light: #BBDEFB;
             --background: #F5F5F5;
             --surface: #FFFFFF;
             --text-primary: #212121;
@@ -88,29 +90,49 @@
             padding: 20px;
         }
 
-        /* Progress Card */
+        /* Progress Cards */
+        .progress-cards {
+            display: grid;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
         .progress-card {
             background-color: var(--surface);
             border-radius: 16px;
-            padding: 24px;
-            margin-bottom: 20px;
+            padding: 20px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .progress-card.intake {
+            border-left: 4px solid var(--primary);
+        }
+
+        .progress-card.exercise {
+            border-left: 4px solid var(--exercise);
+        }
+
+        .progress-card.net {
+            border-left: 4px solid var(--normal-calorie);
         }
 
         .progress-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 16px;
+            margin-bottom: 12px;
         }
 
         .progress-title {
             font-size: 14px;
             color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
 
         .progress-value {
-            font-size: 28px;
+            font-size: 24px;
             font-weight: 700;
             color: var(--text-primary);
             display: flex;
@@ -130,9 +152,9 @@
         }
 
         .progress-value .editable-input {
-            font-size: 28px;
+            font-size: 24px;
             font-weight: 700;
-            width: 100px;
+            width: 90px;
             padding: 2px 8px;
             border: 2px solid var(--primary);
             border-radius: 8px;
@@ -140,52 +162,61 @@
         }
 
         .progress-value span.unit {
-            font-size: 16px;
+            font-size: 14px;
             color: var(--text-secondary);
             font-weight: 400;
         }
 
         .progress-bar {
-            height: 12px;
+            height: 10px;
             background-color: var(--background);
-            border-radius: 6px;
+            border-radius: 5px;
             overflow: hidden;
-            margin-bottom: 8px;
         }
 
         .progress-fill {
             height: 100%;
-            border-radius: 6px;
+            border-radius: 5px;
             transition: width 0.5s ease, background-color 0.3s;
         }
 
-        .progress-fill.low { background-color: var(--low-calorie); }
-        .progress-fill.normal { background-color: var(--normal-calorie); }
-        .progress-fill.high { background-color: var(--high-calorie); }
-        .progress-fill.excess { background-color: var(--excess-calorie); }
+        .progress-fill.intake { background-color: var(--primary); }
+        .progress-fill.exercise { background-color: var(--exercise); }
+        .progress-fill.net { background-color: var(--normal-calorie); }
 
-        .progress-percent {
-            text-align: right;
-            font-size: 14px;
-            color: var(--text-secondary);
+        /* Quick Stats */
+        .quick-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
         }
 
-        /* AI Indicator */
-        .ai-indicator {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            font-size: 12px;
-            color: var(--primary);
-            background-color: var(--primary-light);
-            padding: 4px 10px;
+        .stat-item {
+            background-color: var(--surface);
             border-radius: 12px;
-            margin-left: 8px;
-            font-weight: 500;
+            padding: 16px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
         }
 
-        /* Meal Section */
-        .meal-section {
+        .stat-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .stat-value.positive { color: var(--excess-calorie); }
+        .stat-value.negative { color: var(--exercise); }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        /* Meal & Exercise Sections */
+        .section {
             background-color: var(--surface);
             border-radius: 16px;
             padding: 20px;
@@ -193,14 +224,18 @@
             box-shadow: 0 2px 8px rgba(0,0,0,0.08);
         }
 
-        .meal-header {
+        .section.exercise-section {
+            border: 2px solid var(--exercise-light);
+        }
+
+        .section-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 16px;
         }
 
-        .meal-title {
+        .section-title {
             font-size: 16px;
             font-weight: 600;
             display: flex;
@@ -208,9 +243,13 @@
             gap: 8px;
         }
 
-        .meal-calories {
+        .section-calories {
             font-size: 14px;
             color: var(--text-secondary);
+        }
+
+        .section-calories.negative {
+            color: var(--exercise);
         }
 
         .add-btn {
@@ -228,19 +267,28 @@
             transition: all 0.3s;
         }
 
+        .add-btn.exercise {
+            background-color: var(--exercise-light);
+            color: var(--exercise);
+        }
+
         .add-btn:hover {
             background-color: var(--primary);
             color: white;
         }
 
-        /* Meal Items */
-        .meal-items {
+        .add-btn.exercise:hover {
+            background-color: var(--exercise);
+        }
+
+        /* Items List */
+        .items-list {
             display: flex;
             flex-direction: column;
             gap: 12px;
         }
 
-        .meal-item {
+        .item {
             display: flex;
             gap: 12px;
             padding: 12px;
@@ -251,53 +299,70 @@
             position: relative;
         }
 
-        .meal-item:hover {
+        .item:hover {
             background-color: var(--primary-light);
             transform: translateX(4px);
         }
 
-        .meal-item-image {
-            width: 60px;
-            height: 60px;
-            border-radius: 8px;
-            object-fit: cover;
-            background-color: #ddd;
+        .item.exercise-item:hover {
+            background-color: var(--exercise-light);
         }
 
-        .meal-item-image.placeholder {
+        .item-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 24px;
+            background-color: var(--primary-light);
         }
 
-        .meal-item-info {
+        .item.exercise-item .item-icon {
+            background-color: var(--exercise-light);
+        }
+
+        .item-info {
             flex: 1;
             display: flex;
             flex-direction: column;
             justify-content: center;
         }
 
-        .meal-item-name {
+        .item-name {
             font-size: 14px;
             font-weight: 500;
             margin-bottom: 4px;
         }
 
-        .meal-item-calories {
+        .item-detail {
             font-size: 13px;
             color: var(--text-secondary);
         }
 
-        .meal-item-actions {
+        .item-calories {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
             display: flex;
-            gap: 8px;
             align-items: center;
         }
 
-        .meal-item-edit, .meal-item-delete {
-            width: 28px;
-            height: 28px;
+        .item-calories.negative {
+            color: var(--exercise);
+        }
+
+        .item-actions {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+            margin-left: 8px;
+        }
+
+        .item-edit, .item-delete {
+            width: 26px;
+            height: 26px;
             border-radius: 50%;
             border: none;
             cursor: pointer;
@@ -309,26 +374,142 @@
             transition: opacity 0.3s;
         }
 
-        .meal-item:hover .meal-item-edit,
-        .meal-item:hover .meal-item-delete {
+        .item:hover .item-edit,
+        .item:hover .item-delete {
             opacity: 1;
         }
 
-        .meal-item-edit {
+        .item-edit {
             background-color: var(--primary-light);
             color: var(--primary);
         }
 
-        .meal-item-delete {
+        .item-delete {
             background-color: #FFEBEE;
             color: var(--excess-calorie);
         }
 
-        .empty-meal {
+        .empty-item {
             text-align: center;
             padding: 24px;
             color: var(--text-secondary);
             font-size: 14px;
+        }
+
+        /* Weight Card */
+        .weight-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+            color: white;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .weight-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .weight-title {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .weight-value {
+            font-size: 36px;
+            font-weight: 700;
+        }
+
+        .weight-value .unit {
+            font-size: 18px;
+            font-weight: 400;
+            margin-left: 4px;
+        }
+
+        .weight-trend {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        .weight-input-btn {
+            background-color: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.3s;
+        }
+
+        .weight-input-btn:hover {
+            background-color: rgba(255,255,255,0.3);
+        }
+
+        /* Weight Chart */
+        .weight-chart-container {
+            background-color: var(--surface);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .chart-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        .weight-chart {
+            height: 150px;
+            position: relative;
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 8px;
+            padding-bottom: 30px;
+            border-bottom: 1px solid var(--divider);
+        }
+
+        .chart-bar-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .chart-bar {
+            width: 100%;
+            max-width: 40px;
+            background: linear-gradient(to top, #667eea, #764ba2);
+            border-radius: 4px 4px 0 0;
+            transition: all 0.3s;
+            min-height: 4px;
+        }
+
+        .chart-bar:hover {
+            opacity: 0.8;
+        }
+
+        .chart-label {
+            font-size: 11px;
+            color: var(--text-secondary);
+            position: absolute;
+            bottom: 8px;
+        }
+
+        .chart-value {
+            font-size: 11px;
+            color: var(--text-primary);
+            font-weight: 500;
         }
 
         /* Modal */
@@ -411,148 +592,44 @@
             color: var(--excess-calorie);
         }
 
-        .meal-type-selector {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-
-        .meal-type-option {
-            padding: 8px 16px;
-            border-radius: 20px;
-            border: 2px solid var(--divider);
-            background-color: var(--surface);
-            cursor: pointer;
-            font-size: 14px;
-            transition: all 0.3s;
-        }
-
-        .meal-type-option.selected {
-            border-color: var(--primary);
-            background-color: var(--primary-light);
-            color: var(--primary-dark);
-            font-weight: 500;
-        }
-
-        .image-upload {
-            border: 2px dashed var(--divider);
-            border-radius: 12px;
-            padding: 40px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s;
-            position: relative;
-        }
-
-        .image-upload:hover {
-            border-color: var(--primary);
-            background-color: var(--primary-light);
-        }
-
-        .image-upload.has-image {
-            padding: 0;
-            border-style: solid;
-        }
-
-        .image-upload.analyzing {
-            border-color: var(--primary);
-            background-color: var(--primary-light);
-        }
-
-        .image-upload img {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-            border-radius: 10px;
-        }
-
-        .image-upload-placeholder {
-            color: var(--text-secondary);
-        }
-
-        .image-upload-placeholder .icon {
-            font-size: 48px;
-            margin-bottom: 12px;
-        }
-
-        .ai-analyzing-text {
-            color: var(--primary);
-            font-weight: 500;
-            margin-top: 12px;
-        }
-
-        .detected-foods {
-            margin-top: 12px;
-            padding: 12px;
-            background-color: var(--background);
-            border-radius: 8px;
-            font-size: 13px;
-        }
-
-        .detected-foods-title {
-            font-weight: 600;
-            margin-bottom: 8px;
-            color: var(--text-primary);
-        }
-
-        .detected-food-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 4px 0;
-            border-bottom: 1px dashed var(--divider);
-        }
-
-        .detected-food-item:last-child {
-            border-bottom: none;
-        }
-
-        .form-input {
+        .form-input, .form-select {
             width: 100%;
             padding: 12px 16px;
             border: 2px solid var(--divider);
             border-radius: 12px;
             font-size: 14px;
             transition: all 0.3s;
+            background-color: var(--surface);
         }
 
-        .form-input:focus {
+        .form-input:focus, .form-select:focus {
             outline: none;
             border-color: var(--primary);
         }
 
-        .form-input::placeholder {
-            color: #bbb;
+        .form-input.exercise:focus {
+            border-color: var(--exercise);
         }
 
-        .form-input.ai-calculated {
-            border-color: var(--primary);
-            background-color: var(--primary-light);
-        }
-
-        .ai-calc-btn {
-            margin-top: 8px;
-            padding: 8px 16px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 14px;
-            cursor: pointer;
+        .duration-input-wrapper {
             display: flex;
+            gap: 12px;
             align-items: center;
-            gap: 6px;
-            transition: all 0.3s;
         }
 
-        .ai-calc-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        .duration-input-wrapper .form-input {
+            flex: 1;
         }
 
-        .ai-calc-btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none;
+        .duration-unit {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .calorie-hint {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 6px;
         }
 
         .submit-btn {
@@ -568,8 +645,50 @@
             transition: all 0.3s;
         }
 
+        .submit-btn.exercise {
+            background-color: var(--exercise);
+        }
+
         .submit-btn:hover {
             background-color: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .submit-btn.exercise:hover {
+            background-color: #1976D2;
+        }
+
+        /* Exercise Type Selector */
+        .exercise-type-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        .exercise-type-option {
+            padding: 12px 8px;
+            border-radius: 12px;
+            border: 2px solid var(--divider);
+            background-color: var(--surface);
+            cursor: pointer;
+            font-size: 13px;
+            text-align: center;
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .exercise-type-option .icon {
+            font-size: 24px;
+        }
+
+        .exercise-type-option.selected {
+            border-color: var(--exercise);
+            background-color: var(--exercise-light);
+            color: var(--exercise);
+            font-weight: 500;
         }
 
         /* Calendar View */
@@ -677,6 +796,12 @@
         .calendar-day-calories {
             font-size: 10px;
             font-weight: 600;
+        }
+
+        .calendar-day-exercise {
+            font-size: 9px;
+            color: var(--exercise);
+            margin-top: 2px;
         }
 
         .calendar-day.no-data {
@@ -816,8 +941,16 @@
                 display: none;
             }
 
-            .meal-item-edit, .meal-item-delete {
+            .item-edit, .item-delete {
                 opacity: 1;
+            }
+
+            .quick-stats {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .exercise-type-grid {
+                grid-template-columns: repeat(2, 1fr);
             }
         }
     </style>
@@ -832,6 +965,7 @@
         <nav class="nav-tabs">
             <button class="nav-tab active" data-view="today">今日记录</button>
             <button class="nav-tab" data-view="calendar">日历</button>
+            <button class="nav-tab" data-view="weight">体重</button>
             <button class="nav-tab" data-view="settings">设置</button>
         </nav>
     </header>
@@ -840,79 +974,141 @@
     <div class="container">
         <!-- Today View -->
         <div id="today-view" class="view">
-            <!-- Progress Card -->
-            <div class="progress-card">
-                <div class="progress-header">
-                    <span class="progress-title">今日已摄入</span>
-                    <span class="progress-value">
-                        <span id="today-total">0</span>
-                        <span class="unit">/ <span class="editable" id="daily-goal-display" onclick="editDailyGoal()">2000</span> kcal</span>
-                    </span>
+            <!-- Quick Stats -->
+            <div class="quick-stats">
+                <div class="stat-item">
+                    <div class="stat-value" id="stat-intake">0</div>
+                    <div class="stat-label">摄入 (kcal)</div>
                 </div>
-                <div class="progress-bar">
-                    <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
+                <div class="stat-item">
+                    <div class="stat-value negative" id="stat-exercise">0</div>
+                    <div class="stat-label">运动 (kcal)</div>
                 </div>
-                <div class="progress-percent" id="progress-percent">0%</div>
+                <div class="stat-item">
+                    <div class="stat-value" id="stat-net">0</div>
+                    <div class="stat-label">净热量</div>
+                </div>
             </div>
 
-            <!-- Breakfast -->
-            <div class="meal-section" data-meal="breakfast">
-                <div class="meal-header">
-                    <div class="meal-title">
+            <!-- Weight Card -->
+            <div class="weight-card" onclick="openWeightModal()">
+                <div class="weight-header">
+                    <div>
+                        <div class="weight-title">今日体重</div>
+                        <div class="weight-value" id="current-weight">
+                            --<span class="unit">kg</span>
+                        </div>
+                        <div class="weight-trend" id="weight-trend">
+                            点击记录体重
+                        </div>
+                    </div>
+                    <button class="weight-input-btn">+ 记录</button>
+                </div>
+            </div>
+
+            <!-- Meal Sections -->
+            <div class="section" data-meal="breakfast">
+                <div class="section-header">
+                    <div class="section-title">
                         <span>🌅</span>
                         <span>早餐</span>
-                        <span class="meal-calories" id="breakfast-calories">0 kcal</span>
+                        <span class="section-calories" id="breakfast-calories">0 kcal</span>
                     </div>
-                    <button class="add-btn" onclick="openModal('breakfast')">+</button>
+                    <button class="add-btn" onclick="openFoodModal('breakfast')">+</button>
                 </div>
-                <div class="meal-items" id="breakfast-items">
-                    <div class="empty-meal">点击 + 添加早餐记录</div>
+                <div class="items-list" id="breakfast-items">
+                    <div class="empty-item">点击 + 添加早餐记录</div>
                 </div>
             </div>
 
-            <!-- Lunch -->
-            <div class="meal-section" data-meal="lunch">
-                <div class="meal-header">
-                    <div class="meal-title">
+            <div class="section" data-meal="lunch">
+                <div class="section-header">
+                    <div class="section-title">
                         <span>☀️</span>
                         <span>午餐</span>
-                        <span class="meal-calories" id="lunch-calories">0 kcal</span>
+                        <span class="section-calories" id="lunch-calories">0 kcal</span>
                     </div>
-                    <button class="add-btn" onclick="openModal('lunch')">+</button>
+                    <button class="add-btn" onclick="openFoodModal('lunch')">+</button>
                 </div>
-                <div class="meal-items" id="lunch-items">
-                    <div class="empty-meal">点击 + 添加午餐记录</div>
+                <div class="items-list" id="lunch-items">
+                    <div class="empty-item">点击 + 添加午餐记录</div>
                 </div>
             </div>
 
-            <!-- Dinner -->
-            <div class="meal-section" data-meal="dinner">
-                <div class="meal-header">
-                    <div class="meal-title">
+            <div class="section" data-meal="dinner">
+                <div class="section-header">
+                    <div class="section-title">
                         <span>🌙</span>
                         <span>晚餐</span>
-                        <span class="meal-calories" id="dinner-calories">0 kcal</span>
+                        <span class="section-calories" id="dinner-calories">0 kcal</span>
                     </div>
-                    <button class="add-btn" onclick="openModal('dinner')">+</button>
+                    <button class="add-btn" onclick="openFoodModal('dinner')">+</button>
                 </div>
-                <div class="meal-items" id="dinner-items">
-                    <div class="empty-meal">点击 + 添加晚餐记录</div>
+                <div class="items-list" id="dinner-items">
+                    <div class="empty-item">点击 + 添加晚餐记录</div>
                 </div>
             </div>
 
-            <!-- Snack -->
-            <div class="meal-section" data-meal="snack">
-                <div class="meal-header">
-                    <div class="meal-title">
+            <div class="section" data-meal="snack">
+                <div class="section-header">
+                    <div class="section-title">
                         <span>🍪</span>
                         <span>加餐</span>
-                        <span class="meal-calories" id="snack-calories">0 kcal</span>
+                        <span class="section-calories" id="snack-calories">0 kcal</span>
                     </div>
-                    <button class="add-btn" onclick="openModal('snack')">+</button>
+                    <button class="add-btn" onclick="openFoodModal('snack')">+</button>
                 </div>
-                <div class="meal-items" id="snack-items">
-                    <div class="empty-meal">点击 + 添加加餐记录</div>
+                <div class="items-list" id="snack-items">
+                    <div class="empty-item">点击 + 添加加餐记录</div>
                 </div>
+            </div>
+
+            <!-- Exercise Section -->
+            <div class="section exercise-section">
+                <div class="section-header">
+                    <div class="section-title">
+                        <span>🏃</span>
+                        <span>运动消耗</span>
+                        <span class="section-calories negative" id="exercise-calories">0 kcal</span>
+                    </div>
+                    <button class="add-btn exercise" onclick="openExerciseModal()">+</button>
+                </div>
+                <div class="items-list" id="exercise-items">
+                    <div class="empty-item">点击 + 添加运动记录</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Weight View -->
+        <div id="weight-view" class="view hidden">
+            <div class="weight-card" onclick="openWeightModal()">
+                <div class="weight-header">
+                    <div>
+                        <div class="weight-title">今日体重</div>
+                        <div class="weight-value" id="weight-view-current">
+                            --<span class="unit">kg</span>
+                        </div>
+                        <div class="weight-trend" id="weight-view-trend">
+                            点击记录体重
+                        </div>
+                    </div>
+                    <button class="weight-input-btn">+ 记录</button>
+                </div>
+            </div>
+
+            <div class="weight-chart-container">
+                <div class="chart-title">📊 近7天体重趋势</div>
+                <div class="weight-chart" id="weight-chart">
+                    <div class="empty-item">暂无体重数据</div>
+                </div>
+            </div>
+
+            <div class="settings-card">
+                <h3 class="settings-title">目标体重</h3>
+                <div class="form-group">
+                    <input type="number" class="form-input" id="target-weight-input" placeholder="输入目标体重 (kg)" step="0.1">
+                </div>
+                <button class="submit-btn" onclick="saveTargetWeight()">保存目标</button>
             </div>
         </div>
 
@@ -986,6 +1182,10 @@
                 <span class="icon">📅</span>
                 <span>日历</span>
             </div>
+            <div class="mobile-nav-item" data-view="weight">
+                <span class="icon">⚖️</span>
+                <span>体重</span>
+            </div>
             <div class="mobile-nav-item" data-view="settings">
                 <span class="icon">⚙️</span>
                 <span>设置</span>
@@ -993,43 +1193,25 @@
         </div>
     </nav>
 
-    <!-- Add/Edit Record Modal -->
-    <div class="modal-overlay" id="modal">
+    <!-- Food Modal -->
+    <div class="modal-overlay" id="food-modal">
         <div class="modal">
             <div class="modal-header">
-                <h3 class="modal-title" id="modal-title">添加记录</h3>
-                <button class="modal-close" onclick="closeModal()">×</button>
+                <h3 class="modal-title" id="food-modal-title">添加食物</h3>
+                <button class="modal-close" onclick="closeFoodModal()">×</button>
             </div>
             <div class="modal-body">
-                <form id="record-form">
-                    <input type="hidden" id="record-id" value="">
-
-                    <div class="form-group">
-                        <label class="form-label">餐次</label>
-                        <div class="meal-type-selector">
-                            <div class="meal-type-option" data-type="breakfast">早餐</div>
-                            <div class="meal-type-option" data-type="lunch">午餐</div>
-                            <div class="meal-type-option" data-type="dinner">晚餐</div>
-                            <div class="meal-type-option" data-type="snack">加餐</div>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label">食物照片</label>
-                        <div class="image-upload" id="image-upload" onclick="document.getElementById('image-input').click()">
-                            <div class="image-upload-placeholder">
-                                <div class="icon">📷</div>
-                                <div>点击或拖拽上传图片</div>
-                                <div style="font-size: 12px; color: #999; margin-top: 8px;">AI将自动识别图中食物</div>
-                            </div>
-                        </div>
-                        <input type="file" id="image-input" accept="image/*" style="display: none" onchange="handleImageUpload(event)">
-                        <div id="detected-foods-container"></div>
-                    </div>
+                <form id="food-form">
+                    <input type="hidden" id="food-record-id" value="">
 
                     <div class="form-group">
                         <label class="form-label">食物名称 <span class="required">*</span></label>
-                        <input type="text" class="form-input" id="food-name" placeholder="AI识别后会自动填写，或手动输入" required>
+                        <input type="text" class="form-input" id="food-name" placeholder="例如：牛肉盖饭" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">热量 (kcal) <span class="required">*</span></label>
+                        <input type="number" class="form-input" id="food-calories" placeholder="输入热量值" required>
                     </div>
 
                     <div class="form-group">
@@ -1037,21 +1219,110 @@
                         <input type="text" class="form-input" id="food-portion" placeholder="例如：1碗 (约300g)">
                     </div>
 
+                    <button type="submit" class="submit-btn">保存记录</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Exercise Modal -->
+    <div class="modal-overlay" id="exercise-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title" id="exercise-modal-title">添加运动</h3>
+                <button class="modal-close" onclick="closeExerciseModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="exercise-form">
+                    <input type="hidden" id="exercise-record-id" value="">
+
                     <div class="form-group">
-                        <label class="form-label">热量 (kcal) <span class="required">*</span></label>
-                        <input type="number" class="form-input" id="food-calories" placeholder="上传图片后AI自动计算，或手动输入" required>
-                        <button type="button" class="ai-calc-btn" id="ai-calc-btn" onclick="autoCalculateCalories()">
-                            <span>✨</span>
-                            <span>AI重新计算</span>
-                        </button>
+                        <label class="form-label">运动类型</label>
+                        <div class="exercise-type-grid">
+                            <div class="exercise-type-option" data-type="running" data-cal="10">
+                                <span class="icon">🏃</span>
+                                <span>跑步</span>
+                            </div>
+                            <div class="exercise-type-option" data-type="walking" data-cal="4">
+                                <span class="icon">🚶</span>
+                                <span>快走</span>
+                            </div>
+                            <div class="exercise-type-option" data-type="cycling" data-cal="8">
+                                <span class="icon">🚴</span>
+                                <span>骑行</span>
+                            </div>
+                            <div class="exercise-type-option" data-type="swimming" data-cal="12">
+                                <span class="icon">🏊</span>
+                                <span>游泳</span>
+                            </div>
+                            <div class="exercise-type-option" data-type="yoga" data-cal="3">
+                                <span class="icon">🧘</span>
+                                <span>瑜伽</span>
+                            </div>
+                            <div class="exercise-type-option" data-type="fitness" data-cal="6">
+                                <span class="icon">💪</span>
+                                <span>健身</span>
+                            </div>
+                            <div class="exercise-type-option" data-type="basketball" data-cal="8">
+                                <span class="icon">🏀</span>
+                                <span>篮球</span>
+                            </div>
+                            <div class="exercise-type-option" data-type="badminton" data-cal="7">
+                                <span class="icon">🏸</span>
+                                <span>羽毛球</span>
+                            </div>
+                            <div class="exercise-type-option" data-type="other" data-cal="5">
+                                <span class="icon">🎯</span>
+                                <span>其他</span>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label">备注</label>
-                        <input type="text" class="form-input" id="food-notes" placeholder="可选填写...">
+                        <label class="form-label">运动名称 <span class="required">*</span></label>
+                        <input type="text" class="form-input exercise" id="exercise-name" placeholder="例如：晨跑" required>
                     </div>
 
-                    <button type="submit" class="submit-btn" id="submit-btn">保存记录</button>
+                    <div class="form-group">
+                        <label class="form-label">时长 <span class="required">*</span></label>
+                        <div class="duration-input-wrapper">
+                            <input type="number" class="form-input exercise" id="exercise-duration" placeholder="30" required>
+                            <span class="duration-unit">分钟</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">消耗热量 (kcal) <span class="required">*</span></label>
+                        <input type="number" class="form-input exercise" id="exercise-calories-input" placeholder="自动计算或手动输入" required>
+                        <div class="calorie-hint">系统根据运动类型和时长自动估算</div>
+                    </div>
+
+                    <button type="submit" class="submit-btn exercise">保存运动记录</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Weight Modal -->
+    <div class="modal-overlay" id="weight-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">记录体重</h3>
+                <button class="modal-close" onclick="closeWeightModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="weight-form">
+                    <div class="form-group">
+                        <label class="form-label">今日体重 (kg) <span class="required">*</span></label>
+                        <input type="number" class="form-input" id="weight-input" placeholder="例如：65.5" step="0.1" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">备注（可选）</label>
+                        <input type="text" class="form-input" id="weight-notes" placeholder="例如：空腹体重">
+                    </div>
+
+                    <button type="submit" class="submit-btn">保存体重</button>
                 </form>
             </div>
         </div>
@@ -1061,807 +1332,187 @@
     <div class="toast" id="toast"></div>
 
     <script>
-        // Enhanced Food Database for AI Image Recognition
-        const foodDatabase = {
-            // 主食类
-            '米饭': { cal: 116, unit: '100g', category: '主食', density: 0.8 },
-            '白米饭': { cal: 116, unit: '100g', category: '主食', density: 0.8 },
-            '粥': { cal: 50, unit: '100g', category: '主食', density: 1.0 },
-            '白粥': { cal: 50, unit: '100g', category: '主食', density: 1.0 },
-            '小米粥': { cal: 60, unit: '100g', category: '主食', density: 1.0 },
-            '面条': { cal: 137, unit: '100g', category: '主食', density: 0.9 },
-            '拉面': { cal: 150, unit: '100g', category: '主食', density: 0.9 },
-            '刀削面': { cal: 160, unit: '100g', category: '主食', density: 0.9 },
-            '意大利面': { cal: 131, unit: '100g', category: '主食', density: 0.9 },
-            '馒头': { cal: 223, unit: '100g', category: '主食', density: 0.6 },
-            '花卷': { cal: 214, unit: '100g', category: '主食', density: 0.6 },
-            '包子': { cal: 220, unit: '个', category: '主食', avgWeight: 80 },
-            '肉包': { cal: 250, unit: '个', category: '主食', avgWeight: 85 },
-            '菜包': { cal: 180, unit: '个', category: '主食', avgWeight: 80 },
-            '饺子': { cal: 50, unit: '个', category: '主食', avgWeight: 20 },
-            '水饺': { cal: 50, unit: '个', category: '主食', avgWeight: 20 },
-            '煎饺': { cal: 65, unit: '个', category: '主食', avgWeight: 20 },
-            '蒸饺': { cal: 48, unit: '个', category: '主食', avgWeight: 20 },
-            '馄饨': { cal: 60, unit: '个', category: '主食', avgWeight: 25 },
-            '云吞': { cal: 60, unit: '个', category: '主食', avgWeight: 25 },
-            '抄手': { cal: 70, unit: '个', category: '主食', avgWeight: 25 },
-            '面包': { cal: 265, unit: '100g', category: '主食', density: 0.4 },
-            '吐司': { cal: 265, unit: '片', category: '主食', avgWeight: 30 },
-            '全麦面包': { cal: 247, unit: '100g', category: '主食', density: 0.4 },
-            '法棍': { cal: 270, unit: '100g', category: '主食', density: 0.5 },
-            '贝果': { cal: 250, unit: '个', category: '主食', avgWeight: 90 },
-            '燕麦': { cal: 389, unit: '100g', category: '主食', density: 0.4 },
-            '燕麦片': { cal: 389, unit: '100g', category: '主食', density: 0.4 },
-            '玉米': { cal: 86, unit: '根', category: '主食', avgWeight: 200 },
-            '玉米棒': { cal: 86, unit: '根', category: '主食', avgWeight: 200 },
-            '红薯': { cal: 86, unit: '100g', category: '主食', density: 0.9 },
-            '紫薯': { cal: 82, unit: '100g', category: '主食', density: 0.9 },
-            '土豆': { cal: 77, unit: '100g', category: '主食', density: 1.0 },
-            '土豆泥': { cal: 113, unit: '100g', category: '主食', density: 1.0 },
-            '薯条': { cal: 312, unit: '份(中)', category: '主食', avgWeight: 110 },
-            '薯片': { cal: 536, unit: '100g', category: '零食', density: 0.2 },
-
-            // 肉类
-            '牛肉': { cal: 125, unit: '100g', category: '肉类', density: 1.0 },
-            '牛排': { cal: 271, unit: '100g', category: '肉类', density: 1.0 },
-            '牛腩': { cal: 332, unit: '100g', category: '肉类', density: 1.0 },
-            '牛腱': { cal: 130, unit: '100g', category: '肉类', density: 1.0 },
-            '肥牛': { cal: 250, unit: '100g', category: '肉类', density: 1.0 },
-            '牛肉片': { cal: 180, unit: '100g', category: '肉类', density: 1.0 },
-            '猪肉': { cal: 143, unit: '100g', category: '肉类', density: 1.0 },
-            '五花肉': { cal: 349, unit: '100g', category: '肉类', density: 1.0 },
-            '里脊肉': { cal: 155, unit: '100g', category: '肉类', density: 1.0 },
-            '排骨': { cal: 278, unit: '100g', category: '肉类', density: 1.0 },
-            '猪蹄': { cal: 260, unit: '100g', category: '肉类', density: 1.0 },
-            '鸡肉': { cal: 165, unit: '100g', category: '肉类', density: 1.0 },
-            '鸡胸肉': { cal: 165, unit: '100g', category: '肉类', density: 1.0 },
-            '鸡腿': { cal: 215, unit: '个', category: '肉类', avgWeight: 120 },
-            '鸡腿肉': { cal: 200, unit: '100g', category: '肉类', density: 1.0 },
-            '鸡翅': { cal: 290, unit: '个', category: '肉类', avgWeight: 50 },
-            '鸡翅中': { cal: 202, unit: '100g', category: '肉类', density: 1.0 },
-            '鸡爪': { cal: 254, unit: '100g', category: '肉类', density: 1.0 },
-            '鸡蛋': { cal: 70, unit: '个', category: '蛋奶', avgWeight: 50 },
-            '煮鸡蛋': { cal: 70, unit: '个', category: '蛋奶', avgWeight: 50 },
-            '煎蛋': { cal: 90, unit: '个', category: '蛋奶', avgWeight: 50 },
-            '炒蛋': { cal: 100, unit: '个', category: '蛋奶', avgWeight: 50 },
-            '鸭蛋': { cal: 100, unit: '个', category: '蛋奶', avgWeight: 65 },
-            '鱼肉': { cal: 100, unit: '100g', category: '肉类', density: 1.0 },
-            '三文鱼': { cal: 208, unit: '100g', category: '肉类', density: 1.0 },
-            '鳕鱼': { cal: 82, unit: '100g', category: '肉类', density: 1.0 },
-            '鲈鱼': { cal: 105, unit: '100g', category: '肉类', density: 1.0 },
-            '鲫鱼': { cal: 108, unit: '100g', category: '肉类', density: 1.0 },
-            '带鱼': { cal: 127, unit: '100g', category: '肉类', density: 1.0 },
-            '虾': { cal: 85, unit: '100g', category: '肉类', density: 1.0 },
-            '虾仁': { cal: 85, unit: '100g', category: '肉类', density: 1.0 },
-            '基围虾': { cal: 90, unit: '100g', category: '肉类', density: 1.0 },
-            '龙虾': { cal: 90, unit: '100g', category: '肉类', density: 1.0 },
-            '螃蟹': { cal: 97, unit: '100g', category: '肉类', density: 1.0 },
-            '火腿': { cal: 120, unit: '片', category: '肉类', avgWeight: 20 },
-            '培根': { cal: 180, unit: '片', category: '肉类', avgWeight: 25 },
-            '香肠': { cal: 250, unit: '根', category: '肉类', avgWeight: 50 },
-            '烤肠': { cal: 280, unit: '根', category: '肉类', avgWeight: 60 },
-            '腊肉': { cal: 450, unit: '100g', category: '肉类', density: 1.0 },
-            '腊肠': { cal: 500, unit: '100g', category: '肉类', density: 1.0 },
-
-            // 麻辣烫/火锅食材
-            '麻辣烫': { cal: 450, unit: '份', category: '套餐', avgWeight: 500 },
-            '火锅': { cal: 600, unit: '份', category: '套餐', avgWeight: 600 },
-            '牛肉丸': { cal: 250, unit: '100g', category: '肉类', density: 1.0 },
-            '鱼丸': { cal: 120, unit: '100g', category: '肉类', density: 1.0 },
-            '虾丸': { cal: 130, unit: '100g', category: '肉类', density: 1.0 },
-            '贡丸': { cal: 220, unit: '100g', category: '肉类', density: 1.0 },
-            '蟹棒': { cal: 150, unit: '100g', category: '肉类', density: 1.0 },
-            '鱼豆腐': { cal: 150, unit: '100g', category: '肉类', density: 1.0 },
-            '午餐肉': { cal: 300, unit: '100g', category: '肉类', density: 1.0 },
-            '亲亲肠': { cal: 280, unit: '100g', category: '肉类', density: 1.0 },
-            '撒尿牛丸': { cal: 260, unit: '100g', category: '肉类', density: 1.0 },
-            '千张': { cal: 260, unit: '100g', category: '豆制品', density: 1.0 },
-            '豆腐皮': { cal: 260, unit: '100g', category: '豆制品', density: 1.0 },
-            '腐竹': { cal: 460, unit: '100g', category: '豆制品', density: 0.5 },
-            '冻豆腐': { cal: 80, unit: '100g', category: '豆制品', density: 0.8 },
-            '油豆腐': { cal: 245, unit: '100g', category: '豆制品', density: 0.8 },
-            '魔芋丝': { cal: 10, unit: '100g', category: '蔬菜', density: 1.0 },
-            '木耳': { cal: 27, unit: '100g', category: '蔬菜', density: 1.0 },
-            '金针菇': { cal: 32, unit: '100g', category: '蔬菜', density: 0.8 },
-            '香菇': { cal: 26, unit: '100g', category: '蔬菜', density: 0.8 },
-            '藕片': { cal: 70, unit: '100g', category: '蔬菜', density: 1.0 },
-            '土豆片': { cal: 77, unit: '100g', category: '蔬菜', density: 1.0 },
-            '红薯粉': { cal: 140, unit: '100g', category: '主食', density: 1.0 },
-            '宽粉': { cal: 150, unit: '100g', category: '主食', density: 1.0 },
-            '粉丝': { cal: 350, unit: '100g', category: '主食', density: 0.3 },
-            '方便面': { cal: 470, unit: '100g', category: '主食', density: 0.5 },
-
-            // 蔬菜类
-            '青菜': { cal: 20, unit: '100g', category: '蔬菜', density: 0.5 },
-            '白菜': { cal: 16, unit: '100g', category: '蔬菜', density: 0.5 },
-            '小白菜': { cal: 18, unit: '100g', category: '蔬菜', density: 0.5 },
-            '菠菜': { cal: 23, unit: '100g', category: '蔬菜', density: 0.5 },
-            '西兰花': { cal: 34, unit: '100g', category: '蔬菜', density: 0.6 },
-            '花菜': { cal: 25, unit: '100g', category: '蔬菜', density: 0.6 },
-            '西红柿': { cal: 18, unit: '个', category: '蔬菜', avgWeight: 150 },
-            '番茄': { cal: 18, unit: '个', category: '蔬菜', avgWeight: 150 },
-            '黄瓜': { cal: 15, unit: '根', category: '蔬菜', avgWeight: 150 },
-            '胡萝卜': { cal: 41, unit: '根', category: '蔬菜', avgWeight: 100 },
-            '茄子': { cal: 25, unit: '100g', category: '蔬菜', density: 0.8 },
-            '豆角': { cal: 31, unit: '100g', category: '蔬菜', density: 0.8 },
-            '四季豆': { cal: 31, unit: '100g', category: '蔬菜', density: 0.8 },
-            '芹菜': { cal: 14, unit: '100g', category: '蔬菜', density: 0.5 },
-            '韭菜': { cal: 29, unit: '100g', category: '蔬菜', density: 0.5 },
-            '青椒': { cal: 22, unit: '100g', category: '蔬菜', density: 0.8 },
-            '辣椒': { cal: 40, unit: '100g', category: '蔬菜', density: 0.8 },
-            '洋葱': { cal: 40, unit: '100g', category: '蔬菜', density: 0.9 },
-            '大蒜': { cal: 149, unit: '100g', category: '蔬菜', density: 0.8 },
-            '生姜': { cal: 80, unit: '100g', category: '蔬菜', density: 1.0 },
-            '葱': { cal: 33, unit: '100g', category: '蔬菜', density: 0.5 },
-            '香菜': { cal: 23, unit: '100g', category: '蔬菜', density: 0.3 },
-            '蘑菇': { cal: 22, unit: '100g', category: '蔬菜', density: 0.8 },
-            '平菇': { cal: 24, unit: '100g', category: '蔬菜', density: 0.8 },
-            '海带': { cal: 12, unit: '100g', category: '蔬菜', density: 1.0 },
-            '紫菜': { cal: 250, unit: '100g', category: '蔬菜', density: 0.1 },
-            '豆芽': { cal: 44, unit: '100g', category: '蔬菜', density: 0.6 },
-            '豆芽菜': { cal: 44, unit: '100g', category: '蔬菜', density: 0.6 },
-            '生菜': { cal: 15, unit: '100g', category: '蔬菜', density: 0.4 },
-            '油麦菜': { cal: 12, unit: '100g', category: '蔬菜', density: 0.4 },
-            '空心菜': { cal: 19, unit: '100g', category: '蔬菜', density: 0.5 },
-            '莴笋': { cal: 15, unit: '100g', category: '蔬菜', density: 0.6 },
-            '竹笋': { cal: 25, unit: '100g', category: '蔬菜', density: 0.9 },
-            '冬瓜': { cal: 12, unit: '100g', category: '蔬菜', density: 0.9 },
-            '南瓜': { cal: 26, unit: '100g', category: '蔬菜', density: 0.9 },
-            '丝瓜': { cal: 20, unit: '100g', category: '蔬菜', density: 0.8 },
-            '苦瓜': { cal: 19, unit: '100g', category: '蔬菜', density: 0.8 },
-
-            // 豆制品
-            '豆腐': { cal: 76, unit: '100g', category: '豆制品', density: 1.0 },
-            '嫩豆腐': { cal: 60, unit: '100g', category: '豆制品', density: 1.0 },
-            '老豆腐': { cal: 90, unit: '100g', category: '豆制品', density: 1.0 },
-            '内酯豆腐': { cal: 50, unit: '100g', category: '豆制品', density: 1.0 },
-            '豆腐干': { cal: 140, unit: '100g', category: '豆制品', density: 1.0 },
-            '香干': { cal: 140, unit: '100g', category: '豆制品', density: 1.0 },
-            '素鸡': { cal: 200, unit: '100g', category: '豆制品', density: 1.0 },
-            '豆浆': { cal: 45, unit: '100ml', category: '饮品', density: 1.0 },
-
-            // 水果类
-            '苹果': { cal: 52, unit: '个', category: '水果', avgWeight: 180 },
-            '香蕉': { cal: 89, unit: '根', category: '水果', avgWeight: 120 },
-            '橙子': { cal: 47, unit: '个', category: '水果', avgWeight: 150 },
-            '橘子': { cal: 50, unit: '个', category: '水果', avgWeight: 100 },
-            '梨': { cal: 57, unit: '个', category: '水果', avgWeight: 150 },
-            '葡萄': { cal: 62, unit: '100g', category: '水果', density: 0.9 },
-            '草莓': { cal: 32, unit: '100g', category: '水果', density: 0.7 },
-            '西瓜': { cal: 30, unit: '100g', category: '水果', density: 0.95 },
-            '芒果': { cal: 60, unit: '个', category: '水果', avgWeight: 200 },
-            '榴莲': { cal: 147, unit: '100g', category: '水果', density: 0.9 },
-            '牛油果': { cal: 160, unit: '个', category: '水果', avgWeight: 150 },
-            '火龙果': { cal: 50, unit: '个', category: '水果', avgWeight: 300 },
-            '猕猴桃': { cal: 61, unit: '个', category: '水果', avgWeight: 80 },
-            '柚子': { cal: 42, unit: '100g', category: '水果', density: 0.9 },
-            '菠萝': { cal: 50, unit: '100g', category: '水果', density: 0.9 },
-            '哈密瓜': { cal: 34, unit: '100g', category: '水果', density: 0.9 },
-            '樱桃': { cal: 63, unit: '100g', category: '水果', density: 0.9 },
-            '蓝莓': { cal: 57, unit: '100g', category: '水果', density: 0.8 },
-            '桃子': { cal: 39, unit: '个', category: '水果', avgWeight: 150 },
-            '李子': { cal: 38, unit: '个', category: '水果', avgWeight: 70 },
-            '柿子': { cal: 71, unit: '个', category: '水果', avgWeight: 150 },
-
-            // 饮品
-            '牛奶': { cal: 54, unit: '100ml', category: '饮品', density: 1.03 },
-            '纯牛奶': { cal: 54, unit: '100ml', category: '饮品', density: 1.03 },
-            '酸奶': { cal: 70, unit: '100g', category: '饮品', density: 1.0 },
-            '咖啡': { cal: 2, unit: '杯', category: '饮品', avgWeight: 240 },
-            '美式咖啡': { cal: 5, unit: '杯', category: '饮品', avgWeight: 240 },
-            '拿铁': { cal: 120, unit: '杯', category: '饮品', avgWeight: 240 },
-            '卡布奇诺': { cal: 110, unit: '杯', category: '饮品', avgWeight: 240 },
-            '摩卡': { cal: 180, unit: '杯', category: '饮品', avgWeight: 240 },
-            '奶茶': { cal: 150, unit: '杯', category: '饮品', avgWeight: 300 },
-            '珍珠奶茶': { cal: 250, unit: '杯', category: '饮品', avgWeight: 400 },
-            '可乐': { cal: 43, unit: '100ml', category: '饮品', density: 1.0 },
-            '雪碧': { cal: 38, unit: '100ml', category: '饮品', density: 1.0 },
-            '果汁': { cal: 45, unit: '100ml', category: '饮品', density: 1.0 },
-            '橙汁': { cal: 45, unit: '100ml', category: '饮品', density: 1.0 },
-            '苹果汁': { cal: 47, unit: '100ml', category: '饮品', density: 1.0 },
-            '啤酒': { cal: 43, unit: '100ml', category: '饮品', density: 1.0 },
-            '红酒': { cal: 85, unit: '杯', category: '饮品', avgWeight: 150 },
-            '白酒': { cal: 295, unit: '100ml', category: '饮品', density: 0.95 },
-            '绿茶': { cal: 2, unit: '杯', category: '饮品', avgWeight: 250 },
-            '红茶': { cal: 2, unit: '杯', category: '饮品', avgWeight: 250 },
-            '乌龙茶': { cal: 2, unit: '杯', category: '饮品', avgWeight: 250 },
-            '蜂蜜水': { cal: 30, unit: '杯', category: '饮品', avgWeight: 250 },
-            '椰子水': { cal: 19, unit: '100ml', category: '饮品', density: 1.0 },
-            '运动饮料': { cal: 25, unit: '100ml', category: '饮品', density: 1.0 },
-            '苏打水': { cal: 0, unit: '100ml', category: '饮品', density: 1.0 },
-
-            // 零食/甜点
-            '巧克力': { cal: 546, unit: '100g', category: '零食', density: 1.2 },
-            '黑巧克力': { cal: 600, unit: '100g', category: '零食', density: 1.2 },
-            '牛奶巧克力': { cal: 535, unit: '100g', category: '零食', density: 1.2 },
-            '饼干': { cal: 500, unit: '100g', category: '零食', density: 0.6 },
-            '曲奇': { cal: 520, unit: '100g', category: '零食', density: 0.6 },
-            '奥利奥': { cal: 480, unit: '100g', category: '零食', density: 0.6 },
-            '坚果': { cal: 600, unit: '100g', category: '零食', density: 0.6 },
-            '花生': { cal: 567, unit: '100g', category: '零食', density: 0.6 },
-            '瓜子': { cal: 560, unit: '100g', category: '零食', density: 0.4 },
-            '杏仁': { cal: 579, unit: '100g', category: '零食', density: 0.5 },
-            '核桃': { cal: 654, unit: '100g', category: '零食', density: 0.5 },
-            '腰果': { cal: 553, unit: '100g', category: '零食', density: 0.5 },
-            '开心果': { cal: 560, unit: '100g', category: '零食', density: 0.5 },
-            '冰淇淋': { cal: 207, unit: '个', category: '甜点', avgWeight: 80 },
-            '雪糕': { cal: 180, unit: '个', category: '甜点', avgWeight: 70 },
-            '蛋糕': { cal: 371, unit: '100g', category: '甜点', density: 0.6 },
-            '奶油蛋糕': { cal: 350, unit: '100g', category: '甜点', density: 0.6 },
-            '芝士蛋糕': { cal: 320, unit: '100g', category: '甜点', density: 0.8 },
-            '甜甜圈': { cal: 450, unit: '个', category: '甜点', avgWeight: 70 },
-            '泡芙': { cal: 300, unit: '个', category: '甜点', avgWeight: 50 },
-            '蛋挞': { cal: 250, unit: '个', category: '甜点', avgWeight: 45 },
-            '布丁': { cal: 120, unit: '份', category: '甜点', avgWeight: 100 },
-            '果冻': { cal: 60, unit: '份', category: '甜点', avgWeight: 100 },
-            '糖果': { cal: 400, unit: '100g', category: '零食', density: 1.2 },
-
-            // 快餐/外食
-            '汉堡': { cal: 500, unit: '个', category: '快餐', avgWeight: 220 },
-            '巨无霸': { cal: 540, unit: '个', category: '快餐', avgWeight: 220 },
-            '芝士汉堡': { cal: 450, unit: '个', category: '快餐', avgWeight: 200 },
-            '鸡肉汉堡': { cal: 480, unit: '个', category: '快餐', avgWeight: 210 },
-            '披萨': { cal: 266, unit: '片', category: '快餐', avgWeight: 100 },
-            '炸鸡': { cal: 280, unit: '块', category: '快餐', avgWeight: 120 },
-            '炸鸡腿': { cal: 320, unit: '个', category: '快餐', avgWeight: 150 },
-            '炸鸡翅': { cal: 290, unit: '个', category: '快餐', avgWeight: 50 },
-            '热狗': { cal: 300, unit: '个', category: '快餐', avgWeight: 120 },
-            '三明治': { cal: 350, unit: '个', category: '快餐', avgWeight: 180 },
-            '潜艇堡': { cal: 450, unit: '个', category: '快餐', avgWeight: 250 },
-            '墨西哥卷': { cal: 380, unit: '个', category: '快餐', avgWeight: 200 },
-            '塔可': { cal: 200, unit: '个', category: '快餐', avgWeight: 100 },
-
-            // 中餐菜品
-            '盖饭': { cal: 600, unit: '份', category: '中餐', avgWeight: 400 },
-            '牛肉盖饭': { cal: 650, unit: '份', category: '中餐', avgWeight: 420 },
-            '猪肉盖饭': { cal: 620, unit: '份', category: '中餐', avgWeight: 400 },
-            '鸡肉盖饭': { cal: 580, unit: '份', category: '中餐', avgWeight: 400 },
-            '炒饭': { cal: 550, unit: '份', category: '中餐', avgWeight: 350 },
-            '蛋炒饭': { cal: 520, unit: '份', category: '中餐', avgWeight: 350 },
-            '扬州炒饭': { cal: 600, unit: '份', category: '中餐', avgWeight: 380 },
-            '炒面': { cal: 500, unit: '份', category: '中餐', avgWeight: 350 },
-            '炒米粉': { cal: 480, unit: '份', category: '中餐', avgWeight: 320 },
-            '炒河粉': { cal: 520, unit: '份', category: '中餐', avgWeight: 350 },
-            '油泼面': { cal: 550, unit: '份', category: '中餐', avgWeight: 400 },
-            '炸酱面': { cal: 580, unit: '份', category: '中餐', avgWeight: 400 },
-            '兰州拉面': { cal: 450, unit: '份', category: '中餐', avgWeight: 400 },
-            '重庆小面': { cal: 480, unit: '份', category: '中餐', avgWeight: 350 },
-            '螺蛳粉': { cal: 520, unit: '份', category: '中餐', avgWeight: 400 },
-            '酸辣粉': { cal: 380, unit: '份', category: '中餐', avgWeight: 350 },
-            '凉皮': { cal: 250, unit: '份', category: '中餐', avgWeight: 300 },
-            '肉夹馍': { cal: 350, unit: '个', category: '中餐', avgWeight: 150 },
-            '煎饼': { cal: 300, unit: '个', category: '中餐', avgWeight: 200 },
-            '煎饼果子': { cal: 350, unit: '个', category: '中餐', avgWeight: 220 },
-            '油条': { cal: 200, unit: '根', category: '中餐', avgWeight: 50 },
-            '豆浆油条': { cal: 350, unit: '份', category: '中餐', avgWeight: 300 },
-            '小笼包': { cal: 80, unit: '个', category: '中餐', avgWeight: 20 },
-            '生煎': { cal: 120, unit: '个', category: '中餐', avgWeight: 35 },
-            '锅贴': { cal: 60, unit: '个', category: '中餐', avgWeight: 20 },
-            '烧麦': { cal: 100, unit: '个', category: '中餐', avgWeight: 40 },
-            '春卷': { cal: 150, unit: '个', category: '中餐', avgWeight: 50 },
-            '寿司': { cal: 40, unit: '个', category: '日料', avgWeight: 25 },
-            '刺身': { cal: 120, unit: '份', category: '日料', avgWeight: 100 },
-            '天妇罗': { cal: 200, unit: '份', category: '日料', avgWeight: 100 },
-            '拉面': { cal: 450, unit: '碗', category: '日料', avgWeight: 400 },
-            '味噌汤': { cal: 50, unit: '碗', category: '日料', avgWeight: 200 },
-            '沙拉': { cal: 150, unit: '份', category: '西餐', avgWeight: 200 },
-            '凯撒沙拉': { cal: 180, unit: '份', category: '西餐', avgWeight: 200 },
-            '水果沙拉': { cal: 120, unit: '份', category: '西餐', avgWeight: 200 },
-            '蔬菜沙拉': { cal: 80, unit: '份', category: '西餐', avgWeight: 200 },
-            '土豆泥': { cal: 113, unit: '份', category: '西餐', avgWeight: 150 },
-            '烤蔬菜': { cal: 120, unit: '份', category: '西餐', avgWeight: 200 },
-            '牛排': { cal: 271, unit: '份', category: '西餐', avgWeight: 200 },
-            '羊排': { cal: 290, unit: '份', category: '西餐', avgWeight: 200 },
-            '猪排': { cal: 300, unit: '份', category: '西餐', avgWeight: 200 },
-            '鸡排': { cal: 250, unit: '份', category: '西餐', avgWeight: 200 },
-            '炸鱼薯条': { cal: 850, unit: '份', category: '西餐', avgWeight: 400 },
-            '意面': { cal: 380, unit: '份', category: '西餐', avgWeight: 300 },
-            '千层面': { cal: 450, unit: '份', category: '西餐', avgWeight: 300 },
-            ' risotto': { cal: 350, unit: '份', category: '西餐', avgWeight: 250 },
-            '汤': { cal: 80, unit: '碗', category: '汤品', avgWeight: 250 },
-            '鸡汤': { cal: 80, unit: '碗', category: '汤品', avgWeight: 250 },
-            '排骨汤': { cal: 120, unit: '碗', category: '汤品', avgWeight: 250 },
-            '紫菜蛋花汤': { cal: 40, unit: '碗', category: '汤品', avgWeight: 250 },
-            '番茄蛋汤': { cal: 60, unit: '碗', category: '汤品', avgWeight: 250 },
-            '酸辣汤': { cal: 80, unit: '碗', category: '汤品', avgWeight: 250 },
-            '蘑菇汤': { cal: 100, unit: '碗', category: '汤品', avgWeight: 250 },
-            '奶油蘑菇汤': { cal: 180, unit: '碗', category: '汤品', avgWeight: 250 },
-
-            // 酱料/调味品
-            '酱油': { cal: 60, unit: '100ml', category: '调料', density: 1.2 },
-            '醋': { cal: 20, unit: '100ml', category: '调料', density: 1.0 },
-            '蚝油': { cal: 110, unit: '100g', category: '调料', density: 1.2 },
-            '番茄酱': { cal: 100, unit: '100g', category: '调料', density: 1.2 },
-            '沙拉酱': { cal: 450, unit: '100g', category: '调料', density: 1.0 },
-            '蛋黄酱': { cal: 680, unit: '100g', category: '调料', density: 1.0 },
-            '花生酱': { cal: 600, unit: '100g', category: '调料', density: 1.0 },
-            '芝麻酱': { cal: 625, unit: '100g', category: '调料', density: 1.0 },
-            '辣椒酱': { cal: 40, unit: '100g', category: '调料', density: 1.1 },
-            '老干妈': { cal: 500, unit: '100g', category: '调料', density: 1.0 },
-            '豆瓣酱': { cal: 180, unit: '100g', category: '调料', density: 1.2 },
-            '甜面酱': { cal: 150, unit: '100g', category: '调料', density: 1.2 },
-            '辣椒油': { cal: 900, unit: '100g', category: '调料', density: 0.9 },
-            '香油': { cal: 900, unit: '100ml', category: '调料', density: 0.92 },
-            '橄榄油': { cal: 884, unit: '100ml', category: '调料', density: 0.92 },
-            '黄油': { cal: 717, unit: '100g', category: '调料', density: 0.96 },
-            '蜂蜜': { cal: 304, unit: '100g', category: '调料', density: 1.4 },
-            '白糖': { cal: 400, unit: '100g', category: '调料', density: 0.8 },
-            '冰糖': { cal: 400, unit: '100g', category: '调料', density: 0.9 }
+        // Data Management
+        const STORAGE_KEYS = {
+            records: 'calorieTracker_records',
+            exercises: 'calorieTracker_exercises',
+            weights: 'calorieTracker_weights',
+            settings: 'calorieTracker_settings'
         };
 
-        // Simulated AI Image Analysis
-        function analyzeImageWithAI(file) {
-            return new Promise((resolve) => {
-                // Simulate AI processing time
-                setTimeout(() => {
-                    // Generate deterministic "random" results based on file size and name
-                    const seed = file.size + file.name.length;
-                    const random = seededRandom(seed);
-
-                    // Detect multiple foods from database
-                    const detectedFoods = simulateFoodDetection(random);
-
-                    resolve({
-                        detectedFoods: detectedFoods,
-                        confidence: 0.75 + random() * 0.2
-                    });
-                }, 1500);
-            });
-        }
-
-        function seededRandom(seed) {
-            let s = seed;
-            return function() {
-                s = Math.sin(s * 12.9898 + 78.233) * 43758.5453;
-                return s - Math.floor(s);
-            };
-        }
-
-        function simulateFoodDetection(random) {
-            // Get all food names
-            const foodNames = Object.keys(foodDatabase);
-            const detected = [];
-            const numFoods = 1 + Math.floor(random() * 4); // 1-4 foods
-
-            for (let i = 0; i < numFoods; i++) {
-                const index = Math.floor(random() * foodNames.length);
-                const foodName = foodNames[index];
-                const food = foodDatabase[foodName];
-
-                // Calculate realistic portion based on food type
-                let portion, weight;
-                if (food.avgWeight) {
-                    weight = food.avgWeight;
-                    portion = food.unit;
-                } else {
-                    weight = 100 + Math.floor(random() * 150); // 100-250g
-                    portion = `${weight}g`;
-                }
-
-                // Calculate calories based on weight
-                let calories;
-                if (food.avgWeight) {
-                    calories = food.cal;
-                } else {
-                    calories = Math.round((food.cal / 100) * weight);
-                }
-
-                // Add some randomness to calories (+/- 10%)
-                calories = Math.round(calories * (0.9 + random() * 0.2));
-
-                detected.push({
-                    name: foodName,
-                    calories: calories,
-                    portion: portion,
-                    confidence: 0.6 + random() * 0.35
-                });
-            }
-
-            return detected;
-        }
-
-        // Data Management
-        const STORAGE_KEY = 'calorieTracker_data';
-        const SETTINGS_KEY = 'calorieTracker_settings';
-
         let records = [];
-        let settings = { dailyGoal: 2000 };
-        let currentMealType = 'breakfast';
-        let currentImage = null;
+        let exercises = [];
+        let weights = [];
+        let settings = { dailyGoal: 2000, targetWeight: null };
         let currentDate = new Date();
         let viewingDate = new Date();
-        let editingRecordId = null;
-        let detectedFoodsList = [];
+        let currentMealType = 'breakfast';
+        let selectedExerciseType = null;
+
+        // Exercise type calorie rates (kcal per minute)
+        const exerciseRates = {
+            running: 10,
+            walking: 4,
+            cycling: 8,
+            swimming: 12,
+            yoga: 3,
+            fitness: 6,
+            basketball: 8,
+            badminton: 7,
+            other: 5
+        };
 
         // Initialize
         function init() {
             loadData();
             loadSettings();
             renderToday();
+            renderWeightView();
             renderCalendar();
             setupEventListeners();
         }
 
         function loadData() {
-            const data = localStorage.getItem(STORAGE_KEY);
-            if (data) {
-                records = JSON.parse(data);
-            }
+            const recordsData = localStorage.getItem(STORAGE_KEYS.records);
+            const exercisesData = localStorage.getItem(STORAGE_KEYS.exercises);
+            const weightsData = localStorage.getItem(STORAGE_KEYS.weights);
+
+            if (recordsData) records = JSON.parse(recordsData);
+            if (exercisesData) exercises = JSON.parse(exercisesData);
+            if (weightsData) weights = JSON.parse(weightsData);
         }
 
         function saveData() {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
+            localStorage.setItem(STORAGE_KEYS.records, JSON.stringify(records));
+            localStorage.setItem(STORAGE_KEYS.exercises, JSON.stringify(exercises));
+            localStorage.setItem(STORAGE_KEYS.weights, JSON.stringify(weights));
         }
 
         function loadSettings() {
-            const data = localStorage.getItem(SETTINGS_KEY);
+            const data = localStorage.getItem(STORAGE_KEYS.settings);
             if (data) {
-                settings = JSON.parse(data);
+                settings = { ...settings, ...JSON.parse(data) };
             }
             document.getElementById('daily-goal-input').value = settings.dailyGoal;
-            document.getElementById('daily-goal-display').textContent = settings.dailyGoal;
+            if (settings.targetWeight) {
+                document.getElementById('target-weight-input').value = settings.targetWeight;
+            }
         }
 
         function saveSettings() {
             settings.dailyGoal = parseInt(document.getElementById('daily-goal-input').value) || 2000;
-            localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
-            document.getElementById('daily-goal-display').textContent = settings.dailyGoal;
+            localStorage.setItem(STORAGE_KEYS.settings, JSON.stringify(settings));
             renderToday();
             renderCalendar();
             showToast('设置已保存');
         }
 
-        // Edit Daily Goal
-        function editDailyGoal() {
-            const goalEl = document.getElementById('daily-goal-display');
-            const currentValue = parseInt(goalEl.textContent) || 2000;
-
-            const input = document.createElement('input');
-            input.type = 'number';
-            input.className = 'editable-input';
-            input.value = currentValue;
-
-            goalEl.replaceWith(input);
-            input.focus();
-            input.select();
-
-            function saveEdit() {
-                const newValue = parseInt(input.value) || 2000;
-                settings.dailyGoal = newValue;
-                localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
-
-                const newSpan = document.createElement('span');
-                newSpan.className = 'editable';
-                newSpan.id = 'daily-goal-display';
-                newSpan.textContent = newValue;
-                newSpan.onclick = editDailyGoal;
-
-                input.replaceWith(newSpan);
-                renderToday();
-                renderCalendar();
-                showToast('每日目标已更新');
+        function saveTargetWeight() {
+            const target = parseFloat(document.getElementById('target-weight-input').value);
+            if (target && target > 0) {
+                settings.targetWeight = target;
+                localStorage.setItem(STORAGE_KEYS.settings, JSON.stringify(settings));
+                renderWeightView();
+                showToast('目标体重已保存');
             }
-
-            input.addEventListener('blur', saveEdit);
-            input.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter') {
-                    saveEdit();
-                }
-            });
         }
 
-        // AI Auto Calculation
-        async function autoCalculateCalories() {
-            const nameInput = document.getElementById('food-name');
-            const portionInput = document.getElementById('food-portion');
-            const caloriesInput = document.getElementById('food-calories');
-            const aiBtn = document.getElementById('ai-calc-btn');
-
-            // If we have detected foods from image, use those
-            if (detectedFoodsList.length > 0) {
-                const totalCalories = detectedFoodsList.reduce((sum, f) => sum + f.calories, 0);
-                const foodNames = detectedFoodsList.map(f => f.name).join(' + ');
-
-                nameInput.value = foodNames;
-                caloriesInput.value = totalCalories;
-                caloriesInput.classList.add('ai-calculated');
-
-                showToast(`✨ AI已识别 ${detectedFoodsList.length} 种食物，估算 ${totalCalories} kcal`);
-                return;
-            }
-
-            const foodName = nameInput.value.trim();
-            const portion = portionInput.value.trim();
-
-            if (!foodName) {
-                showToast('请先输入食物名称或上传图片');
-                return;
-            }
-
-            aiBtn.disabled = true;
-            aiBtn.innerHTML = '<span class="spinner"></span><span>AI计算中...</span>';
-
-            setTimeout(() => {
-                const calculatedCalories = calculateWithAI(foodName, portion);
-
-                caloriesInput.value = calculatedCalories;
-                caloriesInput.classList.add('ai-calculated');
-
-                aiBtn.disabled = false;
-                aiBtn.innerHTML = '<span>✨</span><span>AI重新计算</span>';
-
-                showToast(`✨ AI已估算热量: ${calculatedCalories} kcal`);
-            }, 800);
-        }
-
-        function calculateWithAI(foodName, portion) {
-            let totalCalories = 0;
-            const foods = foodName.split(/[+，,、]/).map(f => f.trim()).filter(f => f);
-
-            foods.forEach(food => {
-                let bestMatch = null;
-                let bestMatchLength = 0;
-
-                for (const [key, value] of Object.entries(foodDatabase)) {
-                    if (food.includes(key) || key.includes(food)) {
-                        if (key.length > bestMatchLength) {
-                            bestMatch = value;
-                            bestMatchLength = key.length;
-                        }
-                    }
-                }
-
-                if (bestMatch) {
-                    let calories = bestMatch.cal;
-
-                    // Adjust for portion if specified
-                    if (portion) {
-                        const numMatch = portion.match(/(\d+(?:\.\d+)?)/);
-                        if (numMatch && !bestMatch.avgWeight) {
-                            const num = parseFloat(numMatch[1]);
-                            if (portion.includes('克') || portion.includes('g')) {
-                                calories = Math.round((bestMatch.cal / 100) * num);
-                            } else if (portion.includes('斤')) {
-                                calories = Math.round((bestMatch.cal / 100) * num * 500);
-                            } else if (portion.includes('公斤') || portion.includes('kg')) {
-                                calories = Math.round((bestMatch.cal / 100) * num * 1000);
-                            }
-                        }
-                    }
-
-                    totalCalories += calories;
-                } else {
-                    // Default estimation for unknown foods
-                    if (food.includes('肉') || food.includes('鱼') || food.includes('鸡') || food.includes('牛') || food.includes('猪')) {
-                        totalCalories += 200;
-                    } else if (food.includes('饭') || food.includes('面') || food.includes('粉')) {
-                        totalCalories += 400;
-                    } else if (food.includes('菜') || food.includes('蔬')) {
-                        totalCalories += 50;
-                    } else if (food.includes('汤') || food.includes('粥')) {
-                        totalCalories += 100;
-                    } else if (food.includes('果')) {
-                        totalCalories += 80;
-                    } else {
-                        totalCalories += 150;
-                    }
-                }
-            });
-
-            return totalCalories || 200;
-        }
-
-        // View Navigation
+        // Event Listeners
         function setupEventListeners() {
-            document.querySelectorAll('.nav-tab').forEach(tab => {
-                tab.addEventListener('click', () => {
-                    const view = tab.dataset.view;
-                    switchView(view);
-                });
+            // Navigation
+            document.querySelectorAll('.nav-tab, .mobile-nav-item').forEach(el => {
+                el.addEventListener('click', () => switchView(el.dataset.view));
             });
 
-            document.querySelectorAll('.mobile-nav-item').forEach(item => {
-                item.addEventListener('click', () => {
-                    const view = item.dataset.view;
-                    switchView(view);
-                });
-            });
+            // Food form
+            document.getElementById('food-form').addEventListener('submit', handleFoodSubmit);
 
-            document.querySelectorAll('.meal-type-option').forEach(option => {
+            // Exercise form
+            document.getElementById('exercise-form').addEventListener('submit', handleExerciseSubmit);
+
+            // Exercise type selection
+            document.querySelectorAll('.exercise-type-option').forEach(option => {
                 option.addEventListener('click', () => {
-                    document.querySelectorAll('.meal-type-option').forEach(o => o.classList.remove('selected'));
+                    document.querySelectorAll('.exercise-type-option').forEach(o => o.classList.remove('selected'));
                     option.classList.add('selected');
-                    currentMealType = option.dataset.type;
+                    selectedExerciseType = option.dataset.type;
+                    calculateExerciseCalories();
                 });
             });
 
-            document.getElementById('record-form').addEventListener('submit', handleSubmit);
+            // Auto-calculate exercise calories
+            document.getElementById('exercise-duration').addEventListener('input', calculateExerciseCalories);
 
-            const uploadArea = document.getElementById('image-upload');
-            uploadArea.addEventListener('dragover', (e) => {
-                e.preventDefault();
-                uploadArea.style.borderColor = 'var(--primary)';
-            });
-            uploadArea.addEventListener('dragleave', () => {
-                uploadArea.style.borderColor = 'var(--divider)';
-            });
-            uploadArea.addEventListener('drop', (e) => {
-                e.preventDefault();
-                uploadArea.style.borderColor = 'var(--divider)';
-                const file = e.dataTransfer.files[0];
-                if (file && file.type.startsWith('image/')) {
-                    processImage(file);
-                }
-            });
+            // Weight form
+            document.getElementById('weight-form').addEventListener('submit', handleWeightSubmit);
         }
 
         function switchView(view) {
             document.querySelectorAll('.nav-tab, .mobile-nav-item').forEach(el => {
                 el.classList.toggle('active', el.dataset.view === view);
             });
-
             document.querySelectorAll('.view').forEach(v => v.classList.add('hidden'));
             document.getElementById(`${view}-view`).classList.remove('hidden');
 
-            if (view === 'calendar') {
-                renderCalendar();
+            if (view === 'calendar') renderCalendar();
+            if (view === 'weight') renderWeightView();
+        }
+
+        // Calculate exercise calories
+        function calculateExerciseCalories() {
+            const duration = parseInt(document.getElementById('exercise-duration').value) || 0;
+            let rate = 5; // default rate
+
+            if (selectedExerciseType && exerciseRates[selectedExerciseType]) {
+                rate = exerciseRates[selectedExerciseType];
+            }
+
+            const calories = Math.round(duration * rate);
+            if (calories > 0) {
+                document.getElementById('exercise-calories-input').value = calories;
             }
         }
 
-        // Modal Functions
-        function openModal(mealType = 'breakfast', recordId = null) {
-            editingRecordId = recordId;
+        // Food Modal
+        function openFoodModal(mealType, recordId = null) {
             currentMealType = mealType;
-            currentImage = null;
-            detectedFoodsList = [];
-
-            const modalTitle = document.getElementById('modal-title');
-            const submitBtn = document.getElementById('submit-btn');
-            const detectedContainer = document.getElementById('detected-foods-container');
-            detectedContainer.innerHTML = '';
+            document.getElementById('food-record-id').value = recordId || '';
+            document.getElementById('food-modal-title').textContent = recordId ? '编辑食物' : '添加食物';
 
             if (recordId) {
                 const record = records.find(r => r.id === recordId);
                 if (record) {
-                    modalTitle.textContent = '编辑记录';
-                    submitBtn.textContent = '更新记录';
-
-                    document.getElementById('record-id').value = recordId;
                     document.getElementById('food-name').value = record.foodName;
-                    document.getElementById('food-portion').value = record.portion || '';
                     document.getElementById('food-calories').value = record.calories;
-                    document.getElementById('food-notes').value = record.notes || '';
-
-                    if (record.imageUrl) {
-                        currentImage = record.imageUrl;
-                        const uploadArea = document.getElementById('image-upload');
-                        uploadArea.innerHTML = `<img src="${currentImage}" alt="Food">`;
-                        uploadArea.classList.add('has-image');
-                    }
-
-                    currentMealType = record.mealType;
+                    document.getElementById('food-portion').value = record.portion || '';
                 }
             } else {
-                modalTitle.textContent = '添加记录';
-                submitBtn.textContent = '保存记录';
-                document.getElementById('record-form').reset();
-                document.getElementById('record-id').value = '';
-
-                const uploadArea = document.getElementById('image-upload');
-                uploadArea.innerHTML = `
-                    <div class="image-upload-placeholder">
-                        <div class="icon">📷</div>
-                        <div>点击或拖拽上传图片</div>
-                        <div style="font-size: 12px; color: #999; margin-top: 8px;">AI将自动识别图中食物</div>
-                    </div>
-                `;
-                uploadArea.classList.remove('has-image');
+                document.getElementById('food-form').reset();
             }
 
-            document.getElementById('food-calories').classList.remove('ai-calculated');
-
-            document.querySelectorAll('.meal-type-option').forEach(o => {
-                o.classList.toggle('selected', o.dataset.type === currentMealType);
-            });
-
-            document.getElementById('modal').classList.add('active');
+            document.getElementById('food-modal').classList.add('active');
         }
 
-        function closeModal() {
-            document.getElementById('modal').classList.remove('active');
-            editingRecordId = null;
-            detectedFoodsList = [];
+        function closeFoodModal() {
+            document.getElementById('food-modal').classList.remove('active');
         }
 
-        async function handleImageUpload(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-
-            const uploadArea = document.getElementById('image-upload');
-
-            // Show analyzing state
-            uploadArea.classList.add('analyzing');
-            uploadArea.innerHTML = `
-                <div class="image-upload-placeholder">
-                    <div class="icon">🔍</div>
-                    <div>AI正在分析图片...</div>
-                    <div class="ai-analyzing-text">
-                        <span class="spinner" style="border-color: var(--primary); border-top-color: transparent;"></span>
-                        识别食物中
-                    </div>
-                </div>
-            `;
-
-            // Read and display image
-            const reader = new FileReader();
-            reader.onload = async (e) => {
-                currentImage = e.target.result;
-
-                // Run AI analysis
-                const analysis = await analyzeImageWithAI(file);
-                detectedFoodsList = analysis.detectedFoods;
-
-                // Update upload area with image
-                uploadArea.classList.remove('analyzing');
-                uploadArea.classList.add('has-image');
-                uploadArea.innerHTML = `<img src="${currentImage}" alt="Food">`;
-
-                // Show detected foods
-                const detectedContainer = document.getElementById('detected-foods-container');
-                const totalCalories = detectedFoodsList.reduce((sum, f) => sum + f.calories, 0);
-                const foodNames = detectedFoodsList.map(f => f.name).join(' + ');
-
-                detectedContainer.innerHTML = `
-                    <div class="detected-foods">
-                        <div class="detected-foods-title">✨ AI识别结果 (置信度: ${(analysis.confidence * 100).toFixed(0)}%)</div>
-                        ${detectedFoodsList.map(f => `
-                            <div class="detected-food-item">
-                                <span>${f.name} (${f.portion})</span>
-                                <span><b>${f.calories} kcal</b></span>
-                            </div>
-                        `).join('')}
-                        <div class="detected-food-item" style="border-top: 2px solid var(--primary); margin-top: 8px; padding-top: 8px;">
-                            <span><b>总计</b></span>
-                            <span><b>${totalCalories} kcal</b></span>
-                        </div>
-                    </div>
-                `;
-
-                // Auto-fill form
-                document.getElementById('food-name').value = foodNames;
-                document.getElementById('food-calories').value = totalCalories;
-                document.getElementById('food-calories').classList.add('ai-calculated');
-
-                showToast(`✨ AI识别出 ${detectedFoodsList.length} 种食物`);
-            };
-            reader.readAsDataURL(file);
-        }
-
-        function processImage(file) {
-            handleImageUpload({ target: { files: [file] } });
-        }
-
-        function handleSubmit(e) {
+        function handleFoodSubmit(e) {
             e.preventDefault();
-
-            const recordId = document.getElementById('record-id').value;
+            const recordId = document.getElementById('food-record-id').value;
             const recordData = {
                 id: recordId || Date.now().toString(),
                 date: formatDate(currentDate),
                 mealType: currentMealType,
                 foodName: document.getElementById('food-name').value,
-                portion: document.getElementById('food-portion').value,
                 calories: parseInt(document.getElementById('food-calories').value) || 0,
-                notes: document.getElementById('food-notes').value,
-                imageUrl: currentImage,
+                portion: document.getElementById('food-portion').value,
                 createdAt: recordId ? (records.find(r => r.id === recordId)?.createdAt || Date.now()) : Date.now()
             };
 
             if (recordId) {
                 const index = records.findIndex(r => r.id === recordId);
-                if (index !== -1) {
-                    records[index] = recordData;
-                }
+                if (index !== -1) records[index] = recordData;
                 showToast('记录已更新');
             } else {
                 records.push(recordData);
@@ -1870,143 +1521,333 @@
 
             saveData();
             renderToday();
-            closeModal();
+            renderCalendar();
+            closeFoodModal();
+        }
+
+        // Exercise Modal
+        function openExerciseModal(exerciseId = null) {
+            document.getElementById('exercise-record-id').value = exerciseId || '';
+            document.getElementById('exercise-modal-title').textContent = exerciseId ? '编辑运动' : '添加运动';
+
+            if (exerciseId) {
+                const exercise = exercises.find(e => e.id === exerciseId);
+                if (exercise) {
+                    document.getElementById('exercise-name').value = exercise.name;
+                    document.getElementById('exercise-duration').value = exercise.duration;
+                    document.getElementById('exercise-calories-input').value = exercise.calories;
+                    selectedExerciseType = exercise.type;
+                    document.querySelectorAll('.exercise-type-option').forEach(o => {
+                        o.classList.toggle('selected', o.dataset.type === exercise.type);
+                    });
+                }
+            } else {
+                document.getElementById('exercise-form').reset();
+                document.querySelectorAll('.exercise-type-option').forEach(o => o.classList.remove('selected'));
+                selectedExerciseType = null;
+            }
+
+            document.getElementById('exercise-modal').classList.add('active');
+        }
+
+        function closeExerciseModal() {
+            document.getElementById('exercise-modal').classList.remove('active');
+        }
+
+        function handleExerciseSubmit(e) {
+            e.preventDefault();
+            const exerciseId = document.getElementById('exercise-record-id').value;
+            const exerciseData = {
+                id: exerciseId || Date.now().toString(),
+                date: formatDate(currentDate),
+                type: selectedExerciseType || 'other',
+                name: document.getElementById('exercise-name').value,
+                duration: parseInt(document.getElementById('exercise-duration').value) || 0,
+                calories: parseInt(document.getElementById('exercise-calories-input').value) || 0,
+                createdAt: exerciseId ? (exercises.find(e => e.id === exerciseId)?.createdAt || Date.now()) : Date.now()
+            };
+
+            if (exerciseId) {
+                const index = exercises.findIndex(e => e.id === exerciseId);
+                if (index !== -1) exercises[index] = exerciseData;
+                showToast('运动记录已更新');
+            } else {
+                exercises.push(exerciseData);
+                showToast('运动记录已保存');
+            }
+
+            saveData();
+            renderToday();
+            renderCalendar();
+            closeExerciseModal();
+        }
+
+        // Weight Modal
+        function openWeightModal() {
+            const todayWeight = weights.find(w => w.date === formatDate(currentDate));
+            if (todayWeight) {
+                document.getElementById('weight-input').value = todayWeight.weight;
+                document.getElementById('weight-notes').value = todayWeight.notes || '';
+            } else {
+                document.getElementById('weight-form').reset();
+            }
+            document.getElementById('weight-modal').classList.add('active');
+        }
+
+        function closeWeightModal() {
+            document.getElementById('weight-modal').classList.remove('active');
+        }
+
+        function handleWeightSubmit(e) {
+            e.preventDefault();
+            const weightValue = parseFloat(document.getElementById('weight-input').value);
+            const notes = document.getElementById('weight-notes').value;
+            const dateStr = formatDate(currentDate);
+
+            const existingIndex = weights.findIndex(w => w.date === dateStr);
+            const weightData = {
+                date: dateStr,
+                weight: weightValue,
+                notes: notes,
+                createdAt: existingIndex >= 0 ? weights[existingIndex].createdAt : Date.now()
+            };
+
+            if (existingIndex >= 0) {
+                weights[existingIndex] = weightData;
+                showToast('体重已更新');
+            } else {
+                weights.push(weightData);
+                showToast('体重已记录');
+            }
+
+            saveData();
+            renderToday();
+            renderWeightView();
+            closeWeightModal();
         }
 
         // Render Functions
         function renderToday() {
             const todayStr = formatDate(currentDate);
             const todayRecords = records.filter(r => r.date === todayStr);
+            const todayExercises = exercises.filter(e => e.date === todayStr);
 
-            const totals = { breakfast: 0, lunch: 0, dinner: 0, snack: 0 };
+            // Calculate totals
+            const mealTotals = { breakfast: 0, lunch: 0, dinner: 0, snack: 0 };
+            let totalIntake = 0;
             todayRecords.forEach(r => {
-                totals[r.mealType] += r.calories;
+                mealTotals[r.mealType] += r.calories;
+                totalIntake += r.calories;
             });
 
-            const total = totals.breakfast + totals.lunch + totals.dinner + totals.snack;
+            const totalExercise = todayExercises.reduce((sum, e) => sum + e.calories, 0);
+            const netCalories = totalIntake - totalExercise;
 
-            document.getElementById('today-total').textContent = total;
+            // Update quick stats
+            document.getElementById('stat-intake').textContent = totalIntake;
+            document.getElementById('stat-exercise').textContent = totalExercise;
+            document.getElementById('stat-net').textContent = netCalories;
 
-            const percent = Math.min((total / settings.dailyGoal) * 100, 100);
-            document.getElementById('progress-fill').style.width = `${percent}%`;
-            document.getElementById('progress-percent').textContent = `${Math.round((total / settings.dailyGoal) * 100)}%`;
+            // Update meal sections
+            renderMealSection('breakfast', todayRecords.filter(r => r.mealType === 'breakfast'), mealTotals.breakfast);
+            renderMealSection('lunch', todayRecords.filter(r => r.mealType === 'lunch'), mealTotals.lunch);
+            renderMealSection('dinner', todayRecords.filter(r => r.mealType === 'dinner'), mealTotals.dinner);
+            renderMealSection('snack', todayRecords.filter(r => r.mealType === 'snack'), mealTotals.snack);
 
-            const progressFill = document.getElementById('progress-fill');
-            progressFill.className = 'progress-fill';
-            if (total < settings.dailyGoal * 0.8) {
-                progressFill.classList.add('low');
-            } else if (total <= settings.dailyGoal) {
-                progressFill.classList.add('normal');
-            } else if (total <= settings.dailyGoal * 1.2) {
-                progressFill.classList.add('high');
-            } else {
-                progressFill.classList.add('excess');
-            }
+            // Update exercise section
+            renderExerciseSection(todayExercises, totalExercise);
 
-            renderMealSection('breakfast', todayRecords.filter(r => r.mealType === 'breakfast'), totals.breakfast);
-            renderMealSection('lunch', todayRecords.filter(r => r.mealType === 'lunch'), totals.lunch);
-            renderMealSection('dinner', todayRecords.filter(r => r.mealType === 'dinner'), totals.dinner);
-            renderMealSection('snack', todayRecords.filter(r => r.mealType === 'snack'), totals.snack);
+            // Update weight card
+            updateWeightCard();
         }
 
         function renderMealSection(mealType, mealRecords, total) {
             document.getElementById(`${mealType}-calories`).textContent = `${total} kcal`;
-
             const container = document.getElementById(`${mealType}-items`);
+
             if (mealRecords.length === 0) {
-                container.innerHTML = `<div class="empty-meal">点击 + 添加${getMealName(mealType)}记录</div>`;
+                container.innerHTML = `<div class="empty-item">点击 + 添加${getMealName(mealType)}记录</div>`;
                 return;
             }
 
             container.innerHTML = mealRecords.map(record => `
-                <div class="meal-item" onclick="openModal('${mealType}', '${record.id}')">
-                    ${record.imageUrl
-                        ? `<img src="${record.imageUrl}" class="meal-item-image" alt="${record.foodName}">`
-                        : `<div class="meal-item-image placeholder">🍽️</div>`
-                    }
-                    <div class="meal-item-info">
-                        <div class="meal-item-name">${record.foodName}</div>
-                        <div class="meal-item-calories">${record.calories} kcal ${record.portion ? `· ${record.portion}` : ''}</div>
+                <div class="item" onclick="openFoodModal('${mealType}', '${record.id}')">
+                    <div class="item-icon">🍽️</div>
+                    <div class="item-info">
+                        <div class="item-name">${record.foodName}</div>
+                        <div class="item-detail">${record.portion || ''}</div>
                     </div>
-                    <div class="meal-item-actions" onclick="event.stopPropagation()">
-                        <button class="meal-item-edit" onclick="openModal('${mealType}', '${record.id}')" title="编辑">✏️</button>
-                        <button class="meal-item-delete" onclick="deleteRecord('${record.id}')" title="删除">🗑️</button>
+                    <div class="item-calories">+${record.calories}</div>
+                    <div class="item-actions" onclick="event.stopPropagation()">
+                        <button class="item-edit" onclick="openFoodModal('${mealType}', '${record.id}')">✏️</button>
+                        <button class="item-delete" onclick="deleteRecord('${record.id}')">🗑️</button>
                     </div>
                 </div>
             `).join('');
         }
 
+        function renderExerciseSection(todayExercises, total) {
+            document.getElementById('exercise-calories').textContent = `-${total} kcal`;
+            const container = document.getElementById('exercise-items');
+
+            if (todayExercises.length === 0) {
+                container.innerHTML = `<div class="empty-item">点击 + 添加运动记录</div>`;
+                return;
+            }
+
+            container.innerHTML = todayExercises.map(exercise => `
+                <div class="item exercise-item" onclick="openExerciseModal('${exercise.id}')">
+                    <div class="item-icon">${getExerciseIcon(exercise.type)}</div>
+                    <div class="item-info">
+                        <div class="item-name">${exercise.name}</div>
+                        <div class="item-detail">${exercise.duration} 分钟</div>
+                    </div>
+                    <div class="item-calories negative">-${exercise.calories}</div>
+                    <div class="item-actions" onclick="event.stopPropagation()">
+                        <button class="item-edit" onclick="openExerciseModal('${exercise.id}')">✏️</button>
+                        <button class="item-delete" onclick="deleteExercise('${exercise.id}')">🗑️</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderWeightView() {
+            updateWeightCard();
+            renderWeightChart();
+        }
+
+        function updateWeightCard() {
+            const todayWeight = weights.find(w => w.date === formatDate(currentDate));
+            const latestWeight = weights.length > 0 ? weights[weights.length - 1] : null;
+            const currentWeight = todayWeight || latestWeight;
+
+            const weightValueEl = document.getElementById('current-weight');
+            const weightTrendEl = document.getElementById('weight-trend');
+            const weightViewValueEl = document.getElementById('weight-view-current');
+            const weightViewTrendEl = document.getElementById('weight-view-trend');
+
+            if (currentWeight) {
+                weightValueEl.innerHTML = `${currentWeight.weight}<span class="unit">kg</span>`;
+                weightViewValueEl.innerHTML = `${currentWeight.weight}<span class="unit">kg</span>`;
+
+                // Calculate trend
+                const trend = calculateWeightTrend();
+                const trendText = trend > 0 ? `↑ ${trend.toFixed(1)}kg` : trend < 0 ? `↓ ${Math.abs(trend).toFixed(1)}kg` : '→ 持平';
+                const trendHtml = `<span>${trendText}</span> 较7天前`;
+
+                weightTrendEl.innerHTML = trendHtml;
+                weightViewTrendEl.innerHTML = trendHtml;
+            } else {
+                weightValueEl.innerHTML = `--<span class="unit">kg</span>`;
+                weightViewValueEl.innerHTML = `--<span class="unit">kg</span>`;
+                weightTrendEl.textContent = '点击记录体重';
+                weightViewTrendEl.textContent = '点击记录体重';
+            }
+        }
+
+        function calculateWeightTrend() {
+            if (weights.length < 2) return 0;
+            const sorted = [...weights].sort((a, b) => new Date(a.date) - new Date(b.date));
+            const latest = sorted[sorted.length - 1].weight;
+            const weekAgo = sorted.find(w => {
+                const daysDiff = (new Date(sorted[sorted.length - 1].date) - new Date(w.date)) / (1000 * 60 * 60 * 24);
+                return daysDiff >= 6 && daysDiff <= 8;
+            });
+            return weekAgo ? latest - weekAgo.weight : 0;
+        }
+
+        function renderWeightChart() {
+            const chartContainer = document.getElementById('weight-chart');
+            const last7Days = weights
+                .sort((a, b) => new Date(b.date) - new Date(a.date))
+                .slice(0, 7)
+                .reverse();
+
+            if (last7Days.length === 0) {
+                chartContainer.innerHTML = '<div class="empty-item">暂无体重数据</div>';
+                return;
+            }
+
+            const maxWeight = Math.max(...last7Days.map(w => w.weight));
+            const minWeight = Math.min(...last7Days.map(w => w.weight));
+            const range = maxWeight - minWeight || 1;
+
+            chartContainer.innerHTML = last7Days.map(w => {
+                const height = ((w.weight - minWeight) / range * 80 + 20);
+                const date = new Date(w.date);
+                const label = `${date.getMonth() + 1}/${date.getDate()}`;
+                return `
+                    <div class="chart-bar-wrapper">
+                        <div class="chart-value">${w.weight.toFixed(1)}</div>
+                        <div class="chart-bar" style="height: ${height}px"></div>
+                        <div class="chart-label">${label}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
         function renderCalendar() {
             const year = viewingDate.getFullYear();
             const month = viewingDate.getMonth();
-
             document.getElementById('calendar-title').textContent = `${year}年${month + 1}月`;
 
             const firstDay = new Date(year, month, 1);
             const lastDay = new Date(year, month + 1, 0);
-            const prevLastDay = new Date(year, month, 0);
-
-            const startPadding = firstDay.getDay();
             const daysInMonth = lastDay.getDate();
-            const daysInPrevMonth = prevLastDay.getDate();
+            const startPadding = firstDay.getDay();
 
             const calendarDays = document.getElementById('calendar-days');
             calendarDays.innerHTML = '';
 
-            for (let i = startPadding - 1; i >= 0; i--) {
-                const day = daysInPrevMonth - i;
-                const dayEl = createCalendarDay(day, true);
-                calendarDays.appendChild(dayEl);
+            // Previous month padding
+            for (let i = 0; i < startPadding; i++) {
+                calendarDays.appendChild(createCalendarDay('', true));
             }
 
+            // Current month days
             const todayStr = formatDate(new Date());
             for (let day = 1; day <= daysInMonth; day++) {
                 const dateStr = formatDate(new Date(year, month, day));
                 const dayRecords = records.filter(r => r.date === dateStr);
-                const totalCalories = dayRecords.reduce((sum, r) => sum + r.calories, 0);
+                const dayExercises = exercises.filter(e => e.date === dateStr);
+                const totalIntake = dayRecords.reduce((sum, r) => sum + r.calories, 0);
+                const totalExercise = dayExercises.reduce((sum, e) => sum + e.calories, 0);
+                const netCalories = totalIntake - totalExercise;
 
-                const dayEl = createCalendarDay(day, false, totalCalories, dateStr === todayStr);
-                dayEl.onclick = () => {
-                    currentDate = new Date(year, month, day);
-                    switchView('today');
-                };
-                calendarDays.appendChild(dayEl);
-            }
-
-            const totalCells = startPadding + daysInMonth;
-            const endPadding = (7 - (totalCells % 7)) % 7;
-            for (let day = 1; day <= endPadding; day++) {
-                const dayEl = createCalendarDay(day, true);
-                calendarDays.appendChild(dayEl);
+                const isToday = dateStr === todayStr;
+                calendarDays.appendChild(createCalendarDay(day, false, netCalories, totalExercise, isToday));
             }
         }
 
-        function createCalendarDay(day, isOtherMonth, calories = 0, isToday = false) {
+        function createCalendarDay(day, isOtherMonth, netCalories = 0, exercise = 0, isToday = false) {
             const div = document.createElement('div');
             div.className = 'calendar-day';
 
             if (isOtherMonth) {
                 div.classList.add('other-month');
-                div.innerHTML = `<span class="calendar-day-number">${day}</span>`;
             } else {
+                if (netCalories === 0 && exercise === 0) {
+                    div.classList.add('no-data');
+                } else {
+                    const ratio = Math.abs(netCalories) / settings.dailyGoal;
+                    if (netCalories < 0) div.classList.add('low');
+                    else if (ratio <= 0.8) div.classList.add('low');
+                    else if (ratio <= 1) div.classList.add('normal');
+                    else if (ratio <= 1.2) div.classList.add('high');
+                    else div.classList.add('excess');
+                }
                 if (isToday) div.classList.add('today');
 
-                if (calories === 0) {
-                    div.classList.add('no-data');
-                    div.innerHTML = `<span class="calendar-day-number">${day}</span>`;
-                } else {
-                    const ratio = calories / settings.dailyGoal;
-                    let statusClass = 'low';
-                    if (ratio > 1.2) statusClass = 'excess';
-                    else if (ratio > 1) statusClass = 'high';
-                    else if (ratio > 0.8) statusClass = 'normal';
+                div.innerHTML = `
+                    <span class="calendar-day-number">${day}</span>
+                    ${netCalories !== 0 ? `<span class="calendar-day-calories">${netCalories}</span>` : ''}
+                    ${exercise > 0 ? `<span class="calendar-day-exercise">-${exercise}</span>` : ''}
+                `;
 
-                    div.classList.add(statusClass);
-                    div.innerHTML = `
-                        <span class="calendar-day-number">${day}</span>
-                        <span class="calendar-day-calories">${calories}</span>
-                    `;
-                }
+                div.onclick = () => {
+                    currentDate = new Date(viewingDate.getFullYear(), viewingDate.getMonth(), day);
+                    switchView('today');
+                };
             }
 
             return div;
@@ -2023,6 +1864,16 @@
             }
         }
 
+        function deleteExercise(id) {
+            if (confirm('确定要删除这条运动记录吗？')) {
+                exercises = exercises.filter(e => e.id !== id);
+                saveData();
+                renderToday();
+                renderCalendar();
+                showToast('运动记录已删除');
+            }
+        }
+
         function changeMonth(delta) {
             viewingDate.setMonth(viewingDate.getMonth() + delta);
             renderCalendar();
@@ -2036,8 +1887,8 @@
         }
 
         function exportData() {
-            const data = { records, settings, exportDate: new Date().toISOString() };
-            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const data = { records, exercises, weights, settings, exportDate: new Date().toISOString() };
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' };
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
@@ -2050,8 +1901,13 @@
         function clearAllData() {
             if (confirm('确定要清空所有数据吗？此操作不可恢复！')) {
                 records = [];
-                localStorage.removeItem(STORAGE_KEY);
+                exercises = [];
+                weights = [];
+                localStorage.removeItem(STORAGE_KEYS.records);
+                localStorage.removeItem(STORAGE_KEYS.exercises);
+                localStorage.removeItem(STORAGE_KEYS.weights);
                 renderToday();
+                renderWeightView();
                 renderCalendar();
                 showToast('所有数据已清空');
             }
@@ -2068,6 +1924,14 @@
         function getMealName(type) {
             const names = { breakfast: '早餐', lunch: '午餐', dinner: '晚餐', snack: '加餐' };
             return names[type] || type;
+        }
+
+        function getExerciseIcon(type) {
+            const icons = {
+                running: '🏃', walking: '🚶', cycling: '🚴', swimming: '🏊',
+                yoga: '🧘', fitness: '💪', basketball: '🏀', badminton: '🏸', other: '🎯'
+            };
+            return icons[type] || '🏃';
         }
 
         function showToast(message) {
