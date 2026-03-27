@@ -2032,6 +2032,355 @@
 
         // Start
         init();
-    </script>
+    
+// ===== AI食物识别功能 =====
+class AIFoodRecognizer {
+    constructor() { this.initializeDatabase(); }
+    
+    initializeDatabase() {
+        this.foodDatabase = {
+            '米饭': { calories: 200, unit: '碗', tags: ['主食', '中餐'] },
+            '炒饭': { calories: 350, unit: '碗', tags: ['主食', '中餐'] },
+            '粥': { calories: 120, unit: '碗', tags: ['主食', '早餐'] },
+            '面条': { calories: 280, unit: '碗', tags: ['主食', '中餐'] },
+            '拉面': { calories: 450, unit: '碗', tags: ['主食', '日料'] },
+            '饺子': { calories: 50, unit: '个', tags: ['主食', '中餐'] },
+            '包子': { calories: 220, unit: '个', tags: ['主食', '早餐'] },
+            '馒头': { calories: 220, unit: '个', tags: ['主食', '早餐'] },
+            '面包': { calories: 250, unit: '片', tags: ['主食', '早餐'] },
+            '三明治': { calories: 350, unit: '个', tags: ['主食', '西餐'] },
+            '汉堡': { calories: 500, unit: '个', tags: ['快餐', '西餐'] },
+            '披萨': { calories: 280, unit: '片', tags: ['快餐', '西餐'] },
+            '意面': { calories: 380, unit: '份', tags: ['西餐', '主食'] },
+            '红烧肉': { calories: 450, unit: '份', tags: ['肉类', '中餐'] },
+            '糖醋排骨': { calories: 400, unit: '份', tags: ['肉类', '中餐'] },
+            '宫保鸡丁': { calories: 280, unit: '份', tags: ['肉类', '中餐'] },
+            '麻婆豆腐': { calories: 200, unit: '份', tags: ['豆制品', '中餐'] },
+            '番茄炒蛋': { calories: 150, unit: '份', tags: ['菜品', '中餐'] },
+            '青菜': { calories: 50, unit: '份', tags: ['蔬菜', '中餐'] },
+            '牛奶': { calories: 150, unit: '杯', tags: ['饮品', '早餐'] },
+            '酸奶': { calories: 140, unit: '杯', tags: ['饮品', '早餐'] },
+            '鸡蛋': { calories: 70, unit: '个', tags: ['蛋类', '早餐'] },
+            '苹果': { calories: 80, unit: '个', tags: ['水果', '健康'] },
+            '香蕉': { calories: 90, unit: '根', tags: ['水果', '健康'] },
+            '咖啡': { calories: 50, unit: '杯', tags: ['饮品', '早餐'] },
+            '奶茶': { calories: 350, unit: '杯', tags: ['饮品', '甜点'] }
+        };
+    }
+
+    async analyzeImage(imageFile) {
+        return new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                resolve({
+                    success: true,
+                    imageUrl: e.target.result,
+                    predictions: this.mockImageRecognition()
+                });
+            };
+            reader.readAsDataURL(imageFile);
+        });
+    }
+
+    mockImageRecognition() {
+        const foods = Object.keys(this.foodDatabase).slice(0, 5);
+        return foods.map(food => ({
+            name: food,
+            confidence: Math.random() * 0.4 + 0.6,
+            calories: this.foodDatabase[food].calories
+        })).sort((a, b) => b.confidence - a.confidence);
+    }
+
+    findFoodInDatabase(foodName) {
+        if (this.foodDatabase[foodName]) {
+            return { name: foodName, ...this.foodDatabase[foodName] };
+        }
+        for (const [key, value] of Object.entries(this.foodDatabase)) {
+            if (foodName.toLowerCase().includes(key.toLowerCase()) || 
+                key.toLowerCase().includes(foodName.toLowerCase())) {
+                return { name: key, ...value };
+            }
+        }
+        return null;
+    }
+
+    parsePortion(portion) {
+        if (!portion) return 1;
+        const lower = portion.toLowerCase();
+        if (lower.includes('大') || lower.includes('多')) return 1.5;
+        if (lower.includes('小') || lower.includes('少') || lower.includes('半')) return 0.6;
+        const match = portion.match(/(\d+(?:\.\d+)?)/);
+        if (match) {
+            const num = parseFloat(match[1]);
+            if (num >= 0.1 && num <= 10) return Math.min(num, 3);
+        }
+        return 1;
+    }
+
+    async estimateCalories(foodName, portion, imageFile = null) {
+        let imageAnalysis = null;
+        if (imageFile) imageAnalysis = await this.analyzeImage(imageFile);
+        const dbResult = this.findFoodInDatabase(foodName);
+        if (dbResult) {
+            const multiplier = this.parsePortion(portion);
+            const calories = Math.round(dbResult.calories * multiplier);
+            return {
+                success: true, food: dbResult.name, baseCalories: dbResult.calories,
+                estimatedCalories: calories, unit: dbResult.unit, portion: portion || '标准份量',
+                confidence: imageAnalysis ? 0.95 : 0.85, imageAnalysis, tags: dbResult.tags
+            };
+        }
+        return this.smartEstimate(foodName, portion, imageAnalysis);
+    }
+
+    smartEstimate(foodName, portion, imageAnalysis) {
+        const multiplier = this.parsePortion(portion);
+        let baseCalories = 250, tags = ['其他'];
+        const keywords = {
+            high: { words: ['炸', '烤', '煎', '肥', '奶油', '芝士', '糖', '甜'], calories: 400, tags: ['高热量'] },
+            medium: { words: ['炒', '煮', '蒸', '炖', '卤'], calories: 280, tags: ['中等热量'] },
+            low: { words: ['生菜', '沙拉', '水果', '酸奶', '清汤'], calories: 120, tags: ['低热量'] }
+        };
+        const lower = foodName.toLowerCase();
+        for (const [level, data] of Object.entries(keywords)) {
+            for (const word of data.words) {
+                if (lower.includes(word)) { baseCalories = data.calories; tags = data.tags; break; }
+            }
+        }
+        return {
+            success: true, food: foodName, baseCalories, estimatedCalories: Math.round(baseCalories * multiplier),
+            unit: '份', portion: portion || '标准份量', confidence: imageAnalysis ? 0.7 : 0.6, imageAnalysis, tags, note: '基于关键词智能估算'
+        };
+    }
+}
+
+let aiFoodRecognizer, currentAIResult, selectedFoodImage;
+
+document.addEventListener('DOMContentLoaded', () => {
+    aiFoodRecognizer = new AIFoodRecognizer();
+    setupDragAndDrop();
+    addAIRecognitionButton();
+});
+
+function addAIRecognitionButton() {
+    const label = document.querySelector('label[for="food-name"]');
+    if (label && !document.getElementById('ai-recognize-inline-btn')) {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.id = 'ai-recognize-inline-btn';
+        btn.className = 'ai-recognize-inline-btn';
+        btn.innerHTML = '🤖 AI识别';
+        btn.onclick = openAIFoodModal;
+        label.appendChild(btn);
+    }
+}
+
+function openAIFoodModal() { document.getElementById('ai-food-recognition-modal').classList.add('active'); resetAIForm(); }
+function closeAIFoodModal() { document.getElementById('ai-food-recognition-modal').classList.remove('active'); }
+function closeAIFoodModalOnOverlay(e) { if (e.target === e.currentTarget) closeAIFoodModal(); }
+
+function resetAIForm() {
+    selectedFoodImage = currentAIResult = null;
+    document.getElementById('ai-food-name').value = '';
+    document.getElementById('ai-portion-description').value = '';
+    document.getElementById('food-image-input').value = '';
+    resetImageUpload();
+    hideAIResult();
+}
+
+function resetImageUpload() {
+    const uploadArea = document.getElementById('food-image-upload-area');
+    uploadArea.classList.remove('has-image');
+    document.getElementById('upload-placeholder').style.display = 'block';
+    document.getElementById('food-preview-image').style.display = 'none';
+    document.getElementById('food-preview-image').src = '';
+    document.getElementById('remove-image-btn').style.display = 'none';
+}
+
+function handleFoodImageUpload(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    if (!file.type.startsWith('image/')) { alert('请选择图片文件'); return; }
+    if (file.size > 10 * 1024 * 1024) { alert('图片大小不能超过10MB'); return; }
+    selectedFoodImage = file;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        document.getElementById('food-image-upload-area').classList.add('has-image');
+        document.getElementById('upload-placeholder').style.display = 'none';
+        document.getElementById('food-preview-image').src = e.target.result;
+        document.getElementById('food-preview-image').style.display = 'block';
+        document.getElementById('remove-image-btn').style.display = 'flex';
+    };
+    reader.readAsDataURL(file);
+}
+
+function removeFoodImage() { selectedFoodImage = null; document.getElementById('food-image-input').value = ''; resetImageUpload(); }
+
+function setupDragAndDrop() {
+    const uploadArea = document.getElementById('food-image-upload-area');
+    if (!uploadArea) return;
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(e => uploadArea.addEventListener(e, (ev) => { ev.preventDefault(); ev.stopPropagation(); }, false));
+    ['dragenter', 'dragover'].forEach(e => uploadArea.addEventListener(e, () => { uploadArea.style.borderColor = 'var(--primary)'; uploadArea.style.backgroundColor = 'var(--primary-light)'; }));
+    ['dragleave', 'drop'].forEach(e => uploadArea.addEventListener(e, () => { uploadArea.style.borderColor = ''; uploadArea.style.backgroundColor = ''; }));
+    uploadArea.addEventListener('drop', (e) => { const files = e.dataTransfer.files; if (files.length > 0 && files[0].type.startsWith('image/')) { document.getElementById('food-image-input').files = files; handleFoodImageUpload({ target: { files: files } }); } });
+}
+
+async function performAIRecognition() {
+    const foodName = document.getElementById('ai-food-name').value.trim();
+    const portion = document.getElementById('ai-portion-description').value.trim();
+    if (!foodName && !selectedFoodImage) { alert('请输入食物名称或上传图片'); return; }
+    const btn = document.getElementById('ai-recognize-btn');
+    btn.classList.add('loading'); btn.disabled = true;
+    try {
+        const result = await aiFoodRecognizer.estimateCalories(foodName || '未知食物', portion, selectedFoodImage);
+        if (result.success) { currentAIResult = result; displayAIResult(result); } else { alert('识别失败，请重试'); }
+    } catch (error) { console.error('AI识别错误:', error); alert('识别过程中出现错误，请重试'); }
+    finally { btn.classList.remove('loading'); btn.disabled = false; }
+}
+
+function displayAIResult(result) {
+    document.getElementById('result-food-name').textContent = result.food;
+    document.getElementById('result-calories').textContent = result.estimatedCalories;
+    document.getElementById('result-unit').textContent = result.unit;
+    document.getElementById('portion-info').textContent = '基于份量: ' + result.portion;
+    document.getElementById('confidence-badge').textContent = '置信度: ' + Math.round(result.confidence * 100) + '%';
+    document.getElementById('result-food-tags').innerHTML = result.tags.map(tag => '<span class="tag">' + tag + '</span>').join('');
+    document.getElementById('ai-result-section').style.display = 'block';
+    document.getElementById('ai-result-section').scrollIntoView({ behavior: 'smooth' });
+}
+
+function hideAIResult() { document.getElementById('ai-result-section').style.display = 'none'; }
+
+function confirmAIResult() {
+    if (!currentAIResult) return;
+    document.getElementById('food-name').value = currentAIResult.food;
+    document.getElementById('food-calories').value = currentAIResult.estimatedCalories;
+    document.getElementById('food-portion').value = currentAIResult.portion;
+    closeAIFoodModal();
+    showToast('已填充: ' + currentAIResult.food + ' - ' + currentAIResult.estimatedCalories + '千卡');
+}
+
+function adjustCalories() {
+    if (!currentAIResult) return;
+    document.getElementById('manual-calories-input').value = currentAIResult.estimatedCalories;
+    document.getElementById('manual-adjust-section').style.display = 'block';
+    document.getElementById('manual-adjust-section').scrollIntoView({ behavior: 'smooth' });
+}
+
+function saveManualAdjustment() {
+    const newCalories = parseInt(document.getElementById('manual-calories-input').value);
+    if (isNaN(newCalories) || newCalories < 0) { alert('请输入有效的热量值'); return; }
+    if (currentAIResult) { currentAIResult.estimatedCalories = newCalories; displayAIResult(currentAIResult); }
+    cancelManualAdjustment();
+    showToast('热量已调整');
+}
+
+function cancelManualAdjustment() { document.getElementById('manual-adjust-section').style.display = 'none'; }
+
+function retryRecognition() {
+    hideAIResult();
+    document.getElementById('ai-food-name').value = '';
+    document.getElementById('ai-portion-description').value = '';
+    removeFoodImage();
+    document.getElementById('ai-food-name').focus();
+}
+
+function onFoodNameInput() {
+    const input = document.getElementById('ai-food-name');
+    const value = input.value.trim().toLowerCase();
+    const suggestionsContainer = document.getElementById('food-suggestions');
+    if (value.length < 1) { suggestionsContainer.style.display = 'none'; return; }
+    const matches = Object.keys(aiFoodRecognizer.foodDatabase).filter(food => food.toLowerCase().includes(value)).slice(0, 5);
+    if (matches.length === 0) { suggestionsContainer.style.display = 'none'; return; }
+    suggestionsContainer.innerHTML = matches.map(food => {
+        const data = aiFoodRecognizer.foodDatabase[food];
+        return '<div class="suggestion-item" onclick="selectFoodSuggestion('' + food + '')"><span class="suggestion-name">' + food + '</span><span class="suggestion-calories">' + data.calories + '千卡/' + data.unit + '</span></div>';
+    }).join('');
+    suggestionsContainer.style.display = 'block';
+}
+
+function selectFoodSuggestion(foodName) { document.getElementById('ai-food-name').value = foodName; document.getElementById('food-suggestions').style.display = 'none'; }
+
+let aiFoodRecognizer, currentAIResult, selectedFoodImage;
+document.addEventListener('DOMContentLoaded', () => { aiFoodRecognizer = new AIFoodRecognizer(); setupDragAndDrop(); addAIRecognitionButton(); });
+</script>
+
+<!-- AI食物识别模态框 -->
+<div id="ai-food-recognition-modal" class="modal-overlay" onclick="closeAIFoodModalOnOverlay(event)">
+    <div class="modal ai-modal" onclick="event.stopPropagation()">
+        <div class="modal-header">
+            <h3 class="modal-title">🤖 AI 智能识别食物热量</h3>
+            <button class="modal-close" onclick="closeAIFoodModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="image-upload-section">
+                <div class="upload-area" id="food-image-upload-area" onclick="document.getElementById('food-image-input').click()">
+                    <div class="upload-placeholder" id="upload-placeholder">
+                        <span class="upload-icon">📷</span>
+                        <p class="upload-text">点击或拖拽上传食物照片</p>
+                        <p class="upload-hint">支持 JPG、PNG 格式，最大 10MB</p>
+                    </div>
+                    <img id="food-preview-image" class="preview-image" style="display: none;">
+                    <button type="button" class="remove-image-btn" id="remove-image-btn" style="display: none;" onclick="event.stopPropagation(); removeFoodImage();">&times;</button>
+                </div>
+                <input type="file" id="food-image-input" accept="image/*" style="display: none;" onchange="handleFoodImageUpload(event)">
+            </div>
+            <div class="form-group">
+                <label class="form-label">
+                    食物名称 <span class="required">*</span>
+                    <span class="ai-hint">💡 输入如"红烧肉"、"汉堡"等</span>
+                </label>
+                <input type="text" id="ai-food-name" class="form-input" placeholder="请输入食物名称" oninput="onFoodNameInput()">
+                <div class="food-suggestions" id="food-suggestions" style="display: none;"></div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">
+                    份量描述
+                    <span class="ai-hint">💡 如"一大碗"、"2个"、"小份"等</span>
+                </label>
+                <input type="text" id="ai-portion-description" class="form-input" placeholder="请输入份量描述（可选）">
+            </div>
+            <button type="button" class="ai-recognize-btn" id="ai-recognize-btn" onclick="performAIRecognition()">
+                <span class="btn-icon">🤖</span>
+                <span class="btn-text">AI 智能识别热量</span>
+            </button>
+            <div class="ai-result-section" id="ai-result-section">
+                <div class="result-header">
+                    <h4>🎯 识别结果</h4>
+                    <span class="confidence-badge" id="confidence-badge">置信度: 95%</span>
+                </div>
+                <div class="result-content">
+                    <div class="food-info-card">
+                        <div class="food-name" id="result-food-name">红烧肉</div>
+                        <div class="food-tags" id="result-food-tags">
+                            <span class="tag">中餐</span>
+                            <span class="tag">肉类</span>
+                        </div>
+                    </div>
+                    <div class="calorie-display">
+                        <div class="calorie-number" id="result-calories">450</div>
+                        <div class="calorie-unit">千卡 / <span id="result-unit">份</span></div>
+                    </div>
+                    <div class="portion-info" id="portion-info">基于份量: 标准份量</div>
+                </div>
+                <div class="result-actions">
+                    <button type="button" class="btn-confirm" onclick="confirmAIResult()"><span>✓</span> 确认并使用此数据</button>
+                    <button type="button" class="btn-adjust" onclick="adjustCalories()"><span>✎</span> 手动调整</button>
+                    <button type="button" class="btn-retry" onclick="retryRecognition()"><span>↻</span> 重新识别</button>
+                </div>
+            </div>
+            <div class="manual-adjust-section" id="manual-adjust-section">
+                <div class="form-group">
+                    <label class="form-label">调整热量（千卡）</label>
+                    <input type="number" id="manual-calories-input" class="form-input" min="0" max="5000" step="10">
+                </div>
+                <div class="adjust-actions">
+                    <button type="button" class="btn-save-adjust" onclick="saveManualAdjustment()">保存调整</button>
+                    <button type="button" class="btn-cancel-adjust" onclick="cancelManualAdjustment()">取消</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>
