@@ -3,1011 +3,222 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CalorieTracker - 饮食热量追踪器</title>
+    <title>CalorieTracker - 智能饮食热量追踪器</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         :root {
-            --primary: #4CAF50;
-            --primary-dark: #388E3C;
-            --primary-light: #C8E6C9;
-            --low-calorie: #81C784;
-            --normal-calorie: #FFD54F;
-            --high-calorie: #FF9800;
-            --excess-calorie: #EF5350;
-            --exercise: #2196F3;
-            --exercise-light: #BBDEFB;
-            --background: #F5F5F5;
-            --surface: #FFFFFF;
-            --text-primary: #212121;
-            --text-secondary: #757575;
-            --divider: #E0E0E0;
+            --primary: #4CAF50; --primary-dark: #388E3C; --primary-light: #C8E6C9;
+            --low-calorie: #81C784; --normal-calorie: #FFD54F; --high-calorie: #FF9800;
+            --excess-calorie: #EF5350; --exercise: #2196F3; --exercise-light: #BBDEFB;
+            --background: #F5F5F5; --surface: #FFFFFF; --text-primary: #212121;
+            --text-secondary: #757575; --divider: #E0E0E0;
         }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: var(--background); color: var(--text-primary); min-height: 100vh; }
+        .header { background-color: var(--surface); padding: 16px 24px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 100; }
+        .logo { font-size: 20px; font-weight: 600; color: var(--primary); display: flex; align-items: center; gap: 8px; }
+        .nav-tabs { display: flex; gap: 8px; }
+        .nav-tab { padding: 8px 16px; border-radius: 20px; cursor: pointer; font-size: 14px; transition: all 0.3s; border: none; background: transparent; color: var(--text-secondary); }
+        .nav-tab.active { background-color: var(--primary-light); color: var(--primary-dark); font-weight: 500; }
+        .nav-tab:hover { background-color: var(--primary-light); }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        
+        /* 每日目标进度条 */
+        .daily-goal-card { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 16px; padding: 20px; margin-bottom: 20px; color: white; box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3); }
+        .daily-goal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+        .daily-goal-title { font-size: 14px; opacity: 0.9; }
+        .daily-goal-edit { background: rgba(255,255,255,0.2); border: none; color: white; padding: 4px 12px; border-radius: 12px; font-size: 12px; cursor: pointer; }
+        .daily-goal-value { font-size: 32px; font-weight: 700; margin-bottom: 8px; }
+        .daily-goal-progress { height: 8px; background: rgba(255,255,255,0.3); border-radius: 4px; overflow: hidden; }
+        .daily-goal-progress-fill { height: 100%; background: white; border-radius: 4px; transition: width 0.5s ease; }
+        .daily-goal-stats { display: flex; justify-content: space-between; margin-top: 12px; font-size: 12px; opacity: 0.9; }
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background-color: var(--background);
-            color: var(--text-primary);
-            min-height: 100vh;
-        }
-
-        /* Header */
-        .header {
-            background-color: var(--surface);
-            padding: 16px 24px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .logo {
-            font-size: 20px;
-            font-weight: 600;
-            color: var(--primary);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .nav-tabs {
-            display: flex;
-            gap: 8px;
-        }
-
-        .nav-tab {
-            padding: 8px 16px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: all 0.3s;
-            border: none;
-            background: transparent;
-            color: var(--text-secondary);
-        }
-
-        .nav-tab.active {
-            background-color: var(--primary-light);
-            color: var(--primary-dark);
-            font-weight: 500;
-        }
-
-        .nav-tab:hover {
-            background-color: var(--primary-light);
-        }
-
-        /* Main Container */
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        /* Progress Cards */
-        .progress-cards {
-            display: grid;
-            gap: 12px;
-            margin-bottom: 20px;
-        }
-
-        .progress-card {
-            background-color: var(--surface);
-            border-radius: 16px;
-            padding: 20px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-        }
-
-        .progress-card.intake {
-            border-left: 4px solid var(--primary);
-        }
-
-        .progress-card.exercise {
-            border-left: 4px solid var(--exercise);
-        }
-
-        .progress-card.net {
-            border-left: 4px solid var(--normal-calorie);
-        }
-
-        .progress-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-        }
-
-        .progress-title {
-            font-size: 14px;
-            color: var(--text-secondary);
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .progress-value {
-            font-size: 24px;
-            font-weight: 700;
-            color: var(--text-primary);
-            display: flex;
-            align-items: baseline;
-            gap: 4px;
-        }
-
-        .progress-value .editable {
-            cursor: pointer;
-            padding: 2px 8px;
-            border-radius: 8px;
-            transition: all 0.3s;
-        }
-
-        .progress-value .editable:hover {
-            background-color: var(--primary-light);
-        }
-
-        .progress-value .editable-input {
-            font-size: 24px;
-            font-weight: 700;
-            width: 90px;
-            padding: 2px 8px;
-            border: 2px solid var(--primary);
-            border-radius: 8px;
-            text-align: center;
-        }
-
-        .progress-value span.unit {
-            font-size: 14px;
-            color: var(--text-secondary);
-            font-weight: 400;
-        }
-
-        .progress-bar {
-            height: 10px;
-            background-color: var(--background);
-            border-radius: 5px;
-            overflow: hidden;
-        }
-
-        .progress-fill {
-            height: 100%;
-            border-radius: 5px;
-            transition: width 0.5s ease, background-color 0.3s;
-        }
-
+        .progress-cards { display: grid; gap: 12px; margin-bottom: 20px; }
+        .progress-card { background-color: var(--surface); border-radius: 16px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+        .progress-card.intake { border-left: 4px solid var(--primary); }
+        .progress-card.exercise { border-left: 4px solid var(--exercise); }
+        .progress-card.net { border-left: 4px solid var(--normal-calorie); }
+        .progress-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+        .progress-title { font-size: 14px; color: var(--text-secondary); display: flex; align-items: center; gap: 6px; }
+        .progress-value { font-size: 24px; font-weight: 700; color: var(--text-primary); display: flex; align-items: baseline; gap: 4px; }
+        .progress-value .editable { cursor: pointer; padding: 2px 8px; border-radius: 8px; transition: all 0.3s; }
+        .progress-value .editable:hover { background-color: var(--primary-light); }
+        .progress-value .editable-input { font-size: 24px; font-weight: 700; width: 90px; padding: 2px 8px; border: 2px solid var(--primary); border-radius: 8px; text-align: center; }
+        .progress-value span.unit { font-size: 14px; color: var(--text-secondary); font-weight: 400; }
+        .progress-bar { height: 10px; background-color: var(--background); border-radius: 5px; overflow: hidden; }
+        .progress-fill { height: 100%; border-radius: 5px; transition: width 0.5s ease, background-color 0.3s; }
         .progress-fill.intake { background-color: var(--primary); }
         .progress-fill.exercise { background-color: var(--exercise); }
         .progress-fill.net { background-color: var(--normal-calorie); }
-
-        /* Quick Stats */
-        .quick-stats {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
-            margin-bottom: 20px;
-        }
-
-        .stat-item {
-            background-color: var(--surface);
-            border-radius: 12px;
-            padding: 16px;
-            text-align: center;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-        }
-
-        .stat-value {
-            font-size: 20px;
-            font-weight: 700;
-            color: var(--text-primary);
-        }
-
+        .quick-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
+        .stat-item { background-color: var(--surface); border-radius: 12px; padding: 16px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+        .stat-value { font-size: 20px; font-weight: 700; color: var(--text-primary); }
         .stat-value.positive { color: var(--excess-calorie); }
         .stat-value.negative { color: var(--exercise); }
-
-        .stat-label {
-            font-size: 12px;
-            color: var(--text-secondary);
-            margin-top: 4px;
-        }
-
-        /* Meal & Exercise Sections */
-        .section {
-            background-color: var(--surface);
-            border-radius: 16px;
-            padding: 20px;
-            margin-bottom: 16px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-        }
-
-        .section.exercise-section {
-            border: 2px solid var(--exercise-light);
-        }
-
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 16px;
-        }
-
-        .section-title {
-            font-size: 16px;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .section-calories {
-            font-size: 14px;
-            color: var(--text-secondary);
-        }
-
-        .section-calories.negative {
-            color: var(--exercise);
-        }
-
-        .add-btn {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            border: none;
-            background-color: var(--primary-light);
-            color: var(--primary);
-            font-size: 20px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s;
-        }
-
-        .add-btn.exercise {
-            background-color: var(--exercise-light);
-            color: var(--exercise);
-        }
-
-        .add-btn:hover {
-            background-color: var(--primary);
-            color: white;
-        }
-
-        .add-btn.exercise:hover {
-            background-color: var(--exercise);
-        }
-
-        /* Items List */
-        .items-list {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .item {
-            display: flex;
-            gap: 12px;
-            padding: 12px;
-            background-color: var(--background);
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.3s;
-            position: relative;
-        }
-
-        .item:hover {
-            background-color: var(--primary-light);
-            transform: translateX(4px);
-        }
-
-        .item.exercise-item:hover {
-            background-color: var(--exercise-light);
-        }
-
-        .item-icon {
-            width: 48px;
-            height: 48px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            background-color: var(--primary-light);
-        }
-
-        .item.exercise-item .item-icon {
-            background-color: var(--exercise-light);
-        }
-
-        .item-info {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-
-        .item-name {
-            font-size: 14px;
-            font-weight: 500;
-            margin-bottom: 4px;
-        }
-
-        .item-detail {
-            font-size: 13px;
-            color: var(--text-secondary);
-        }
-
-        .item-calories {
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--text-primary);
-            display: flex;
-            align-items: center;
-        }
-
-        .item-calories.negative {
-            color: var(--exercise);
-        }
-
-        .item-actions {
-            display: flex;
-            gap: 6px;
-            align-items: center;
-            margin-left: 8px;
-        }
-
-        .item-edit, .item-delete {
-            width: 26px;
-            height: 26px;
-            border-radius: 50%;
-            border: none;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-
-        .item:hover .item-edit,
-        .item:hover .item-delete {
-            opacity: 1;
-        }
-
-        .item-edit {
-            background-color: var(--primary-light);
-            color: var(--primary);
-        }
-
-        .item-delete {
-            background-color: #FFEBEE;
-            color: var(--excess-calorie);
-        }
-
-        .empty-item {
-            text-align: center;
-            padding: 24px;
-            color: var(--text-secondary);
-            font-size: 14px;
-        }
+        .stat-label { font-size: 12px; color: var(--text-secondary); margin-top: 4px; }
+        .section { background-color: var(--surface); border-radius: 16px; padding: 20px; margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+        .section.exercise-section { border: 2px solid var(--exercise-light); }
+        .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+        .section-title { font-size: 16px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+        .section-calories { font-size: 14px; color: var(--text-secondary); }
+        .section-calories.negative { color: var(--exercise); }
+        .add-btn { width: 32px; height: 32px; border-radius: 50%; border: none; background-color: var(--primary-light); color: var(--primary); font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s; }
+        .add-btn.exercise { background-color: var(--exercise-light); color: var(--exercise); }
+        .add-btn:hover { background-color: var(--primary); color: white; }
+        .add-btn.exercise:hover { background-color: var(--exercise); }
+        .items-list { display: flex; flex-direction: column; gap: 12px; }
+        .item { display: flex; gap: 12px; padding: 12px; background-color: var(--background); border-radius: 12px; cursor: pointer; transition: all 0.3s; position: relative; }
+        .item:hover { background-color: var(--primary-light); transform: translateX(4px); }
+        .item.exercise-item:hover { background-color: var(--exercise-light); }
+        .item-icon { width: 48px; height: 48px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 24px; background-color: var(--primary-light); }
+        .item.exercise-item .item-icon { background-color: var(--exercise-light); }
+        .item-info { flex: 1; display: flex; flex-direction: column; justify-content: center; }
+        .item-name { font-size: 14px; font-weight: 500; margin-bottom: 4px; }
+        .item-detail { font-size: 13px; color: var(--text-secondary); }
+        .item-calories { font-size: 14px; font-weight: 600; color: var(--text-primary); display: flex; align-items: center; }
+        .item-calories.negative { color: var(--exercise); }
+        .item-actions { display: flex; gap: 6px; align-items: center; margin-left: 8px; }
+        .item-edit, .item-delete { width: 26px; height: 26px; border-radius: 50%; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 12px; opacity: 0; transition: opacity 0.3s; }
+        .item:hover .item-edit, .item:hover .item-delete { opacity: 1; }
+        .item-edit { background-color: var(--primary-light); color: var(--primary); }
+        .item-delete { background-color: #FFEBEE; color: var(--excess-calorie); }
+        .empty-item { text-align: center; padding: 24px; color: var(--text-secondary); font-size: 14px; }
 
         /* Weight Card */
-        .weight-card {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 16px;
-            padding: 24px;
-            margin-bottom: 20px;
-            color: white;
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
-        }
-
-        .weight-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 16px;
-        }
-
-        .weight-title {
-            font-size: 14px;
-            opacity: 0.9;
-        }
-
-        .weight-value {
-            font-size: 36px;
-            font-weight: 700;
-        }
-
-        .weight-value .unit {
-            font-size: 18px;
-            font-weight: 400;
-            margin-left: 4px;
-        }
-
-        .weight-trend {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 13px;
-            opacity: 0.9;
-        }
-
-        .weight-input-btn {
-            background-color: rgba(255,255,255,0.2);
-            border: none;
-            color: white;
-            padding: 8px 16px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 13px;
-            transition: all 0.3s;
-        }
-
-        .weight-input-btn:hover {
-            background-color: rgba(255,255,255,0.3);
-        }
-
-        /* Weight Chart */
-        .weight-chart-container {
-            background-color: var(--surface);
-            border-radius: 16px;
-            padding: 20px;
-            margin-bottom: 16px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-        }
-
-        .chart-title {
-            font-size: 16px;
-            font-weight: 600;
-            margin-bottom: 16px;
-        }
-
-        .weight-chart {
-            height: 150px;
-            position: relative;
-            display: flex;
-            align-items: flex-end;
-            justify-content: space-between;
-            gap: 8px;
-            padding-bottom: 30px;
-            border-bottom: 1px solid var(--divider);
-        }
-
-        .chart-bar-wrapper {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .chart-bar {
-            width: 100%;
-            max-width: 40px;
-            background: linear-gradient(to top, #667eea, #764ba2);
-            border-radius: 4px 4px 0 0;
-            transition: all 0.3s;
-            min-height: 4px;
-        }
-
-        .chart-bar:hover {
-            opacity: 0.8;
-        }
-
-        .chart-label {
-            font-size: 11px;
-            color: var(--text-secondary);
-            position: absolute;
-            bottom: 8px;
-        }
-
-        .chart-value {
-            font-size: 11px;
-            color: var(--text-primary);
-            font-weight: 500;
-        }
+        .weight-card { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 16px; padding: 24px; margin-bottom: 20px; color: white; box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3); }
+        .weight-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+        .weight-title { font-size: 14px; opacity: 0.9; }
+        .weight-value { font-size: 36px; font-weight: 700; }
+        .weight-value .unit { font-size: 18px; font-weight: 400; margin-left: 4px; }
+        .weight-trend { display: flex; align-items: center; gap: 8px; font-size: 13px; opacity: 0.9; }
+        .weight-input-btn { background-color: rgba(255,255,255,0.2); border: none; color: white; padding: 8px 16px; border-radius: 20px; cursor: pointer; font-size: 13px; transition: all 0.3s; }
+        .weight-input-btn:hover { background-color: rgba(255,255,255,0.3); }
+        .weight-chart-container { background-color: var(--surface); border-radius: 16px; padding: 20px; margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+        .chart-title { font-size: 16px; font-weight: 600; margin-bottom: 16px; }
+        .weight-chart { height: 150px; position: relative; display: flex; align-items: flex-end; justify-content: space-between; gap: 8px; padding-bottom: 30px; border-bottom: 1px solid var(--divider); }
+        .chart-bar-wrapper { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+        .chart-bar { width: 100%; max-width: 40px; background: linear-gradient(to top, #667eea, #764ba2); border-radius: 4px 4px 0 0; transition: all 0.3s; min-height: 4px; }
+        .chart-bar:hover { opacity: 0.8; }
+        .chart-label { font-size: 11px; color: var(--text-secondary); position: absolute; bottom: 8px; }
+        .chart-value { font-size: 11px; color: var(--text-primary); font-weight: 500; }
 
         /* Modal */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: rgba(0,0,0,0.5);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            padding: 20px;
-        }
-
-        .modal-overlay.active {
-            display: flex;
-        }
-
-        .modal {
-            background-color: var(--surface);
-            border-radius: 20px;
-            width: 100%;
-            max-width: 480px;
-            max-height: 90vh;
-            overflow-y: auto;
-            animation: slideUp 0.3s ease;
-        }
-
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .modal-header {
-            padding: 20px 24px;
-            border-bottom: 1px solid var(--divider);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .modal-title {
-            font-size: 18px;
-            font-weight: 600;
-        }
-
-        .modal-close {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            border: none;
-            background-color: var(--background);
-            cursor: pointer;
-            font-size: 18px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal-body {
-            padding: 24px;
-        }
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; z-index: 1000; padding: 20px; }
+        .modal-overlay.active { display: flex; }
+        .modal { background-color: var(--surface); border-radius: 20px; width: 100%; max-width: 480px; max-height: 90vh; overflow-y: auto; animation: slideUp 0.3s ease; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .modal-header { padding: 20px 24px; border-bottom: 1px solid var(--divider); display: flex; justify-content: space-between; align-items: center; }
+        .modal-title { font-size: 18px; font-weight: 600; }
+        .modal-close { width: 32px; height: 32px; border-radius: 50%; border: none; background-color: var(--background); cursor: pointer; font-size: 18px; display: flex; align-items: center; justify-content: center; }
+        .modal-body { padding: 24px; }
 
         /* Form */
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-label {
-            display: block;
-            font-size: 14px;
-            font-weight: 500;
-            margin-bottom: 8px;
-        }
-
-        .form-label .required {
-            color: var(--excess-calorie);
-        }
-
-        .form-input, .form-select {
-            width: 100%;
-            padding: 12px 16px;
-            border: 2px solid var(--divider);
-            border-radius: 12px;
-            font-size: 14px;
-            transition: all 0.3s;
-            background-color: var(--surface);
-        }
-
-        .form-input:focus, .form-select:focus {
-            outline: none;
-            border-color: var(--primary);
-        }
-
-        .form-input.exercise:focus {
-            border-color: var(--exercise);
-        }
-
-        .duration-input-wrapper {
-            display: flex;
-            gap: 12px;
-            align-items: center;
-        }
-
-        .duration-input-wrapper .form-input {
-            flex: 1;
-        }
-
-        .duration-unit {
-            font-size: 14px;
-            color: var(--text-secondary);
-        }
-
-        .calorie-hint {
-            font-size: 12px;
-            color: var(--text-secondary);
-            margin-top: 6px;
-        }
-
-        .submit-btn {
-            width: 100%;
-            padding: 16px;
-            background-color: var(--primary);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .submit-btn.exercise {
-            background-color: var(--exercise);
-        }
-
-        .submit-btn:hover {
-            background-color: var(--primary-dark);
-            transform: translateY(-2px);
-        }
-
-        .submit-btn.exercise:hover {
-            background-color: #1976D2;
-        }
+        .form-group { margin-bottom: 20px; }
+        .form-label { display: block; font-size: 14px; font-weight: 500; margin-bottom: 8px; }
+        .form-label .required { color: var(--excess-calorie); }
+        .form-input, .form-select { width: 100%; padding: 12px 16px; border: 2px solid var(--divider); border-radius: 12px; font-size: 14px; transition: all 0.3s; background-color: var(--surface); }
+        .form-input:focus, .form-select:focus { outline: none; border-color: var(--primary); }
+        .form-input.exercise:focus { border-color: var(--exercise); }
+        .duration-input-wrapper { display: flex; gap: 12px; align-items: center; }
+        .duration-input-wrapper .form-input { flex: 1; }
+        .duration-unit { font-size: 14px; color: var(--text-secondary); }
+        .calorie-hint { font-size: 12px; color: var(--text-secondary); margin-top: 6px; }
+        .submit-btn { width: 100%; padding: 16px; background-color: var(--primary); color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s; }
+        .submit-btn.exercise { background-color: var(--exercise); }
+        .submit-btn:hover { background-color: var(--primary-dark); transform: translateY(-2px); }
+        .submit-btn.exercise:hover { background-color: #1976D2; }
 
         /* Exercise Type Selector */
-        .exercise-type-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-        }
-
-        .exercise-type-option {
-            padding: 12px 8px;
-            border-radius: 12px;
-            border: 2px solid var(--divider);
-            background-color: var(--surface);
-            cursor: pointer;
-            font-size: 13px;
-            text-align: center;
-            transition: all 0.3s;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .exercise-type-option .icon {
-            font-size: 24px;
-        }
-
-        .exercise-type-option.selected {
-            border-color: var(--exercise);
-            background-color: var(--exercise-light);
-            color: var(--exercise);
-            font-weight: 500;
-        }
+        .exercise-type-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+        .exercise-type-option { padding: 12px 8px; border-radius: 12px; border: 2px solid var(--divider); background-color: var(--surface); cursor: pointer; font-size: 13px; text-align: center; transition: all 0.3s; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+        .exercise-type-option .icon { font-size: 24px; }
+        .exercise-type-option.selected { border-color: var(--exercise); background-color: var(--exercise-light); color: var(--exercise); font-weight: 500; }
 
         /* Calendar View */
-        .calendar-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .calendar-nav {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-        }
-
-        .calendar-nav-btn {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            border: none;
-            background-color: var(--surface);
-            cursor: pointer;
-            font-size: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-
-        .calendar-title {
-            font-size: 18px;
-            font-weight: 600;
-        }
-
-        .calendar-today-btn {
-            padding: 8px 16px;
-            border: none;
-            background-color: var(--primary-light);
-            color: var(--primary-dark);
-            border-radius: 20px;
-            font-size: 14px;
-            cursor: pointer;
-            font-weight: 500;
-        }
-
-        .calendar-grid {
-            background-color: var(--surface);
-            border-radius: 16px;
-            padding: 20px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-        }
-
-        .calendar-weekdays {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 8px;
-            margin-bottom: 12px;
-        }
-
-        .calendar-weekday {
-            text-align: center;
-            font-size: 12px;
-            color: var(--text-secondary);
-            font-weight: 500;
-        }
-
-        .calendar-days {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 8px;
-        }
-
-        .calendar-day {
-            aspect-ratio: 1;
-            border-radius: 12px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s;
-            position: relative;
-            min-height: 60px;
-        }
-
-        .calendar-day:hover {
-            transform: scale(1.05);
-        }
-
-        .calendar-day.other-month {
-            opacity: 0.3;
-        }
-
-        .calendar-day.today {
-            border: 2px solid var(--primary);
-        }
-
-        .calendar-day-number {
-            font-size: 14px;
-            font-weight: 500;
-            margin-bottom: 2px;
-        }
-
-        .calendar-day-calories {
-            font-size: 10px;
-            font-weight: 600;
-        }
-
-        .calendar-day-exercise {
-            font-size: 9px;
-            color: var(--exercise);
-            margin-top: 2px;
-        }
-
-        .calendar-day.no-data {
-            background-color: var(--background);
-        }
-
-        .calendar-day.low { background-color: var(--low-calorie); color: white; }
-        .calendar-day.normal { background-color: var(--normal-calorie); color: #333; }
-        .calendar-day.high { background-color: var(--high-calorie); color: white; }
-        .calendar-day.excess { background-color: var(--excess-calorie); color: white; }
-
-        .calendar-legend {
-            display: flex;
-            justify-content: center;
-            gap: 16px;
-            margin-top: 20px;
-            flex-wrap: wrap;
-        }
-
-        .legend-item {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 12px;
-            color: var(--text-secondary);
-        }
-
-        .legend-color {
-            width: 16px;
-            height: 16px;
-            border-radius: 4px;
-        }
-
-        /* Settings Panel */
-        .settings-card {
-            background-color: var(--surface);
-            border-radius: 16px;
-            padding: 24px;
-            margin-bottom: 16px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-        }
-
-        .settings-title {
-            font-size: 16px;
-            font-weight: 600;
-            margin-bottom: 16px;
-        }
-
+        .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .calendar-nav { display: flex; align-items: center; gap: 16px; }
+        .calendar-nav-btn { width: 36px; height: 36px; border-radius: 50%; border: none; background-color: var(--surface); cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .calendar-title { font-size: 18px; font-weight: 600; }
+        .calendar-today-btn { padding: 8px 16px; border: none; background-color: var(--primary-light); color: var(--primary-dark); border-radius: 20px; font-size: 14px; cursor: pointer; font-weight: 500; }
+        .calendar-grid { background-color: var(--surface); border-radius: 16px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+        .calendar-weekdays { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; margin-bottom: 12px; }
+        .calendar-weekday { text-align: center; font-size: 12px; color: var(--text-secondary); font-weight: 500; }
+        .calendar-days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
+        .calendar-day { aspect-ratio: 1; border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s; position: relative; min-height: 60px; }
+        .calendar-day:hover { transform: scale(1.05); }
+        .calendar-day.other-month { opacity: 0.3; }
+        .calendar-day.today { border: 2px solid var(--primary); }
+        .calendar-day-number { font-size: 14px; font-weight: 500; margin-bottom: 2px; }
+        .calendar-day-calories { font-size: 10px; font-weight: 600; }
+        
         /* Toast */
-        .toast {
-            position: fixed;
-            bottom: 24px;
-            left: 50%;
-            transform: translateX(-50%) translateY(100px);
-            background-color: #333;
-            color: white;
-            padding: 12px 24px;
-            border-radius: 8px;
-            font-size: 14px;
-            z-index: 2000;
-            opacity: 0;
-            transition: all 0.3s;
-        }
+        .toast { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%) translateY(100px); background-color: rgba(0,0,0,0.8); color: white; padding: 12px 24px; border-radius: 24px; font-size: 14px; opacity: 0; transition: all 0.3s ease; z-index: 2000; }
+        .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-        .toast.show {
-            transform: translateX(-50%) translateY(0);
-            opacity: 1;
-        }
-
-        /* Loading Spinner */
-        .spinner {
-            display: inline-block;
-            width: 16px;
-            height: 16px;
-            border: 2px solid #fff;
-            border-top-color: transparent;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        /* Hidden */
-        .hidden {
-            display: none !important;
-        }
-
-        /* Mobile Bottom Nav */
-        .mobile-nav {
-            display: none;
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background-color: var(--surface);
-            padding: 12px 24px;
-            box-shadow: 0 -2px 8px rgba(0,0,0,0.1);
-            z-index: 100;
-        }
-
-        .mobile-nav-items {
-            display: flex;
-            justify-content: space-around;
-        }
-
-        .mobile-nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 4px;
-            cursor: pointer;
-            color: var(--text-secondary);
-            font-size: 12px;
-        }
-
-        .mobile-nav-item.active {
-            color: var(--primary);
-        }
-
-        .mobile-nav-item .icon {
-            font-size: 24px;
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                padding: 16px;
-                padding-bottom: 80px;
-            }
-
-            .mobile-nav {
-                display: block;
-            }
-
-            .nav-tabs {
-                display: none;
-            }
-
-            .item-edit, .item-delete {
-                opacity: 1;
-            }
-
-            .quick-stats {
-                grid-template-columns: repeat(3, 1fr);
-            }
-
-            .exercise-type-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-    
-/* ===== AI食物识别功能样式 ===== */
-.ai-modal { max-width: 600px; max-height: 90vh; overflow-y: auto; }
-.image-upload-section { margin-bottom: 24px; }
-.upload-area { position: relative; border: 2px dashed var(--divider); border-radius: 12px; padding: 40px 20px; text-align: center; cursor: pointer; transition: all 0.3s ease; background-color: var(--background); }
-.upload-area:hover { border-color: var(--primary); background-color: var(--primary-light); }
-.upload-area.has-image { padding: 0; border-style: solid; border-color: var(--primary); }
-.upload-icon { font-size: 48px; display: block; margin-bottom: 12px; }
-.upload-text { font-size: 16px; color: var(--text-primary); margin-bottom: 8px; }
-.upload-hint { font-size: 12px; color: var(--text-secondary); }
-.preview-image { width: 100%; max-height: 300px; object-fit: cover; border-radius: 10px; }
-.remove-image-btn { position: absolute; top: 8px; right: 8px; width: 32px; height: 32px; border-radius: 50%; border: none; background-color: rgba(239, 83, 80, 0.9); color: white; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
-.remove-image-btn:hover { background-color: #c62828; transform: scale(1.1); }
-.ai-hint { font-size: 12px; color: var(--text-secondary); font-weight: normal; margin-left: 8px; }
-.ai-recognize-btn { width: 100%; padding: 16px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.3s; margin: 24px 0; }
-.ai-recognize-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4); }
-.ai-recognize-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
-.ai-result-section { background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); border-radius: 16px; padding: 24px; margin-top: 24px; display: none; }
-.result-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-.result-header h4 { font-size: 18px; color: var(--text-primary); }
-.confidence-badge { background-color: var(--primary); color: white; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 500; }
-.result-content { background-color: white; border-radius: 12px; padding: 20px; margin-bottom: 20px; }
-.food-info-card { text-align: center; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid var(--divider); }
-.food-name { font-size: 24px; font-weight: 700; color: var(--text-primary); margin-bottom: 8px; }
-.food-tags { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; }
-.tag { background-color: var(--primary-light); color: var(--primary-dark); padding: 4px 10px; border-radius: 12px; font-size: 12px; }
-.calorie-display { text-align: center; padding: 20px 0; }
-.calorie-number { font-size: 48px; font-weight: 800; color: var(--primary); line-height: 1; }
-.calorie-unit { font-size: 16px; color: var(--text-secondary); margin-top: 4px; }
-.portion-info { text-align: center; padding-top: 16px; border-top: 1px solid var(--divider); color: var(--text-secondary); font-size: 14px; }
-.result-actions { display: flex; gap: 12px; flex-wrap: wrap; }
-.result-actions button { flex: 1; min-width: 120px; padding: 12px 16px; border: none; border-radius: 10px; font-size: 14px; font-weight: 500; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: all 0.2s; }
-.btn-confirm { background-color: var(--primary); color: white; }
-.btn-confirm:hover { background-color: var(--primary-dark); }
-.btn-adjust { background-color: var(--background); color: var(--text-primary); border: 1px solid var(--divider); }
-.btn-adjust:hover { background-color: var(--divider); }
-.btn-retry { background-color: var(--exercise-light); color: var(--exercise); }
-.btn-retry:hover { background-color: var(--exercise); color: white; }
-.manual-adjust-section { background-color: white; border-radius: 12px; padding: 20px; margin-top: 16px; display: none; }
-.manual-adjust-section .form-group { margin-bottom: 16px; }
-.adjust-actions { display: flex; gap: 12px; }
-.adjust-actions button { flex: 1; padding: 10px 16px; border: none; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.2s; }
-.btn-save-adjust { background-color: var(--primary); color: white; }
-.btn-save-adjust:hover { background-color: var(--primary-dark); }
-.btn-cancel-adjust { background-color: var(--background); color: var(--text-secondary); }
-.btn-cancel-adjust:hover { background-color: var(--divider); }
-.ai-recognize-btn.loading { position: relative; color: transparent; }
-.ai-recognize-btn.loading::after { content: ''; position: absolute; width: 20px; height: 20px; top: 50%; left: 50%; margin-left: -10px; margin-top: -10px; border: 2px solid #ffffff; border-radius: 50%; border-top-color: transparent; animation: spinner 0.8s linear infinite; }
-@keyframes spinner { to { transform: rotate(360deg); } }
-.ai-recognize-inline-btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 20px; font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.3s; margin-left: 12px; }
-.ai-recognize-inline-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4); }
-@media (max-width: 480px) { .result-actions { flex-direction: column; } .result-actions button { width: 100%; } .calorie-number { font-size: 36px; } .food-name { font-size: 20px; } .ai-recognize-inline-btn { margin-left: 0; margin-top: 8px; width: 100%; justify-content: center; } }
-</style>
+        /* AI食物识别功能样式 */
+        .ai-modal { max-width: 600px; }
+        .image-upload-section { margin-bottom: 24px; }
+        .upload-area { position: relative; border: 2px dashed var(--divider); border-radius: 12px; padding: 40px 20px; text-align: center; cursor: pointer; transition: all 0.3s ease; background-color: var(--background); }
+        .upload-area:hover { border-color: var(--primary); background-color: var(--primary-light); }
+        .upload-area.has-image { padding: 0; border-style: solid; border-color: var(--primary); }
+        .upload-icon { font-size: 48px; display: block; margin-bottom: 12px; }
+        .upload-text { font-size: 16px; color: var(--text-primary); margin-bottom: 8px; }
+        .upload-hint { font-size: 12px; color: var(--text-secondary); }
+        .preview-image { width: 100%; max-height: 300px; object-fit: cover; border-radius: 10px; }
+        .remove-image-btn { position: absolute; top: 8px; right: 8px; width: 32px; height: 32px; border-radius: 50%; border: none; background-color: rgba(239, 83, 80, 0.9); color: white; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+        .remove-image-btn:hover { background-color: #c62828; transform: scale(1.1); }
+        .ai-hint { font-size: 12px; color: var(--text-secondary); font-weight: normal; margin-left: 8px; }
+        .ai-recognize-btn { width: 100%; padding: 16px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.3s; margin: 24px 0; }
+        .ai-recognize-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4); }
+        .ai-recognize-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+        .ai-result-section { background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); border-radius: 16px; padding: 24px; margin-top: 24px; display: none; }
+        .result-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .result-header h4 { font-size: 18px; color: var(--text-primary); }
+        .confidence-badge { background-color: var(--primary); color: white; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 500; }
+        .result-content { background-color: white; border-radius: 12px; padding: 20px; margin-bottom: 20px; }
+        .food-info-card { text-align: center; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid var(--divider); }
+        .food-name { font-size: 24px; font-weight: 700; color: var(--text-primary); margin-bottom: 8px; }
+        .food-tags { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; }
+        .tag { background-color: var(--primary-light); color: var(--primary-dark); padding: 4px 10px; border-radius: 12px; font-size: 12px; }
+        .calorie-display { text-align: center; padding: 20px 0; }
+        .calorie-number { font-size: 48px; font-weight: 800; color: var(--primary); line-height: 1; }
+        .calorie-unit { font-size: 16px; color: var(--text-secondary); margin-top: 4px; }
+        .portion-info { text-align: center; padding-top: 16px; border-top: 1px solid var(--divider); color: var(--text-secondary); font-size: 14px; }
+        .result-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+        .result-actions button { flex: 1; min-width: 120px; padding: 12px 16px; border: none; border-radius: 10px; font-size: 14px; font-weight: 500; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: all 0.2s; }
+        .btn-confirm { background-color: var(--primary); color: white; }
+        .btn-confirm:hover { background-color: var(--primary-dark); }
+        .btn-adjust { background-color: var(--background); color: var(--text-primary); border: 1px solid var(--divider); }
+        .btn-adjust:hover { background-color: var(--divider); }
+        .btn-retry { background-color: var(--exercise-light); color: var(--exercise); }
+        .btn-retry:hover { background-color: var(--exercise); color: white; }
+        .manual-adjust-section { background-color: white; border-radius: 12px; padding: 20px; margin-top: 16px; display: none; }
+        .manual-adjust-section .form-group { margin-bottom: 16px; }
+        .adjust-actions { display: flex; gap: 12px; }
+        .adjust-actions button { flex: 1; padding: 10px 16px; border: none; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.2s; }
+        .btn-save-adjust { background-color: var(--primary); color: white; }
+        .btn-save-adjust:hover { background-color: var(--primary-dark); }
+        .btn-cancel-adjust { background-color: var(--background); color: var(--text-secondary); }
+        .btn-cancel-adjust:hover { background-color: var(--divider); }
+        .ai-recognize-btn.loading { position: relative; color: transparent; }
+        .ai-recognize-btn.loading::after { content: ''; position: absolute; width: 20px; height: 20px; top: 50%; left: 50%; margin-left: -10px; margin-top: -10px; border: 2px solid #ffffff; border-radius: 50%; border-top-color: transparent; animation: spinner 0.8s linear infinite; }
+        @keyframes spinner { to { transform: rotate(360deg); } }
+        .ai-recognize-inline-btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 20px; font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.3s; margin-left: 12px; }
+        .ai-recognize-inline-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4); }
+        @media (max-width: 480px) { .result-actions { flex-direction: column; } .result-actions button { width: 100%; } .calorie-number { font-size: 36px; } .food-name { font-size: 20px; } .ai-recognize-inline-btn { margin-left: 0; margin-top: 8px; width: 100%; justify-content: center; } }
+        
+        /* Toast */
+        .toast { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%) translateY(100px); background-color: rgba(0,0,0,0.8); color: white; padding: 12px 24px; border-radius: 24px; font-size: 14px; opacity: 0; transition: all 0.3s ease; z-index: 2000; }
+        .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+        
+        /* Goal Edit Modal */
+        .goal-edit-input { width: 100%; padding: 12px 16px; border: 2px solid var(--divider); border-radius: 12px; font-size: 16px; text-align: center; margin-bottom: 20px; }
+        .goal-edit-input:focus { outline: none; border-color: var(--primary); }
+    </style>
 </head>
 <body>
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
+
     <!-- Header -->
     <header class="header">
         <div class="logo">
@@ -1015,10 +226,9 @@
             <span>CalorieTracker</span>
         </div>
         <nav class="nav-tabs">
-            <button class="nav-tab active" data-view="today">今日记录</button>
-            <button class="nav-tab" data-view="calendar">日历</button>
-            <button class="nav-tab" data-view="weight">体重</button>
-            <button class="nav-tab" data-view="settings">设置</button>
+            <button class="nav-tab active" onclick="switchView('today')" id="tab-today">今日</button>
+            <button class="nav-tab" onclick="switchView('calendar')" id="tab-calendar">日历</button>
+            <button class="nav-tab" onclick="switchView('weight')" id="tab-weight">体重</button>
         </nav>
     </header>
 
@@ -1026,46 +236,30 @@
     <div class="container">
         <!-- Today View -->
         <div id="today-view" class="view">
-            <!-- Quick Stats -->
-            <div class="quick-stats">
-                <div class="stat-item">
-                    <div class="stat-value" id="stat-intake">0</div>
-                    <div class="stat-label">摄入 (kcal)</div>
+            <!-- Daily Goal Progress -->
+            <div class="daily-goal-card" id="daily-goal-card">
+                <div class="daily-goal-header">
+                    <span class="daily-goal-title">每日目标</span>
+                    <button class="daily-goal-edit" onclick="editDailyGoal()">编辑</button>
                 </div>
-                <div class="stat-item">
-                    <div class="stat-value negative" id="stat-exercise">0</div>
-                    <div class="stat-label">运动 (kcal)</div>
+                <div class="daily-goal-value">
+                    <span id="current-calories">0</span> / <span id="goal-calories">2000</span> kcal
                 </div>
-                <div class="stat-item">
-                    <div class="stat-value" id="stat-net">0</div>
-                    <div class="stat-label">净热量</div>
+                <div class="daily-goal-progress">
+                    <div class="daily-goal-progress-fill" id="goal-progress-fill" style="width: 0%"></div>
                 </div>
-            </div>
-
-            <!-- Weight Card -->
-            <div class="weight-card" onclick="openWeightModal()">
-                <div class="weight-header">
-                    <div>
-                        <div class="weight-title">今日体重</div>
-                        <div class="weight-value" id="current-weight">
-                            --<span class="unit">kg</span>
-                        </div>
-                        <div class="weight-trend" id="weight-trend">
-                            点击记录体重
-                        </div>
-                    </div>
-                    <button class="weight-input-btn">+ 记录</button>
+                <div class="daily-goal-stats">
+                    <span>已摄入: <span id="stat-intake">0</span> kcal</span>
+                    <span>已运动: <span id="stat-exercise">0</span> kcal</span>
+                    <span>剩余: <span id="stat-remaining">2000</span> kcal</span>
                 </div>
             </div>
 
             <!-- Meal Sections -->
-            <div class="section" data-meal="breakfast">
+            <div class="section" id="breakfast-section">
                 <div class="section-header">
-                    <div class="section-title">
-                        <span>🌅</span>
-                        <span>早餐</span>
-                        <span class="section-calories" id="breakfast-calories">0 kcal</span>
-                    </div>
+                    <div class="section-title">🌅 早餐</div>
+                    <div class="section-calories" id="breakfast-calories">0 kcal</div>
                     <button class="add-btn" onclick="openFoodModal('breakfast')">+</button>
                 </div>
                 <div class="items-list" id="breakfast-items">
@@ -1073,13 +267,10 @@
                 </div>
             </div>
 
-            <div class="section" data-meal="lunch">
+            <div class="section" id="lunch-section">
                 <div class="section-header">
-                    <div class="section-title">
-                        <span>☀️</span>
-                        <span>午餐</span>
-                        <span class="section-calories" id="lunch-calories">0 kcal</span>
-                    </div>
+                    <div class="section-title">🌞 午餐</div>
+                    <div class="section-calories" id="lunch-calories">0 kcal</div>
                     <button class="add-btn" onclick="openFoodModal('lunch')">+</button>
                 </div>
                 <div class="items-list" id="lunch-items">
@@ -1087,13 +278,10 @@
                 </div>
             </div>
 
-            <div class="section" data-meal="dinner">
+            <div class="section" id="dinner-section">
                 <div class="section-header">
-                    <div class="section-title">
-                        <span>🌙</span>
-                        <span>晚餐</span>
-                        <span class="section-calories" id="dinner-calories">0 kcal</span>
-                    </div>
+                    <div class="section-title">🌙 晚餐</div>
+                    <div class="section-calories" id="dinner-calories">0 kcal</div>
                     <button class="add-btn" onclick="openFoodModal('dinner')">+</button>
                 </div>
                 <div class="items-list" id="dinner-items">
@@ -1101,13 +289,10 @@
                 </div>
             </div>
 
-            <div class="section" data-meal="snack">
+            <div class="section" id="snack-section">
                 <div class="section-header">
-                    <div class="section-title">
-                        <span>🍪</span>
-                        <span>加餐</span>
-                        <span class="section-calories" id="snack-calories">0 kcal</span>
-                    </div>
+                    <div class="section-title">🍿 加餐</div>
+                    <div class="section-calories" id="snack-calories">0 kcal</div>
                     <button class="add-btn" onclick="openFoodModal('snack')">+</button>
                 </div>
                 <div class="items-list" id="snack-items">
@@ -1116,13 +301,10 @@
             </div>
 
             <!-- Exercise Section -->
-            <div class="section exercise-section">
+            <div class="section exercise-section" id="exercise-section">
                 <div class="section-header">
-                    <div class="section-title">
-                        <span>🏃</span>
-                        <span>运动消耗</span>
-                        <span class="section-calories negative" id="exercise-calories">0 kcal</span>
-                    </div>
+                    <div class="section-title">🏃 运动消耗</div>
+                    <div class="section-calories negative" id="exercise-calories">-0 kcal</div>
                     <button class="add-btn exercise" onclick="openExerciseModal()">+</button>
                 </div>
                 <div class="items-list" id="exercise-items">
@@ -1131,48 +313,15 @@
             </div>
         </div>
 
-        <!-- Weight View -->
-        <div id="weight-view" class="view hidden">
-            <div class="weight-card" onclick="openWeightModal()">
-                <div class="weight-header">
-                    <div>
-                        <div class="weight-title">今日体重</div>
-                        <div class="weight-value" id="weight-view-current">
-                            --<span class="unit">kg</span>
-                        </div>
-                        <div class="weight-trend" id="weight-view-trend">
-                            点击记录体重
-                        </div>
-                    </div>
-                    <button class="weight-input-btn">+ 记录</button>
-                </div>
-            </div>
-
-            <div class="weight-chart-container">
-                <div class="chart-title">📊 近7天体重趋势</div>
-                <div class="weight-chart" id="weight-chart">
-                    <div class="empty-item">暂无体重数据</div>
-                </div>
-            </div>
-
-            <div class="settings-card">
-                <h3 class="settings-title">目标体重</h3>
-                <div class="form-group">
-                    <input type="number" class="form-input" id="target-weight-input" placeholder="输入目标体重 (kg)" step="0.1">
-                </div>
-                <button class="submit-btn" onclick="saveTargetWeight()">保存目标</button>
-            </div>
-        </div>
-
         <!-- Calendar View -->
-        <div id="calendar-view" class="view hidden">
+        <div id="calendar-view" class="view" style="display: none;">
             <div class="calendar-header">
                 <div class="calendar-nav">
-                    <button class="calendar-nav-btn" onclick="changeMonth(-1)">‹</button>
-                    <span class="calendar-title" id="calendar-title">2025年3月</span>
-                    <button class="calendar-nav-btn" onclick="changeMonth(1)">›</button>
+                    <button class="calendar-nav-btn" onclick="changeMonth(-1)">←</button>
+                    <span class="calendar-title" id="calendar-month-year">2024年1月</span>
+                    <button class="calendar-nav-btn" onclick="changeMonth(1)">→</button>
                 </div>
-                <button class="calendar-today-btn" onclick="goToToday()">今日</button>
+                <button class="calendar-today-btn" onclick="goToToday()">今天</button>
             </div>
             <div class="calendar-grid">
                 <div class="calendar-weekdays">
@@ -1184,98 +333,163 @@
                     <div class="calendar-weekday">五</div>
                     <div class="calendar-weekday">六</div>
                 </div>
-                <div class="calendar-days" id="calendar-days"></div>
-            </div>
-            <div class="calendar-legend">
-                <div class="legend-item">
-                    <div class="legend-color" style="background-color: var(--low-calorie)"></div>
-                    <span>偏低</span>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-color" style="background-color: var(--normal-calorie)"></div>
-                    <span>合理</span>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-color" style="background-color: var(--high-calorie)"></div>
-                    <span>偏高</span>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-color" style="background-color: var(--excess-calorie)"></div>
-                    <span>超标</span>
+                <div class="calendar-days" id="calendar-days">
+                    <!-- Calendar days will be generated by JS -->
                 </div>
             </div>
         </div>
 
-        <!-- Settings View -->
-        <div id="settings-view" class="view hidden">
-            <div class="settings-card">
-                <h3 class="settings-title">每日热量目标</h3>
-                <div class="form-group">
-                    <input type="number" class="form-input" id="daily-goal-input" value="2000" placeholder="输入每日热量目标">
+        <!-- Weight View -->
+        <div id="weight-view" class="view" style="display: none;">
+            <div class="weight-card">
+                <div class="weight-header">
+                    <span class="weight-title">当前体重</span>
+                    <button class="weight-input-btn" onclick="openWeightModal()">+ 记录</button>
                 </div>
-                <button class="submit-btn" onclick="saveSettings()">保存设置</button>
+                <div class="weight-value">
+                    <span id="current-weight">--</span><span class="unit">kg</span>
+                </div>
+                <div class="weight-trend">
+                    <span id="weight-trend-icon">→</span>
+                    <span id="weight-trend-text">暂无记录</span>
+                </div>
             </div>
-            <div class="settings-card">
-                <h3 class="settings-title">数据管理</h3>
-                <button class="submit-btn" style="background-color: #666; margin-bottom: 12px;" onclick="exportData()">导出数据</button>
-                <button class="submit-btn" style="background-color: #2196F3; margin-bottom: 12px;" onclick="document.getElementById('import-input').click()">导入数据</button>
-                <button class="submit-btn" style="background-color: var(--excess-calorie);" onclick="clearAllData()">清空所有数据</button>
+            <div class="weight-chart-container">
+                <div class="chart-title">📊 体重变化趋势 (最近30天)</div>
+                <div class="weight-chart" id="weight-chart">
+                    <div class="empty-item">暂无体重记录</div>
+                </div>
             </div>
         </div>
     </div>
-
-    <input type="file" id="import-input" accept="application/json" style="display:none" onchange="importDataFile(event)">
-
-    <!-- Mobile Bottom Nav -->
-    <nav class="mobile-nav">
-        <div class="mobile-nav-items">
-            <div class="mobile-nav-item active" data-view="today">
-                <span class="icon">📋</span>
-                <span>今日</span>
-            </div>
-            <div class="mobile-nav-item" data-view="calendar">
-                <span class="icon">📅</span>
-                <span>日历</span>
-            </div>
-            <div class="mobile-nav-item" data-view="weight">
-                <span class="icon">⚖️</span>
-                <span>体重</span>
-            </div>
-            <div class="mobile-nav-item" data-view="settings">
-                <span class="icon">⚙️</span>
-                <span>设置</span>
-            </div>
-        </div>
-    </nav>
 
     <!-- Food Modal -->
     <div class="modal-overlay" id="food-modal">
         <div class="modal">
             <div class="modal-header">
                 <h3 class="modal-title" id="food-modal-title">添加食物</h3>
-                <button class="modal-close" onclick="closeFoodModal()">×</button>
+                <button class="modal-close" onclick="closeModal('food-modal')">×</button>
             </div>
             <div class="modal-body">
-                <form id="food-form">
-                    <input type="hidden" id="food-record-id" value="">
-
+                <form id="food-form" onsubmit="saveFood(event)">
+                    <input type="hidden" id="food-id">
+                    <input type="hidden" id="food-meal-type">
                     <div class="form-group">
                         <label class="form-label">食物名称 <span class="required">*</span></label>
-                        <input type="text" class="form-input" id="food-name" placeholder="例如：牛肉盖饭" required>
+                        <input type="text" class="form-input" id="food-name" placeholder="例如: 米饭、鸡胸肉" required>
+                        <button type="button" class="ai-recognize-inline-btn" onclick="openAIRecognition()">
+                            🤖 AI识别
+                        </button>
                     </div>
-
+                    <div class="form-group">
+                        <label class="form-label">份量描述</label>
+                        <input type="text" class="form-input" id="food-portion" placeholder="例如: 1碗、100g、1个">
+                    </div>
                     <div class="form-group">
                         <label class="form-label">热量 (kcal) <span class="required">*</span></label>
-                        <input type="number" class="form-input" id="food-calories" placeholder="输入热量值" required>
+                        <input type="number" class="form-input" id="food-calories" placeholder="0" required>
+                        <p class="calorie-hint">💡 提示: 可以使用AI识别功能自动计算热量</p>
                     </div>
-
-                    <div class="form-group">
-                        <label class="form-label">分量</label>
-                        <input type="text" class="form-input" id="food-portion" placeholder="例如：1碗 (约300g)">
-                    </div>
-
                     <button type="submit" class="submit-btn">保存记录</button>
                 </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI Recognition Modal -->
+    <div class="modal-overlay" id="ai-recognition-modal">
+        <div class="modal ai-modal">
+            <div class="modal-header">
+                <h3 class="modal-title">🤖 AI 食物识别</h3>
+                <button class="modal-close" onclick="closeModal('ai-recognition-modal')">×</button>
+            </div>
+            <div class="modal-body">
+                <!-- Image Upload Section -->
+                <div class="image-upload-section">
+                    <label class="form-label">上传食物图片 <span class="ai-hint">(可选，上传图片可提高识别准确度)</span></label>
+                    <div class="upload-area" id="upload-area" onclick="document.getElementById('image-input').click()">
+                        <div class="upload-placeholder" id="upload-placeholder">
+                            <span class="upload-icon">📷</span>
+                            <p class="upload-text">点击或拖拽上传图片</p>
+                            <p class="upload-hint">支持 JPG、PNG 格式</p>
+                        </div>
+                        <img id="preview-image" class="preview-image" style="display: none;">
+                        <button type="button" class="remove-image-btn" id="remove-image-btn" onclick="removeImage(event)" style="display: none;">×</button>
+                    </div>
+                    <input type="file" id="image-input" accept="image/*" style="display: none;" onchange="handleImageUpload(event)">
+                </div>
+
+                <!-- Food Description -->
+                <div class="form-group">
+                    <label class="form-label">食物描述 <span class="required">*</span></label>
+                    <input type="text" class="form-input" id="ai-food-description" placeholder="例如: 一碗红烧肉配米饭，还有青菜">
+                </div>
+
+                <!-- Portion Info -->
+                <div class="form-group">
+                    <label class="form-label">份量信息</label>
+                    <input type="text" class="form-input" id="ai-portion-info" placeholder="例如: 1大碗、2个、300g">
+                </div>
+
+                <!-- AI Recognize Button -->
+                <button type="button" class="ai-recognize-btn" id="ai-recognize-btn" onclick="performAIRecognition()">
+                    <span>🤖</span> 开始AI识别分析
+                </button>
+
+                <!-- AI Result Section -->
+                <div class="ai-result-section" id="ai-result-section">
+                    <div class="result-header">
+                        <h4>🎯 识别结果</h4>
+                        <span class="confidence-badge" id="confidence-badge">置信度: 95%</span>
+                    </div>
+                    <div class="result-content">
+                        <div class="food-info-card">
+                            <div class="food-name" id="result-food-name">红烧肉配米饭</div>
+                            <div class="food-tags" id="result-food-tags">
+                                <span class="tag">中式</span>
+                                <span class="tag">高热量</span>
+                            </div>
+                        </div>
+                        <div class="calorie-display">
+                            <div class="calorie-number" id="result-calories">685</div>
+                            <div class="calorie-unit">千卡 (kcal)</div>
+                        </div>
+                        <div class="portion-info" id="result-portion">
+                            估算份量: 1大碗 (约350g)
+                        </div>
+                    </div>
+                    <div class="result-actions">
+                        <button type="button" class="btn-confirm" onclick="applyAIResult()">
+                            ✅ 确认使用
+                        </button>
+                        <button type="button" class="btn-adjust" onclick="showManualAdjust()">
+                            ✏️ 手动调整
+                        </button>
+                        <button type="button" class="btn-retry" onclick="retryAIRecognition()">
+                            🔄 重新识别
+                        </button>
+                    </div>
+                    
+                    <!-- Manual Adjust Section -->
+                    <div class="manual-adjust-section" id="manual-adjust-section">
+                        <div class="form-group">
+                            <label class="form-label">食物名称</label>
+                            <input type="text" class="form-input" id="adjust-food-name">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">热量 (kcal)</label>
+                            <input type="number" class="form-input" id="adjust-calories">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">份量</label>
+                            <input type="text" class="form-input" id="adjust-portion">
+                        </div>
+                        <div class="adjust-actions">
+                            <button type="button" class="btn-save-adjust" onclick="applyManualAdjust()">保存</button>
+                            <button type="button" class="btn-cancel-adjust" onclick="hideManualAdjust()">取消</button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -1284,74 +498,57 @@
     <div class="modal-overlay" id="exercise-modal">
         <div class="modal">
             <div class="modal-header">
-                <h3 class="modal-title" id="exercise-modal-title">添加运动</h3>
-                <button class="modal-close" onclick="closeExerciseModal()">×</button>
+                <h3 class="modal-title">添加运动</h3>
+                <button class="modal-close" onclick="closeModal('exercise-modal')">×</button>
             </div>
             <div class="modal-body">
-                <form id="exercise-form">
-                    <input type="hidden" id="exercise-record-id" value="">
-
+                <form id="exercise-form" onsubmit="saveExercise(event)">
+                    <input type="hidden" id="exercise-id">
                     <div class="form-group">
                         <label class="form-label">运动类型</label>
-                        <div class="exercise-type-grid">
-                            <div class="exercise-type-option" data-type="running" data-cal="10">
+                        <div class="exercise-type-grid" id="exercise-type-grid">
+                            <div class="exercise-type-option" data-type="running" onclick="selectExerciseType('running')">
                                 <span class="icon">🏃</span>
                                 <span>跑步</span>
                             </div>
-                            <div class="exercise-type-option" data-type="walking" data-cal="4">
+                            <div class="exercise-type-option" data-type="walking" onclick="selectExerciseType('walking')">
                                 <span class="icon">🚶</span>
-                                <span>快走</span>
+                                <span>步行</span>
                             </div>
-                            <div class="exercise-type-option" data-type="cycling" data-cal="8">
+                            <div class="exercise-type-option" data-type="cycling" onclick="selectExerciseType('cycling')">
                                 <span class="icon">🚴</span>
                                 <span>骑行</span>
                             </div>
-                            <div class="exercise-type-option" data-type="swimming" data-cal="12">
+                            <div class="exercise-type-option" data-type="swimming" onclick="selectExerciseType('swimming')">
                                 <span class="icon">🏊</span>
                                 <span>游泳</span>
                             </div>
-                            <div class="exercise-type-option" data-type="yoga" data-cal="3">
+                            <div class="exercise-type-option" data-type="yoga" onclick="selectExerciseType('yoga')">
                                 <span class="icon">🧘</span>
                                 <span>瑜伽</span>
                             </div>
-                            <div class="exercise-type-option" data-type="fitness" data-cal="6">
+                            <div class="exercise-type-option" data-type="gym" onclick="selectExerciseType('gym')">
                                 <span class="icon">💪</span>
                                 <span>健身</span>
                             </div>
-                            <div class="exercise-type-option" data-type="basketball" data-cal="8">
-                                <span class="icon">🏀</span>
-                                <span>篮球</span>
-                            </div>
-                            <div class="exercise-type-option" data-type="badminton" data-cal="7">
-                                <span class="icon">🏸</span>
-                                <span>羽毛球</span>
-                            </div>
-                            <div class="exercise-type-option" data-type="other" data-cal="5">
-                                <span class="icon">🎯</span>
-                                <span>其他</span>
-                            </div>
                         </div>
                     </div>
-
                     <div class="form-group">
                         <label class="form-label">运动名称 <span class="required">*</span></label>
-                        <input type="text" class="form-input exercise" id="exercise-name" placeholder="例如：晨跑" required>
+                        <input type="text" class="form-input exercise" id="exercise-name" placeholder="例如: 慢跑、游泳" required>
                     </div>
-
                     <div class="form-group">
-                        <label class="form-label">时长 <span class="required">*</span></label>
+                        <label class="form-label">持续时间 (分钟) <span class="required">*</span></label>
                         <div class="duration-input-wrapper">
-                            <input type="number" class="form-input exercise" id="exercise-duration" placeholder="30" required>
+                            <input type="number" class="form-input exercise" id="exercise-duration" placeholder="30" min="1" required>
                             <span class="duration-unit">分钟</span>
                         </div>
                     </div>
-
                     <div class="form-group">
                         <label class="form-label">消耗热量 (kcal) <span class="required">*</span></label>
-                        <input type="number" class="form-input exercise" id="exercise-calories-input" placeholder="自动计算或手动输入" required>
-                        <div class="calorie-hint">系统根据运动类型和时长自动估算</div>
+                        <input type="number" class="form-input exercise" id="exercise-calories" placeholder="200" required>
+                        <p class="calorie-hint">💡 估算公式: MET值 × 体重(kg) × 时间(小时)</p>
                     </div>
-
                     <button type="submit" class="submit-btn exercise">保存运动记录</button>
                 </form>
             </div>
@@ -1363,1024 +560,44 @@
         <div class="modal">
             <div class="modal-header">
                 <h3 class="modal-title">记录体重</h3>
-                <button class="modal-close" onclick="closeWeightModal()">×</button>
+                <button class="modal-close" onclick="closeModal('weight-modal')">×</button>
             </div>
             <div class="modal-body">
-                <form id="weight-form">
+                <form id="weight-form" onsubmit="saveWeight(event)">
+                    <input type="hidden" id="weight-id">
                     <div class="form-group">
-                        <label class="form-label">今日体重 (kg) <span class="required">*</span></label>
-                        <input type="number" class="form-input" id="weight-input" placeholder="例如：65.5" step="0.1" required>
+                        <label class="form-label">体重 (kg) <span class="required">*</span></label>
+                        <input type="number" class="form-input" id="weight-value" placeholder="65.5" step="0.1" required>
                     </div>
-
                     <div class="form-group">
-                        <label class="form-label">备注（可选）</label>
-                        <input type="text" class="form-input" id="weight-notes" placeholder="例如：空腹体重">
+                        <label class="form-label">日期 <span class="required">*</span></label>
+                        <input type="date" class="form-input" id="weight-date" required>
                     </div>
-
-                    <button type="submit" class="submit-btn">保存体重</button>
+                    <div class="form-group">
+                        <label class="form-label">备注 (可选)</label>
+                        <input type="text" class="form-input" id="weight-note" placeholder="例如: 空腹称重、运动后">
+                    </div>
+                    <button type="submit" class="submit-btn">保存记录</button>
                 </form>
             </div>
         </div>
     </div>
 
-    <!-- Toast -->
-    <div class="toast" id="toast"></div>
-
-    <script>
-        // Data Management
-        const STORAGE_KEYS = {
-            records: 'calorieTracker_records',
-            exercises: 'calorieTracker_exercises',
-            weights: 'calorieTracker_weights',
-            settings: 'calorieTracker_settings'
-        };
-
-        let records = [];
-        let exercises = [];
-        let weights = [];
-        let settings = { dailyGoal: 2000, targetWeight: null };
-        let currentDate = new Date();
-        let viewingDate = new Date();
-        let currentMealType = 'breakfast';
-        let selectedExerciseType = null;
-
-        // Exercise type calorie rates (kcal per minute)
-        const exerciseRates = {
-            running: 10,
-            walking: 4,
-            cycling: 8,
-            swimming: 12,
-            yoga: 3,
-            fitness: 6,
-            basketball: 8,
-            badminton: 7,
-            other: 5
-        };
-
-        // Initialize
-        function init() {
-            loadData();
-            loadSettings();
-            renderToday();
-            renderWeightView();
-            renderCalendar();
-            setupEventListeners();
-        }
-
-        function loadData() {
-            const recordsData = localStorage.getItem(STORAGE_KEYS.records);
-            const exercisesData = localStorage.getItem(STORAGE_KEYS.exercises);
-            const weightsData = localStorage.getItem(STORAGE_KEYS.weights);
-
-            if (recordsData) records = JSON.parse(recordsData);
-            if (exercisesData) exercises = JSON.parse(exercisesData);
-            if (weightsData) weights = JSON.parse(weightsData);
-        }
-
-        function saveData() {
-            localStorage.setItem(STORAGE_KEYS.records, JSON.stringify(records));
-            localStorage.setItem(STORAGE_KEYS.exercises, JSON.stringify(exercises));
-            localStorage.setItem(STORAGE_KEYS.weights, JSON.stringify(weights));
-        }
-
-        function loadSettings() {
-            const data = localStorage.getItem(STORAGE_KEYS.settings);
-            if (data) {
-                settings = { ...settings, ...JSON.parse(data) };
-            }
-            document.getElementById('daily-goal-input').value = settings.dailyGoal;
-            if (settings.targetWeight) {
-                document.getElementById('target-weight-input').value = settings.targetWeight;
-            }
-        }
-
-        function saveSettings() {
-            settings.dailyGoal = parseInt(document.getElementById('daily-goal-input').value) || 2000;
-            localStorage.setItem(STORAGE_KEYS.settings, JSON.stringify(settings));
-            renderToday();
-            renderCalendar();
-            showToast('设置已保存');
-        }
-
-        function saveTargetWeight() {
-            const target = parseFloat(document.getElementById('target-weight-input').value);
-            if (target && target > 0) {
-                settings.targetWeight = target;
-                localStorage.setItem(STORAGE_KEYS.settings, JSON.stringify(settings));
-                renderWeightView();
-                showToast('目标体重已保存');
-            }
-        }
-
-        // Event Listeners
-        function setupEventListeners() {
-            // Navigation
-            document.querySelectorAll('.nav-tab, .mobile-nav-item').forEach(el => {
-                el.addEventListener('click', () => switchView(el.dataset.view));
-            });
-
-            // Food form
-            document.getElementById('food-form').addEventListener('submit', handleFoodSubmit);
-
-            // Exercise form
-            document.getElementById('exercise-form').addEventListener('submit', handleExerciseSubmit);
-
-            // Exercise type selection
-            document.querySelectorAll('.exercise-type-option').forEach(option => {
-                option.addEventListener('click', () => {
-                    document.querySelectorAll('.exercise-type-option').forEach(o => o.classList.remove('selected'));
-                    option.classList.add('selected');
-                    selectedExerciseType = option.dataset.type;
-                    calculateExerciseCalories();
-                });
-            });
-
-            // Auto-calculate exercise calories
-            document.getElementById('exercise-duration').addEventListener('input', calculateExerciseCalories);
-
-            // Weight form
-            document.getElementById('weight-form').addEventListener('submit', handleWeightSubmit);
-        }
-
-        function switchView(view) {
-            document.querySelectorAll('.nav-tab, .mobile-nav-item').forEach(el => {
-                el.classList.toggle('active', el.dataset.view === view);
-            });
-            document.querySelectorAll('.view').forEach(v => v.classList.add('hidden'));
-            document.getElementById(`${view}-view`).classList.remove('hidden');
-
-            if (view === 'calendar') renderCalendar();
-            if (view === 'weight') renderWeightView();
-        }
-
-        // Calculate exercise calories
-        function calculateExerciseCalories() {
-            const duration = parseInt(document.getElementById('exercise-duration').value) || 0;
-            let rate = 5; // default rate
-
-            if (selectedExerciseType && exerciseRates[selectedExerciseType]) {
-                rate = exerciseRates[selectedExerciseType];
-            }
-
-            const calories = Math.round(duration * rate);
-            if (calories > 0) {
-                document.getElementById('exercise-calories-input').value = calories;
-            }
-        }
-
-        // Food Modal
-        function openFoodModal(mealType, recordId = null) {
-            currentMealType = mealType;
-            document.getElementById('food-record-id').value = recordId || '';
-            document.getElementById('food-modal-title').textContent = recordId ? '编辑食物' : '添加食物';
-
-            if (recordId) {
-                const record = records.find(r => r.id === recordId);
-                if (record) {
-                    document.getElementById('food-name').value = record.foodName;
-                    document.getElementById('food-calories').value = record.calories;
-                    document.getElementById('food-portion').value = record.portion || '';
-                }
-            } else {
-                document.getElementById('food-form').reset();
-            }
-
-            document.getElementById('food-modal').classList.add('active');
-        }
-
-        function closeFoodModal() {
-            document.getElementById('food-modal').classList.remove('active');
-        }
-
-        function handleFoodSubmit(e) {
-            e.preventDefault();
-            const recordId = document.getElementById('food-record-id').value;
-            const recordData = {
-                id: recordId || Date.now().toString(),
-                date: formatDate(currentDate),
-                mealType: currentMealType,
-                foodName: document.getElementById('food-name').value,
-                calories: parseInt(document.getElementById('food-calories').value) || 0,
-                portion: document.getElementById('food-portion').value,
-                createdAt: recordId ? (records.find(r => r.id === recordId)?.createdAt || Date.now()) : Date.now()
-            };
-
-            if (recordId) {
-                const index = records.findIndex(r => r.id === recordId);
-                if (index !== -1) records[index] = recordData;
-                showToast('记录已更新');
-            } else {
-                records.push(recordData);
-                showToast('记录已保存');
-            }
-
-            saveData();
-            renderToday();
-            renderCalendar();
-            closeFoodModal();
-        }
-
-        // Exercise Modal
-        function openExerciseModal(exerciseId = null) {
-            document.getElementById('exercise-record-id').value = exerciseId || '';
-            document.getElementById('exercise-modal-title').textContent = exerciseId ? '编辑运动' : '添加运动';
-
-            if (exerciseId) {
-                const exercise = exercises.find(e => e.id === exerciseId);
-                if (exercise) {
-                    document.getElementById('exercise-name').value = exercise.name;
-                    document.getElementById('exercise-duration').value = exercise.duration;
-                    document.getElementById('exercise-calories-input').value = exercise.calories;
-                    selectedExerciseType = exercise.type;
-                    document.querySelectorAll('.exercise-type-option').forEach(o => {
-                        o.classList.toggle('selected', o.dataset.type === exercise.type);
-                    });
-                }
-            } else {
-                document.getElementById('exercise-form').reset();
-                document.querySelectorAll('.exercise-type-option').forEach(o => o.classList.remove('selected'));
-                selectedExerciseType = null;
-            }
-
-            document.getElementById('exercise-modal').classList.add('active');
-        }
-
-        function closeExerciseModal() {
-            document.getElementById('exercise-modal').classList.remove('active');
-        }
-
-        function handleExerciseSubmit(e) {
-            e.preventDefault();
-            const exerciseId = document.getElementById('exercise-record-id').value;
-            const exerciseData = {
-                id: exerciseId || Date.now().toString(),
-                date: formatDate(currentDate),
-                type: selectedExerciseType || 'other',
-                name: document.getElementById('exercise-name').value,
-                duration: parseInt(document.getElementById('exercise-duration').value) || 0,
-                calories: parseInt(document.getElementById('exercise-calories-input').value) || 0,
-                createdAt: exerciseId ? (exercises.find(e => e.id === exerciseId)?.createdAt || Date.now()) : Date.now()
-            };
-
-            if (exerciseId) {
-                const index = exercises.findIndex(e => e.id === exerciseId);
-                if (index !== -1) exercises[index] = exerciseData;
-                showToast('运动记录已更新');
-            } else {
-                exercises.push(exerciseData);
-                showToast('运动记录已保存');
-            }
-
-            saveData();
-            renderToday();
-            renderCalendar();
-            closeExerciseModal();
-        }
-
-        // Weight Modal
-        function openWeightModal() {
-            const todayWeight = weights.find(w => w.date === formatDate(currentDate));
-            if (todayWeight) {
-                document.getElementById('weight-input').value = todayWeight.weight;
-                document.getElementById('weight-notes').value = todayWeight.notes || '';
-            } else {
-                document.getElementById('weight-form').reset();
-            }
-            document.getElementById('weight-modal').classList.add('active');
-        }
-
-        function closeWeightModal() {
-            document.getElementById('weight-modal').classList.remove('active');
-        }
-
-        function handleWeightSubmit(e) {
-            e.preventDefault();
-            const weightValue = parseFloat(document.getElementById('weight-input').value);
-            const notes = document.getElementById('weight-notes').value;
-            const dateStr = formatDate(currentDate);
-
-            const existingIndex = weights.findIndex(w => w.date === dateStr);
-            const weightData = {
-                date: dateStr,
-                weight: weightValue,
-                notes: notes,
-                createdAt: existingIndex >= 0 ? weights[existingIndex].createdAt : Date.now()
-            };
-
-            if (existingIndex >= 0) {
-                weights[existingIndex] = weightData;
-                showToast('体重已更新');
-            } else {
-                weights.push(weightData);
-                showToast('体重已记录');
-            }
-
-            saveData();
-            renderToday();
-            renderWeightView();
-            closeWeightModal();
-        }
-
-        // Render Functions
-        function renderToday() {
-            const todayStr = formatDate(currentDate);
-            const todayRecords = records.filter(r => r.date === todayStr);
-            const todayExercises = exercises.filter(e => e.date === todayStr);
-
-            // Calculate totals
-            const mealTotals = { breakfast: 0, lunch: 0, dinner: 0, snack: 0 };
-            let totalIntake = 0;
-            todayRecords.forEach(r => {
-                mealTotals[r.mealType] += r.calories;
-                totalIntake += r.calories;
-            });
-
-            const totalExercise = todayExercises.reduce((sum, e) => sum + e.calories, 0);
-            const netCalories = totalIntake - totalExercise;
-
-            // Update quick stats
-            document.getElementById('stat-intake').textContent = totalIntake;
-            document.getElementById('stat-exercise').textContent = totalExercise;
-            document.getElementById('stat-net').textContent = netCalories;
-
-            // Update meal sections
-            renderMealSection('breakfast', todayRecords.filter(r => r.mealType === 'breakfast'), mealTotals.breakfast);
-            renderMealSection('lunch', todayRecords.filter(r => r.mealType === 'lunch'), mealTotals.lunch);
-            renderMealSection('dinner', todayRecords.filter(r => r.mealType === 'dinner'), mealTotals.dinner);
-            renderMealSection('snack', todayRecords.filter(r => r.mealType === 'snack'), mealTotals.snack);
-
-            // Update exercise section
-            renderExerciseSection(todayExercises, totalExercise);
-
-            // Update weight card
-            updateWeightCard();
-        }
-
-        function renderMealSection(mealType, mealRecords, total) {
-            document.getElementById(`${mealType}-calories`).textContent = `${total} kcal`;
-            const container = document.getElementById(`${mealType}-items`);
-
-            if (mealRecords.length === 0) {
-                container.innerHTML = `<div class="empty-item">点击 + 添加${getMealName(mealType)}记录</div>`;
-                return;
-            }
-
-            container.innerHTML = mealRecords.map(record => `
-                <div class="item" onclick="openFoodModal('${mealType}', '${record.id}')">
-                    <div class="item-icon">🍽️</div>
-                    <div class="item-info">
-                        <div class="item-name">${record.foodName}</div>
-                        <div class="item-detail">${record.portion || ''}</div>
-                    </div>
-                    <div class="item-calories">+${record.calories}</div>
-                    <div class="item-actions" onclick="event.stopPropagation()">
-                        <button class="item-edit" onclick="openFoodModal('${mealType}', '${record.id}')">✏️</button>
-                        <button class="item-delete" onclick="deleteRecord('${record.id}')">🗑️</button>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function renderExerciseSection(todayExercises, total) {
-            document.getElementById('exercise-calories').textContent = `-${total} kcal`;
-            const container = document.getElementById('exercise-items');
-
-            if (todayExercises.length === 0) {
-                container.innerHTML = `<div class="empty-item">点击 + 添加运动记录</div>`;
-                return;
-            }
-
-            container.innerHTML = todayExercises.map(exercise => `
-                <div class="item exercise-item" onclick="openExerciseModal('${exercise.id}')">
-                    <div class="item-icon">${getExerciseIcon(exercise.type)}</div>
-                    <div class="item-info">
-                        <div class="item-name">${exercise.name}</div>
-                        <div class="item-detail">${exercise.duration} 分钟</div>
-                    </div>
-                    <div class="item-calories negative">-${exercise.calories}</div>
-                    <div class="item-actions" onclick="event.stopPropagation()">
-                        <button class="item-edit" onclick="openExerciseModal('${exercise.id}')">✏️</button>
-                        <button class="item-delete" onclick="deleteExercise('${exercise.id}')">🗑️</button>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function renderWeightView() {
-            updateWeightCard();
-            renderWeightChart();
-        }
-
-        function updateWeightCard() {
-            const todayWeight = weights.find(w => w.date === formatDate(currentDate));
-            const latestWeight = weights.length > 0 ? weights[weights.length - 1] : null;
-            const currentWeight = todayWeight || latestWeight;
-
-            const weightValueEl = document.getElementById('current-weight');
-            const weightTrendEl = document.getElementById('weight-trend');
-            const weightViewValueEl = document.getElementById('weight-view-current');
-            const weightViewTrendEl = document.getElementById('weight-view-trend');
-
-            if (currentWeight) {
-                weightValueEl.innerHTML = `${currentWeight.weight}<span class="unit">kg</span>`;
-                weightViewValueEl.innerHTML = `${currentWeight.weight}<span class="unit">kg</span>`;
-
-                // Calculate trend
-                const trend = calculateWeightTrend();
-                const trendText = trend > 0 ? `↑ ${trend.toFixed(1)}kg` : trend < 0 ? `↓ ${Math.abs(trend).toFixed(1)}kg` : '→ 持平';
-                const trendHtml = `<span>${trendText}</span> 较7天前`;
-
-                weightTrendEl.innerHTML = trendHtml;
-                weightViewTrendEl.innerHTML = trendHtml;
-            } else {
-                weightValueEl.innerHTML = `--<span class="unit">kg</span>`;
-                weightViewValueEl.innerHTML = `--<span class="unit">kg</span>`;
-                weightTrendEl.textContent = '点击记录体重';
-                weightViewTrendEl.textContent = '点击记录体重';
-            }
-        }
-
-        function calculateWeightTrend() {
-            if (weights.length < 2) return 0;
-            const sorted = [...weights].sort((a, b) => new Date(a.date) - new Date(b.date));
-            const latest = sorted[sorted.length - 1].weight;
-            const weekAgo = sorted.find(w => {
-                const daysDiff = (new Date(sorted[sorted.length - 1].date) - new Date(w.date)) / (1000 * 60 * 60 * 24);
-                return daysDiff >= 6 && daysDiff <= 8;
-            });
-            return weekAgo ? latest - weekAgo.weight : 0;
-        }
-
-        function renderWeightChart() {
-            const chartContainer = document.getElementById('weight-chart');
-            const last7Days = weights
-                .sort((a, b) => new Date(b.date) - new Date(a.date))
-                .slice(0, 7)
-                .reverse();
-
-            if (last7Days.length === 0) {
-                chartContainer.innerHTML = '<div class="empty-item">暂无体重数据</div>';
-                return;
-            }
-
-            const maxWeight = Math.max(...last7Days.map(w => w.weight));
-            const minWeight = Math.min(...last7Days.map(w => w.weight));
-            const range = maxWeight - minWeight || 1;
-
-            chartContainer.innerHTML = last7Days.map(w => {
-                const height = ((w.weight - minWeight) / range * 80 + 20);
-                const date = new Date(w.date);
-                const label = `${date.getMonth() + 1}/${date.getDate()}`;
-                return `
-                    <div class="chart-bar-wrapper">
-                        <div class="chart-value">${w.weight.toFixed(1)}</div>
-                        <div class="chart-bar" style="height: ${height}px"></div>
-                        <div class="chart-label">${label}</div>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        function renderCalendar() {
-            const year = viewingDate.getFullYear();
-            const month = viewingDate.getMonth();
-            document.getElementById('calendar-title').textContent = `${year}年${month + 1}月`;
-
-            const firstDay = new Date(year, month, 1);
-            const lastDay = new Date(year, month + 1, 0);
-            const daysInMonth = lastDay.getDate();
-            const startPadding = firstDay.getDay();
-
-            const calendarDays = document.getElementById('calendar-days');
-            calendarDays.innerHTML = '';
-
-            // Previous month padding
-            for (let i = 0; i < startPadding; i++) {
-                calendarDays.appendChild(createCalendarDay('', true));
-            }
-
-            // Current month days
-            const todayStr = formatDate(new Date());
-            for (let day = 1; day <= daysInMonth; day++) {
-                const dateStr = formatDate(new Date(year, month, day));
-                const dayRecords = records.filter(r => r.date === dateStr);
-                const dayExercises = exercises.filter(e => e.date === dateStr);
-                const totalIntake = dayRecords.reduce((sum, r) => sum + r.calories, 0);
-                const totalExercise = dayExercises.reduce((sum, e) => sum + e.calories, 0);
-                const netCalories = totalIntake - totalExercise;
-
-                const isToday = dateStr === todayStr;
-                calendarDays.appendChild(createCalendarDay(day, false, netCalories, totalExercise, isToday));
-            }
-        }
-
-        function createCalendarDay(day, isOtherMonth, netCalories = 0, exercise = 0, isToday = false) {
-            const div = document.createElement('div');
-            div.className = 'calendar-day';
-
-            if (isOtherMonth) {
-                div.classList.add('other-month');
-            } else {
-                if (netCalories === 0 && exercise === 0) {
-                    div.classList.add('no-data');
-                } else {
-                    const ratio = Math.abs(netCalories) / settings.dailyGoal;
-                    if (netCalories < 0) div.classList.add('low');
-                    else if (ratio <= 0.8) div.classList.add('low');
-                    else if (ratio <= 1) div.classList.add('normal');
-                    else if (ratio <= 1.2) div.classList.add('high');
-                    else div.classList.add('excess');
-                }
-                if (isToday) div.classList.add('today');
-
-                div.innerHTML = `
-                    <span class="calendar-day-number">${day}</span>
-                    ${netCalories !== 0 ? `<span class="calendar-day-calories">${netCalories}</span>` : ''}
-                    ${exercise > 0 ? `<span class="calendar-day-exercise">-${exercise}</span>` : ''}
-                `;
-
-                div.onclick = () => {
-                    currentDate = new Date(viewingDate.getFullYear(), viewingDate.getMonth(), day);
-                    switchView('today');
-                };
-            }
-
-            return div;
-        }
-
-        // Actions
-        function deleteRecord(id) {
-            if (confirm('确定要删除这条记录吗？')) {
-                records = records.filter(r => r.id !== id);
-                saveData();
-                renderToday();
-                renderCalendar();
-                showToast('记录已删除');
-            }
-        }
-
-        function deleteExercise(id) {
-            if (confirm('确定要删除这条运动记录吗？')) {
-                exercises = exercises.filter(e => e.id !== id);
-                saveData();
-                renderToday();
-                renderCalendar();
-                showToast('运动记录已删除');
-            }
-        }
-
-        function changeMonth(delta) {
-            viewingDate.setMonth(viewingDate.getMonth() + delta);
-            renderCalendar();
-        }
-
-        function goToToday() {
-            viewingDate = new Date();
-            currentDate = new Date();
-            renderCalendar();
-            switchView('today');
-        }
-
-        function exportData() {
-            const data = { records, exercises, weights, settings, exportDate: new Date().toISOString() };
-            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `calorie-tracker-backup-${formatDate(new Date())}.json`;
-            a.click();
-            URL.revokeObjectURL(url);
-            showToast('数据已导出');
-        }
-
-        function importDataFile(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = e => {
-                try {
-                    const imported = JSON.parse(e.target.result);
-                    if (!imported || typeof imported !== 'object') throw new Error('数据格式不正确');
-
-                    const { records: newRecords = [], exercises: newExercises = [], weights: newWeights = [], settings: newSettings = {} } = imported;
-
-                    if (Array.isArray(newRecords)) records = [...records, ...newRecords];
-                    if (Array.isArray(newExercises)) exercises = [...exercises, ...newExercises];
-                    if (Array.isArray(newWeights)) weights = [...weights, ...newWeights];
-
-                    if (newSettings && typeof newSettings === 'object') {
-                        settings = { ...settings, ...newSettings };
-                        localStorage.setItem(STORAGE_KEYS.settings, JSON.stringify(settings));
-                    }
-
-                    saveData();
-                    renderToday();
-                    renderWeightView();
-                    renderCalendar();
-                    showToast('数据已导入，已合并到当前记录');
-                } catch (err) {
-                    showToast('导入失败：文件格式不正确');
-                    console.error(err);
-                }
-            };
-            reader.readAsText(file);
-            event.target.value = '';
-        }
-
-        function clearAllData() {
-            if (confirm('确定要清空所有数据吗？此操作不可恢复！')) {
-                records = [];
-                exercises = [];
-                weights = [];
-                localStorage.removeItem(STORAGE_KEYS.records);
-                localStorage.removeItem(STORAGE_KEYS.exercises);
-                localStorage.removeItem(STORAGE_KEYS.weights);
-                renderToday();
-                renderWeightView();
-                renderCalendar();
-                showToast('所有数据已清空');
-            }
-        }
-
-        // Utilities
-        function formatDate(date) {
-            const year = date.getFullYear();
-            const month = String(date.getMonth() + 1).padStart(2, '0');
-            const day = String(date.getDate()).padStart(2, '0');
-            return `${year}-${month}-${day}`;
-        }
-
-        function getMealName(type) {
-            const names = { breakfast: '早餐', lunch: '午餐', dinner: '晚餐', snack: '加餐' };
-            return names[type] || type;
-        }
-
-        function getExerciseIcon(type) {
-            const icons = {
-                running: '🏃', walking: '🚶', cycling: '🚴', swimming: '🏊',
-                yoga: '🧘', fitness: '💪', basketball: '🏀', badminton: '🏸', other: '🎯'
-            };
-            return icons[type] || '🏃';
-        }
-
-        function showToast(message) {
-            const toast = document.getElementById('toast');
-            toast.textContent = message;
-            toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 2000);
-        }
-
-        // Start
-        init();
-    
-// ===== AI食物识别功能 =====
-class AIFoodRecognizer {
-    constructor() { this.initializeDatabase(); }
-    
-    initializeDatabase() {
-        this.foodDatabase = {
-            '米饭': { calories: 200, unit: '碗', tags: ['主食', '中餐'] },
-            '炒饭': { calories: 350, unit: '碗', tags: ['主食', '中餐'] },
-            '粥': { calories: 120, unit: '碗', tags: ['主食', '早餐'] },
-            '面条': { calories: 280, unit: '碗', tags: ['主食', '中餐'] },
-            '拉面': { calories: 450, unit: '碗', tags: ['主食', '日料'] },
-            '饺子': { calories: 50, unit: '个', tags: ['主食', '中餐'] },
-            '包子': { calories: 220, unit: '个', tags: ['主食', '早餐'] },
-            '馒头': { calories: 220, unit: '个', tags: ['主食', '早餐'] },
-            '面包': { calories: 250, unit: '片', tags: ['主食', '早餐'] },
-            '三明治': { calories: 350, unit: '个', tags: ['主食', '西餐'] },
-            '汉堡': { calories: 500, unit: '个', tags: ['快餐', '西餐'] },
-            '披萨': { calories: 280, unit: '片', tags: ['快餐', '西餐'] },
-            '意面': { calories: 380, unit: '份', tags: ['西餐', '主食'] },
-            '红烧肉': { calories: 450, unit: '份', tags: ['肉类', '中餐'] },
-            '糖醋排骨': { calories: 400, unit: '份', tags: ['肉类', '中餐'] },
-            '宫保鸡丁': { calories: 280, unit: '份', tags: ['肉类', '中餐'] },
-            '麻婆豆腐': { calories: 200, unit: '份', tags: ['豆制品', '中餐'] },
-            '番茄炒蛋': { calories: 150, unit: '份', tags: ['菜品', '中餐'] },
-            '青菜': { calories: 50, unit: '份', tags: ['蔬菜', '中餐'] },
-            '牛奶': { calories: 150, unit: '杯', tags: ['饮品', '早餐'] },
-            '酸奶': { calories: 140, unit: '杯', tags: ['饮品', '早餐'] },
-            '鸡蛋': { calories: 70, unit: '个', tags: ['蛋类', '早餐'] },
-            '苹果': { calories: 80, unit: '个', tags: ['水果', '健康'] },
-            '香蕉': { calories: 90, unit: '根', tags: ['水果', '健康'] },
-            '咖啡': { calories: 50, unit: '杯', tags: ['饮品', '早餐'] },
-            '奶茶': { calories: 350, unit: '杯', tags: ['饮品', '甜点'] }
-        };
-    }
-
-    async analyzeImage(imageFile) {
-        return new Promise((resolve) => {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                resolve({
-                    success: true,
-                    imageUrl: e.target.result,
-                    predictions: this.mockImageRecognition()
-                });
-            };
-            reader.readAsDataURL(imageFile);
-        });
-    }
-
-    mockImageRecognition() {
-        const foods = Object.keys(this.foodDatabase).slice(0, 5);
-        return foods.map(food => ({
-            name: food,
-            confidence: Math.random() * 0.4 + 0.6,
-            calories: this.foodDatabase[food].calories
-        })).sort((a, b) => b.confidence - a.confidence);
-    }
-
-    findFoodInDatabase(foodName) {
-        if (this.foodDatabase[foodName]) {
-            return { name: foodName, ...this.foodDatabase[foodName] };
-        }
-        for (const [key, value] of Object.entries(this.foodDatabase)) {
-            if (foodName.toLowerCase().includes(key.toLowerCase()) || 
-                key.toLowerCase().includes(foodName.toLowerCase())) {
-                return { name: key, ...value };
-            }
-        }
-        return null;
-    }
-
-    parsePortion(portion) {
-        if (!portion) return 1;
-        const lower = portion.toLowerCase();
-        if (lower.includes('大') || lower.includes('多')) return 1.5;
-        if (lower.includes('小') || lower.includes('少') || lower.includes('半')) return 0.6;
-        const match = portion.match(/(\d+(?:\.\d+)?)/);
-        if (match) {
-            const num = parseFloat(match[1]);
-            if (num >= 0.1 && num <= 10) return Math.min(num, 3);
-        }
-        return 1;
-    }
-
-    async estimateCalories(foodName, portion, imageFile = null) {
-        let imageAnalysis = null;
-        if (imageFile) imageAnalysis = await this.analyzeImage(imageFile);
-        const dbResult = this.findFoodInDatabase(foodName);
-        if (dbResult) {
-            const multiplier = this.parsePortion(portion);
-            const calories = Math.round(dbResult.calories * multiplier);
-            return {
-                success: true, food: dbResult.name, baseCalories: dbResult.calories,
-                estimatedCalories: calories, unit: dbResult.unit, portion: portion || '标准份量',
-                confidence: imageAnalysis ? 0.95 : 0.85, imageAnalysis, tags: dbResult.tags
-            };
-        }
-        return this.smartEstimate(foodName, portion, imageAnalysis);
-    }
-
-    smartEstimate(foodName, portion, imageAnalysis) {
-        const multiplier = this.parsePortion(portion);
-        let baseCalories = 250, tags = ['其他'];
-        const keywords = {
-            high: { words: ['炸', '烤', '煎', '肥', '奶油', '芝士', '糖', '甜'], calories: 400, tags: ['高热量'] },
-            medium: { words: ['炒', '煮', '蒸', '炖', '卤'], calories: 280, tags: ['中等热量'] },
-            low: { words: ['生菜', '沙拉', '水果', '酸奶', '清汤'], calories: 120, tags: ['低热量'] }
-        };
-        const lower = foodName.toLowerCase();
-        for (const [level, data] of Object.entries(keywords)) {
-            for (const word of data.words) {
-                if (lower.includes(word)) { baseCalories = data.calories; tags = data.tags; break; }
-            }
-        }
-        return {
-            success: true, food: foodName, baseCalories, estimatedCalories: Math.round(baseCalories * multiplier),
-            unit: '份', portion: portion || '标准份量', confidence: imageAnalysis ? 0.7 : 0.6, imageAnalysis, tags, note: '基于关键词智能估算'
-        };
-    }
-}
-
-let aiFoodRecognizer, currentAIResult, selectedFoodImage;
-
-document.addEventListener('DOMContentLoaded', () => {
-    aiFoodRecognizer = new AIFoodRecognizer();
-    setupDragAndDrop();
-    addAIRecognitionButton();
-});
-
-function addAIRecognitionButton() {
-    const label = document.querySelector('label[for="food-name"]');
-    if (label && !document.getElementById('ai-recognize-inline-btn')) {
-        const btn = document.createElement('button');
-        btn.type = 'button';
-        btn.id = 'ai-recognize-inline-btn';
-        btn.className = 'ai-recognize-inline-btn';
-        btn.innerHTML = '🤖 AI识别';
-        btn.onclick = openAIFoodModal;
-        label.appendChild(btn);
-    }
-}
-
-function openAIFoodModal() { document.getElementById('ai-food-recognition-modal').classList.add('active'); resetAIForm(); }
-function closeAIFoodModal() { document.getElementById('ai-food-recognition-modal').classList.remove('active'); }
-function closeAIFoodModalOnOverlay(e) { if (e.target === e.currentTarget) closeAIFoodModal(); }
-
-function resetAIForm() {
-    selectedFoodImage = currentAIResult = null;
-    document.getElementById('ai-food-name').value = '';
-    document.getElementById('ai-portion-description').value = '';
-    document.getElementById('food-image-input').value = '';
-    resetImageUpload();
-    hideAIResult();
-}
-
-function resetImageUpload() {
-    const uploadArea = document.getElementById('food-image-upload-area');
-    uploadArea.classList.remove('has-image');
-    document.getElementById('upload-placeholder').style.display = 'block';
-    document.getElementById('food-preview-image').style.display = 'none';
-    document.getElementById('food-preview-image').src = '';
-    document.getElementById('remove-image-btn').style.display = 'none';
-}
-
-function handleFoodImageUpload(e) {
-    const file = e.target.files[0];
-    if (!file) return;
-    if (!file.type.startsWith('image/')) { alert('请选择图片文件'); return; }
-    if (file.size > 10 * 1024 * 1024) { alert('图片大小不能超过10MB'); return; }
-    selectedFoodImage = file;
-    const reader = new FileReader();
-    reader.onload = (e) => {
-        document.getElementById('food-image-upload-area').classList.add('has-image');
-        document.getElementById('upload-placeholder').style.display = 'none';
-        document.getElementById('food-preview-image').src = e.target.result;
-        document.getElementById('food-preview-image').style.display = 'block';
-        document.getElementById('remove-image-btn').style.display = 'flex';
-    };
-    reader.readAsDataURL(file);
-}
-
-function removeFoodImage() { selectedFoodImage = null; document.getElementById('food-image-input').value = ''; resetImageUpload(); }
-
-function setupDragAndDrop() {
-    const uploadArea = document.getElementById('food-image-upload-area');
-    if (!uploadArea) return;
-    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(e => uploadArea.addEventListener(e, (ev) => { ev.preventDefault(); ev.stopPropagation(); }, false));
-    ['dragenter', 'dragover'].forEach(e => uploadArea.addEventListener(e, () => { uploadArea.style.borderColor = 'var(--primary)'; uploadArea.style.backgroundColor = 'var(--primary-light)'; }));
-    ['dragleave', 'drop'].forEach(e => uploadArea.addEventListener(e, () => { uploadArea.style.borderColor = ''; uploadArea.style.backgroundColor = ''; }));
-    uploadArea.addEventListener('drop', (e) => { const files = e.dataTransfer.files; if (files.length > 0 && files[0].type.startsWith('image/')) { document.getElementById('food-image-input').files = files; handleFoodImageUpload({ target: { files: files } }); } });
-}
-
-async function performAIRecognition() {
-    const foodName = document.getElementById('ai-food-name').value.trim();
-    const portion = document.getElementById('ai-portion-description').value.trim();
-    if (!foodName && !selectedFoodImage) { alert('请输入食物名称或上传图片'); return; }
-    const btn = document.getElementById('ai-recognize-btn');
-    btn.classList.add('loading'); btn.disabled = true;
-    try {
-        const result = await aiFoodRecognizer.estimateCalories(foodName || '未知食物', portion, selectedFoodImage);
-        if (result.success) { currentAIResult = result; displayAIResult(result); } else { alert('识别失败，请重试'); }
-    } catch (error) { console.error('AI识别错误:', error); alert('识别过程中出现错误，请重试'); }
-    finally { btn.classList.remove('loading'); btn.disabled = false; }
-}
-
-function displayAIResult(result) {
-    document.getElementById('result-food-name').textContent = result.food;
-    document.getElementById('result-calories').textContent = result.estimatedCalories;
-    document.getElementById('result-unit').textContent = result.unit;
-    document.getElementById('portion-info').textContent = '基于份量: ' + result.portion;
-    document.getElementById('confidence-badge').textContent = '置信度: ' + Math.round(result.confidence * 100) + '%';
-    document.getElementById('result-food-tags').innerHTML = result.tags.map(tag => '<span class="tag">' + tag + '</span>').join('');
-    document.getElementById('ai-result-section').style.display = 'block';
-    document.getElementById('ai-result-section').scrollIntoView({ behavior: 'smooth' });
-}
-
-function hideAIResult() { document.getElementById('ai-result-section').style.display = 'none'; }
-
-function confirmAIResult() {
-    if (!currentAIResult) return;
-    document.getElementById('food-name').value = currentAIResult.food;
-    document.getElementById('food-calories').value = currentAIResult.estimatedCalories;
-    document.getElementById('food-portion').value = currentAIResult.portion;
-    closeAIFoodModal();
-    showToast('已填充: ' + currentAIResult.food + ' - ' + currentAIResult.estimatedCalories + '千卡');
-}
-
-function adjustCalories() {
-    if (!currentAIResult) return;
-    document.getElementById('manual-calories-input').value = currentAIResult.estimatedCalories;
-    document.getElementById('manual-adjust-section').style.display = 'block';
-    document.getElementById('manual-adjust-section').scrollIntoView({ behavior: 'smooth' });
-}
-
-function saveManualAdjustment() {
-    const newCalories = parseInt(document.getElementById('manual-calories-input').value);
-    if (isNaN(newCalories) || newCalories < 0) { alert('请输入有效的热量值'); return; }
-    if (currentAIResult) { currentAIResult.estimatedCalories = newCalories; displayAIResult(currentAIResult); }
-    cancelManualAdjustment();
-    showToast('热量已调整');
-}
-
-function cancelManualAdjustment() { document.getElementById('manual-adjust-section').style.display = 'none'; }
-
-function retryRecognition() {
-    hideAIResult();
-    document.getElementById('ai-food-name').value = '';
-    document.getElementById('ai-portion-description').value = '';
-    removeFoodImage();
-    document.getElementById('ai-food-name').focus();
-}
-
-function onFoodNameInput() {
-    const input = document.getElementById('ai-food-name');
-    const value = input.value.trim().toLowerCase();
-    const suggestionsContainer = document.getElementById('food-suggestions');
-    if (value.length < 1) { suggestionsContainer.style.display = 'none'; return; }
-    const matches = Object.keys(aiFoodRecognizer.foodDatabase).filter(food => food.toLowerCase().includes(value)).slice(0, 5);
-    if (matches.length === 0) { suggestionsContainer.style.display = 'none'; return; }
-    suggestionsContainer.innerHTML = matches.map(food => {
-        const data = aiFoodRecognizer.foodDatabase[food];
-        return '<div class="suggestion-item" onclick="selectFoodSuggestion('' + food + '')"><span class="suggestion-name">' + food + '</span><span class="suggestion-calories">' + data.calories + '千卡/' + data.unit + '</span></div>';
-    }).join('');
-    suggestionsContainer.style.display = 'block';
-}
-
-function selectFoodSuggestion(foodName) { document.getElementById('ai-food-name').value = foodName; document.getElementById('food-suggestions').style.display = 'none'; }
-
-let aiFoodRecognizer, currentAIResult, selectedFoodImage;
-document.addEventListener('DOMContentLoaded', () => { aiFoodRecognizer = new AIFoodRecognizer(); setupDragAndDrop(); addAIRecognitionButton(); });
-</script>
-
-<!-- AI食物识别模态框 -->
-<div id="ai-food-recognition-modal" class="modal-overlay" onclick="closeAIFoodModalOnOverlay(event)">
-    <div class="modal ai-modal" onclick="event.stopPropagation()">
-        <div class="modal-header">
-            <h3 class="modal-title">🤖 AI 智能识别食物热量</h3>
-            <button class="modal-close" onclick="closeAIFoodModal()">&times;</button>
-        </div>
-        <div class="modal-body">
-            <div class="image-upload-section">
-                <div class="upload-area" id="food-image-upload-area" onclick="document.getElementById('food-image-input').click()">
-                    <div class="upload-placeholder" id="upload-placeholder">
-                        <span class="upload-icon">📷</span>
-                        <p class="upload-text">点击或拖拽上传食物照片</p>
-                        <p class="upload-hint">支持 JPG、PNG 格式，最大 10MB</p>
-                    </div>
-                    <img id="food-preview-image" class="preview-image" style="display: none;">
-                    <button type="button" class="remove-image-btn" id="remove-image-btn" style="display: none;" onclick="event.stopPropagation(); removeFoodImage();">&times;</button>
-                </div>
-                <input type="file" id="food-image-input" accept="image/*" style="display: none;" onchange="handleFoodImageUpload(event)">
+    <!-- Goal Edit Modal -->
+    <div class="modal-overlay" id="goal-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">设置每日目标</h3>
+                <button class="modal-close" onclick="closeModal('goal-modal')">×</button>
             </div>
-            <div class="form-group">
-                <label class="form-label">
-                    食物名称 <span class="required">*</span>
-                    <span class="ai-hint">💡 输入如"红烧肉"、"汉堡"等</span>
-                </label>
-                <input type="text" id="ai-food-name" class="form-input" placeholder="请输入食物名称" oninput="onFoodNameInput()">
-                <div class="food-suggestions" id="food-suggestions" style="display: none;"></div>
-            </div>
-            <div class="form-group">
-                <label class="form-label">
-                    份量描述
-                    <span class="ai-hint">💡 如"一大碗"、"2个"、"小份"等</span>
-                </label>
-                <input type="text" id="ai-portion-description" class="form-input" placeholder="请输入份量描述（可选）">
-            </div>
-            <button type="button" class="ai-recognize-btn" id="ai-recognize-btn" onclick="performAIRecognition()">
-                <span class="btn-icon">🤖</span>
-                <span class="btn-text">AI 智能识别热量</span>
-            </button>
-            <div class="ai-result-section" id="ai-result-section">
-                <div class="result-header">
-                    <h4>🎯 识别结果</h4>
-                    <span class="confidence-badge" id="confidence-badge">置信度: 95%</span>
-                </div>
-                <div class="result-content">
-                    <div class="food-info-card">
-                        <div class="food-name" id="result-food-name">红烧肉</div>
-                        <div class="food-tags" id="result-food-tags">
-                            <span class="tag">中餐</span>
-                            <span class="tag">肉类</span>
-                        </div>
-                    </div>
-                    <div class="calorie-display">
-                        <div class="calorie-number" id="result-calories">450</div>
-                        <div class="calorie-unit">千卡 / <span id="result-unit">份</span></div>
-                    </div>
-                    <div class="portion-info" id="portion-info">基于份量: 标准份量</div>
-                </div>
-                <div class="result-actions">
-                    <button type="button" class="btn-confirm" onclick="confirmAIResult()"><span>✓</span> 确认并使用此数据</button>
-                    <button type="button" class="btn-adjust" onclick="adjustCalories()"><span>✎</span> 手动调整</button>
-                    <button type="button" class="btn-retry" onclick="retryRecognition()"><span>↻</span> 重新识别</button>
-                </div>
-            </div>
-            <div class="manual-adjust-section" id="manual-adjust-section">
+            <div class="modal-body">
                 <div class="form-group">
-                    <label class="form-label">调整热量（千卡）</label>
-                    <input type="number" id="manual-calories-input" class="form-input" min="0" max="5000" step="10">
+                    <label class="form-label">每日热量目标 (kcal)</label>
+                    <input type="number" class="goal-edit-input" id="goal-input" placeholder="2000" min="500" max="10000">
                 </div>
-                <div class="adjust-actions">
-                    <button type="button" class="btn-save-adjust" onclick="saveManualAdjustment()">保存调整</button>
-                    <button type="button" class="btn-cancel-adjust" onclick="cancelManualAdjustment()">取消</button>
-                </div>
+                <button type="button" class="submit-btn" onclick="saveDailyGoal()">保存设置</button>
             </div>
         </div>
     </div>
-</div>
-</body>
-</html>
+
+    <script>
