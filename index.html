@@ -91,6 +91,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .modal-body { padding: 24px; }
 .form-group { margin-bottom: 20px; }
 .form-label { display: block; font-size: 14px; font-weight: 500; margin-bottom: 8px; }
+.form-label .required { color: #EF5350; margin-left: 4px; }
 .form-input { width: 100%; padding: 12px 16px; border: 2px solid var(--divider); border-radius: 12px; font-size: 14px; transition: all 0.3s; }
 .form-input:focus { outline: none; border-color: var(--primary); }
 .form-input.calories-input { background: var(--primary-light); border-color: var(--primary); font-weight: 600; }
@@ -100,11 +101,6 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .submit-btn:hover { background: var(--primary-dark); }
 .submit-btn.exercise { background: linear-gradient(135deg, #FF6B6B 0%, #FF8E8E 100%); }
 .submit-btn.exercise:hover { background: linear-gradient(135deg, #FF5252 0%, #FF7E7E 100%); }
-.ai-btn { width: 100%; padding: 16px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 16px; }
-.ai-btn:disabled { opacity: 0.6; cursor: not-allowed; }
-.ai-btn.loading { color: transparent; position: relative; }
-.ai-btn.loading::after { content: ''; position: absolute; width: 20px; height: 20px; top: 50%; left: 50%; margin: -10px 0 0 -10px; border: 2px solid white; border-radius: 50%; border-top-color: transparent; animation: spin 0.8s linear infinite; }
-@keyframes spin { to { transform: rotate(360deg); } }
 #toast { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%) translateY(100px); background: rgba(0,0,0,0.8); color: white; padding: 12px 24px; border-radius: 24px; font-size: 14px; opacity: 0; transition: all 0.3s; z-index: 2000; }
 
 /* Exercise Section */
@@ -136,6 +132,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .calendar-day.today { border-color: var(--primary); font-weight: 600; }
 .calendar-day-number { font-size: 16px; font-weight: 500; }
 .calendar-day-calories { font-size: 10px; margin-top: 2px; opacity: 0.8; }
+.calendar-day.selected .calendar-day-calories { color: white; }
 
 /* Weight View */
 .weight-card { background: var(--surface); border-radius: 16px; padding: 24px; margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
@@ -300,9 +297,13 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
     </div>
     <div class="modal-body">
       <div class="form-group">
-        <label class="form-label">运动类型</label>
+        <label class="form-label">运动名称<span class="required">*</span></label>
+        <input type="text" class="form-input" id="exercise-name" placeholder="例如：晨跑、游泳、瑜伽">
+      </div>
+      <div class="form-group">
+        <label class="form-label">运动类型（可选）</label>
         <select class="form-select" id="exercise-type" onchange="calculateExerciseCalories()">
-          <option value="">选择运动类型</option>
+          <option value="">选择运动类型（用于自动计算热量）</option>
           <option value="running" data-calories="10">跑步 (10 kcal/分钟)</option>
           <option value="walking" data-calories="4">快走 (4 kcal/分钟)</option>
           <option value="cycling" data-calories="8">骑行 (8 kcal/分钟)</option>
@@ -467,7 +468,7 @@ function renderAll() {
         <div class="exercise-item">
           <div class="exercise-item-info">
             <div class="exercise-item-name">${ex.name || '未命名运动'}</div>
-            <div class="exercise-item-detail">${ex.duration || 0} 分钟</div>
+            <div class="exercise-item-detail">${ex.duration || 0} 分钟${ex.typeName ? ' · ' + ex.typeName : ''}</div>
           </div>
           <div style="display: flex; align-items: center;">
             <div class="exercise-item-calories">${ex.calories || 0} kcal</div>
@@ -521,6 +522,7 @@ function deleteExerciseItem(index) {
 function openExerciseModal() {
   document.getElementById('exercise-modal').classList.add('active');
   // Reset form
+  document.getElementById('exercise-name').value = '';
   document.getElementById('exercise-type').value = '';
   document.getElementById('exercise-duration').value = '';
   document.getElementById('exercise-calories').value = '';
@@ -541,14 +543,16 @@ function calculateExerciseCalories() {
 }
 
 function saveExercise() {
+  const name = document.getElementById('exercise-name').value.trim();
   const typeSelect = document.getElementById('exercise-type');
   const typeValue = typeSelect.value;
-  const typeName = typeSelect.options[typeSelect.selectedIndex].text.split(' ')[0];
+  const typeName = typeSelect.options[typeSelect.selectedIndex].text.split(' ')[0] || '';
   const duration = parseInt(document.getElementById('exercise-duration').value) || 0;
   const calories = parseInt(document.getElementById('exercise-calories').value) || 0;
   
-  if (!typeValue) {
-    showToast('请选择运动类型');
+  // 验证运动名称（必填）
+  if (!name) {
+    showToast('请输入运动名称');
     return;
   }
   if (duration <= 0) {
@@ -565,8 +569,9 @@ function saveExercise() {
   }
   
   records[dateKey].exercises.push({
-    name: typeName,
+    name: name,
     type: typeValue,
+    typeName: typeValue ? typeName : '',
     duration: duration,
     calories: calories,
     timestamp: Date.now()
