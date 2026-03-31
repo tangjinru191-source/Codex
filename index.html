@@ -606,6 +606,26 @@ function openFoodModal(mealType) {
   document.getElementById('food-name').value = '';
   document.getElementById('food-desc').value = '';
   document.getElementById('food-calories').value = '';
+  
+  // 重置图片上传
+  currentImageBase64 = null;
+  const uploadArea = document.getElementById('image-upload-area');
+  const placeholder = document.getElementById('upload-placeholder');
+  const previewImg = document.getElementById('preview-image');
+  const removeBtn = document.getElementById('remove-image-btn');
+  const fileInput = document.getElementById('food-image-input');
+  
+  if (uploadArea) uploadArea.classList.remove('has-image');
+  if (placeholder) placeholder.style.display = 'flex';
+  if (previewImg) {
+    previewImg.src = '';
+    previewImg.style.display = 'none';
+  }
+  if (removeBtn) removeBtn.style.display = 'none';
+  if (fileInput) fileInput.value = '';
+  
+  // 初始化拖拽上传
+  setTimeout(initDragAndDrop, 100);
 }
 
 function closeFoodModal() {
@@ -716,6 +736,22 @@ function recordWeight() {
 // Initialize
 document.addEventListener('DOMContentLoaded', init);
 
+// 阻止全局拖拽默认行为，防止浏览器打开拖入的图片
+['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+  document.body.addEventListener(eventName, (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+  }, false);
+});
+// 阻止全局拖拽默认行为，防止浏览器打开拖入的图片
+['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+  document.body.addEventListener(eventName, (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+  }, false);
+});
+
+
 // Close modals when clicking outside
 ['food-modal', 'exercise-modal'].forEach(id => {
   document.getElementById(id).addEventListener('click', function(e) {
@@ -783,15 +819,12 @@ function removeImage(event) {
   removeBtn.style.display = 'none';
   fileInput.value = '';
 }
-</script>
-</body>
-</html>
-
-// 拖拽功能修复
+// 初始化拖拽上传功能
 function initDragAndDrop() {
   const uploadArea = document.getElementById('image-upload-area');
   if (!uploadArea) return;
   
+  // 阻止默认拖拽行为
   ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
     uploadArea.addEventListener(eventName, (e) => {
       e.preventDefault();
@@ -799,16 +832,22 @@ function initDragAndDrop() {
     }, false);
   });
   
+  // 拖拽进入效果
   uploadArea.addEventListener('dragenter', () => {
-    uploadArea.classList.add('dragover');
+    uploadArea.classList.add('drag-over');
   });
   
-  uploadArea.addEventListener('dragleave', () => {
-    uploadArea.classList.remove('dragover');
+  // 拖拽离开效果
+  uploadArea.addEventListener('dragleave', (e) => {
+    // 检查是否真的离开了元素
+    if (!uploadArea.contains(e.relatedTarget)) {
+      uploadArea.classList.remove('drag-over');
+    }
   });
   
+  // 处理拖放的文件
   uploadArea.addEventListener('drop', (e) => {
-    uploadArea.classList.remove('dragover');
+    uploadArea.classList.remove('drag-over');
     const files = e.dataTransfer.files;
     if (files.length > 0) {
       handleImageFile(files[0]);
@@ -816,9 +855,6 @@ function initDragAndDrop() {
   });
 }
 
-// 确保在打开食物弹窗时初始化拖拽
-const originalOpenFoodModal = openFoodModal;
-openFoodModal = function(mealType) {
-  originalOpenFoodModal(mealType);
-  setTimeout(initDragAndDrop, 100);
-};
+</script>
+</body>
+</html>
