@@ -59,6 +59,89 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .exercise-delete-btn { width: 20px; height: 20px; border-radius: 50%; border: none; background: rgba(255,255,255,0.3); color: white; font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; margin-left: 8px; opacity: 0; transition: all 0.3s; }
 .exercise-item:hover .exercise-delete-btn { opacity: 1; }
 .exercise-delete-btn:hover { background: white; color: #FF6B6B; }
+.image-upload-area { border: 2px dashed var(--divider); border-radius: 12px; padding: 30px; text-align: center; margin: 16px 0; cursor: pointer; transition: all 0.3s; background: var(--background); position: relative; }
+.image-upload-area:hover, .image-upload-area.drag-over { border-color: var(--primary); background: var(--primary-light); }
+.image-upload-area.has-image { border-style: solid; border-color: var(--primary); padding: 0; overflow: hidden; }
+.upload-placeholder { display: flex; flex-direction: column; align-items: center; gap: 8px; pointer-events: none; }
+.upload-icon { font-size: 48px; }
+.upload-text { font-size: 16px; color: var(--text-primary); }
+.upload-hint { font-size: 12px; color: var(--text-secondary); }
+.preview-image { width: 100%; max-height: 300px; object-fit: cover; display: block; }
+.remove-image-btn { position: absolute; top: 8px; right: 8px; width: 32px; height: 32px; border-radius: 50%; border: none; background: rgba(239, 83, 80, 0.9); color: white; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 10; }
+.ai-result-section { background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); border-radius: 16px; padding: 24px; margin-top: 20px; display: none; }
+.ai-result-section.show { display: block; }
+.result-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+.confidence-badge { background: var(--primary); color: white; padding: 4px 12px; border-radius: 20px; font-size: 12px; }
+.detected-foods { background: white; border-radius: 12px; padding: 16px; margin-bottom: 16px; }
+.detected-food-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--divider); }
+.detected-food-item:last-child { border-bottom: none; }
+.food-name { font-weight: 500; }
+.food-weight { color: var(--text-secondary); font-size: 14px; }
+.food-calories { font-weight: 600; color: var(--primary); }
+.total-calories { text-align: center; padding: 16px; background: white; border-radius: 12px; }
+.total-number { font-size: 36px; font-weight: 800; color: var(--primary); }
+.total-label { color: var(--text-secondary); font-size: 14px; }
+.modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; z-index: 1000; padding: 20px; }
+.modal-overlay.active { display: flex; }
+.modal { background: var(--surface); border-radius: 20px; width: 100%; max-width: 500px; max-height: 90vh; overflow-y: auto; animation: slideUp 0.3s ease; }
+@keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+.modal-header { padding: 20px 24px; border-bottom: 1px solid var(--divider); display: flex; justify-content: space-between; align-items: center; }
+.modal-title { font-size: 18px; font-weight: 600; }
+.modal-close { width: 32px; height: 32px; border-radius: 50%; border: none; background: var(--background); cursor: pointer; font-size: 18px; }
+.modal-body { padding: 24px; }
+.form-group { margin-bottom: 20px; }
+.form-label { display: block; font-size: 14px; font-weight: 500; margin-bottom: 8px; }
+.form-label .required { color: #EF5350; margin-left: 4px; }
+.form-input { width: 100%; padding: 12px 16px; border: 2px solid var(--divider); border-radius: 12px; font-size: 14px; transition: all 0.3s; }
+.form-input:focus { outline: none; border-color: var(--primary); }
+.form-input.calories-input { background: var(--primary-light); border-color: var(--primary); font-weight: 600; }
+.form-select { width: 100%; padding: 12px 16px; border: 2px solid var(--divider); border-radius: 12px; font-size: 14px; background: white; cursor: pointer; }
+.form-select:focus { outline: none; border-color: var(--primary); }
+.submit-btn { width: 100%; padding: 16px; background: var(--primary); color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s; }
+.submit-btn:hover { background: var(--primary-dark); }
+.submit-btn.exercise { background: linear-gradient(135deg, #FF6B6B 0%, #FF8E8E 100%); }
+.submit-btn.exercise:hover { background: linear-gradient(135deg, #FF5252 0%, #FF7E7E 100%); }
+#toast { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%) translateY(100px); background: rgba(0,0,0,0.8); color: white; padding: 12px 24px; border-radius: 24px; font-size: 14px; opacity: 0; transition: all 0.3s; z-index: 2000; }
+
+/* Exercise Section */
+.exercise-section { background: linear-gradient(135deg, #FF6B6B 0%, #FF8E8E 100%); border-radius: 16px; padding: 20px; margin-bottom: 16px; color: white; box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3); }
+.exercise-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+.exercise-title { font-size: 16px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+.exercise-calories { font-size: 14px; opacity: 0.9; }
+.exercise-add-btn { width: 32px; height: 32px; border-radius: 50%; border: none; background: rgba(255,255,255,0.3); color: white; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s; }
+.exercise-add-btn:hover { background: white; color: #FF6B6B; }
+.exercise-list { display: flex; flex-direction: column; gap: 10px; }
+.exercise-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; background: rgba(255,255,255,0.2); border-radius: 10px; backdrop-filter: blur(10px); }
+.exercise-item-info { display: flex; flex-direction: column; gap: 2px; }
+.exercise-item-name { font-size: 14px; font-weight: 500; }
+.exercise-item-detail { font-size: 12px; opacity: 0.8; }
+.exercise-item-calories { font-size: 14px; font-weight: 600; }
+.exercise-delete-btn { width: 20px; height: 20px; border-radius: 50%; border: none; background: rgba(255,255,255,0.3); color: white; font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; margin-left: 8px; opacity: 0; transition: all 0.3s; }
+.exercise-item:hover .exercise-delete-btn { opacity: 1; }
+.exercise-delete-btn:hover { background: white; color: #FF6B6B; }
+
+/* Calendar Styles */
+.calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding: 0 10px; }
+.calendar-nav-btn { width: 36px; height: 36px; border-radius: 50%; border: none; background: var(--primary-light); color: var(--primary); font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.calendar-title { font-size: 20px; font-weight: 600; color: var(--text-primary); }
+.calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
+.calendar-weekday { text-align: center; font-size: 12px; font-weight: 500; color: var(--text-secondary); padding: 8px; }
+.calendar-day { aspect-ratio: 1; border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; background: var(--surface); border: 2px solid transparent; transition: all 0.3s; position: relative; }
+.calendar-day:hover { border-color: var(--primary); }
+.calendar-day.selected { background: var(--primary); color: white; }
+.calendar-day.today { border-color: var(--primary); font-weight: 600; }
+.calendar-day-number { font-size: 16px; font-weight: 500; }
+.calendar-day-calories { font-size: 10px; margin-top: 2px; opacity: 0.8; }
+.calendar-day.selected .calendar-day-calories { color: white; }
+
+/* Weight View */
+.weight-card { background: var(--surface); border-radius: 16px; padding: 24px; margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+.weight-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+.weight-value { font-size: 48px; font-weight: 700; color: var(--primary); }
+.weight-unit { font-size: 20px; color: var(--text-secondary); margin-left: 4px; }
+.weight-btn { padding: 8px 16px; background: var(--primary); color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; }
+.weight-chart { height: 200px; background: var(--background); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--text-secondary); }
+
 
 /* Image Upload Styles */
 .image-upload-area {
@@ -66,7 +149,6 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
   border-radius: 12px;
   padding: 24px;
   text-align: center;
-  margin: 16px 0;
   cursor: pointer;
   transition: all 0.3s;
   background: var(--background);
@@ -165,27 +247,110 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
   50% { opacity: 0.6; }
 }
 
-/* Calendar Styles */
-.calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding: 0 10px; }
-.calendar-nav-btn { width: 36px; height: 36px; border-radius: 50%; border: none; background: var(--primary-light); color: var(--primary); font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-.calendar-title { font-size: 20px; font-weight: 600; color: var(--text-primary); }
-.calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
-.calendar-weekday { text-align: center; font-size: 12px; font-weight: 500; color: var(--text-secondary); padding: 8px; }
-.calendar-day { aspect-ratio: 1; border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; background: var(--surface); border: 2px solid transparent; transition: all 0.3s; position: relative; }
-.calendar-day:hover { border-color: var(--primary); }
-.calendar-day.selected { background: var(--primary); color: white; }
-.calendar-day.today { border-color: var(--primary); font-weight: 600; }
-.calendar-day-number { font-size: 16px; font-weight: 500; }
-.calendar-day-calories { font-size: 10px; margin-top: 2px; opacity: 0.8; }
-.calendar-day.selected .calendar-day-calories { color: white; }
 
-/* Weight View */
-.weight-card { background: var(--surface); border-radius: 16px; padding: 24px; margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
-.weight-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
-.weight-value { font-size: 48px; font-weight: 700; color: var(--primary); }
-.weight-unit { font-size: 20px; color: var(--text-secondary); margin-left: 4px; }
-.weight-btn { padding: 8px 16px; background: var(--primary); color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; }
-.weight-chart { height: 200px; background: var(--background); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--text-secondary); }
+/* Image Upload Styles */
+.image-upload-area {
+  border: 2px dashed var(--divider);
+  border-radius: 12px;
+  padding: 24px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s;
+  background: var(--background);
+  position: relative;
+  min-height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.image-upload-area:hover, .image-upload-area.dragover {
+  border-color: var(--primary);
+  background: var(--primary-light);
+}
+.image-upload-area.has-image {
+  border-style: solid;
+  border-color: var(--primary);
+  padding: 0;
+  overflow: hidden;
+}
+.upload-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  pointer-events: none;
+}
+.upload-icon {
+  font-size: 36px;
+}
+.upload-text {
+  font-size: 14px;
+  color: var(--text-primary);
+  font-weight: 500;
+}
+.upload-hint {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+.preview-image {
+  width: 100%;
+  max-height: 200px;
+  object-fit: contain;
+  display: block;
+  background: var(--background);
+}
+.remove-image-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(239, 83, 80, 0.9);
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+.remove-image-btn:hover {
+  background: #EF5350;
+}
+.ai-recognize-btn {
+  width: 100%;
+  padding: 12px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  margin: 12px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.ai-recognize-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+.ai-recognize-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.ai-recognize-btn.loading {
+  animation: pulse 1.5s infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
 
 /* Hidden by default */
 .view { display: none; }
@@ -316,14 +481,15 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
       <button class="modal-close" onclick="closeFoodModal()">×</button>
     </div>
     <div class="modal-body">
-      <!-- Image Upload Area -->
+      <div class="form-group">
+        
       <div class="form-group">
         <label class="form-label">食物图片</label>
         <div class="image-upload-area" id="image-upload-area" onclick="document.getElementById('food-image-input').click()">
           <div class="upload-placeholder" id="upload-placeholder">
             <div class="upload-icon">📷</div>
             <div class="upload-text">点击或拖拽上传图片</div>
-            <div class="upload-hint">支持 JPG、PNG 格式</div>
+            <div class="upload-hint">支持 JPG、PNG 格式，最大 5MB</div>
           </div>
           <img class="preview-image" id="preview-image" style="display: none;" alt="食物图片">
           <button class="remove-image-btn" id="remove-image-btn" style="display: none;" onclick="removeImage(event)" title="删除图片">×</button>
@@ -331,20 +497,53 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
         <input type="file" id="food-image-input" accept="image/*" style="display: none;" onchange="handleImageSelect(event)">
       </div>
 
+
       <div class="form-group">
-        <label class="form-label">食物名称</label>
+        <label class="form-label">食物图片</label>
+        <div class="image-upload-area" id="image-upload-area" onclick="document.getElementById('food-image-input').click()">
+          <div class="upload-placeholder" id="upload-placeholder">
+            <div class="upload-icon">📷</div>
+            <div class="upload-text">点击或拖拽上传图片</div>
+            <div class="upload-hint">支持 JPG、PNG 格式，最大 5MB</div>
+          </div>
+          <img class="preview-image" id="preview-image" style="display: none;" alt="食物图片">
+          <button class="remove-image-btn" id="remove-image-btn" style="display: none;" onclick="removeImage(event)" title="删除图片">×</button>
+        </div>
+        <input type="file" id="food-image-input" accept="image/*" style="display: none;" onchange="handleImageSelect(event)">
+      </div>
+
+<div class="form-group">
+        <label class="form-label">食物图片</label>
+        <div class="image-upload-area" id="image-upload-area" onclick="document.getElementById('food-image-input').click()">
+          <div class="upload-placeholder" id="upload-placeholder">
+            <div class="upload-icon">📷</div>
+            <div class="upload-text">点击或拖拽上传图片</div>
+            <div class="upload-hint">支持 JPG、PNG 格式，最大 5MB</div>
+          </div>
+          <img class="preview-image" id="preview-image" style="display: none;" alt="食物图片">
+          <button class="remove-image-btn" id="remove-image-btn" style="display: none;" onclick="removeImage(event)" title="删除图片">×</button>
+        </div>
+        <input type="file" id="food-image-input" accept="image/*" style="display: none;" onchange="handleImageSelect(event)">
+      </div>
+
+      <label class="form-label">食物名称</label>
         <input type="text" class="form-input" id="food-name" placeholder="例如：鸡胸肉沙拉">
       </div>
       <div class="form-group">
         <label class="form-label">描述（可选）</label>
         <input type="text" class="form-input" id="food-desc" placeholder="例如：200g鸡肉+生菜+番茄">
       </div>
-
-      <!-- AI Recognize Button -->
       <button class="ai-recognize-btn" id="ai-recognize-btn" onclick="recognizeFoodWithAI()">
         <span>✨</span>
         <span>AI 智能识别热量</span>
       </button>
+      <div class="form-group" style="margin-top: 20px;">
+
+      <button class="ai-recognize-btn" id="ai-recognize-btn" onclick="recognizeFoodWithAI()">
+        <span>✨</span>
+        <span>AI 智能识别热量</span>
+      </button>
+      <div class="form-group" style="margin-top: 20px;">
 
       <div class="form-group" style="margin-top: 20px;">
         <label class="form-label">热量 (kcal)</label>
@@ -403,15 +602,11 @@ let currentDate = new Date();
 let currentMealType = '';
 let calendarDate = new Date();
 
-// Image upload state
-let currentImageBase64 = null;
-
 // Initialize
 function init() {
   loadData();
   renderAll();
   updateTodayTabTitle();
-  initImageUpload();
 }
 
 // Data persistence
@@ -480,216 +675,6 @@ function editDailyGoal() {
     renderAll();
     showToast(`每日目标已更新: ${dailyGoal} kcal`);
   }
-}
-
-// Image Upload Functions
-function initImageUpload() {
-  const uploadArea = document.getElementById('image-upload-area');
-  
-  // Prevent default drag behaviors
-  ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-    uploadArea.addEventListener(eventName, preventDefaults, false);
-  });
-  
-  function preventDefaults(e) {
-    e.preventDefault();
-    e.stopPropagation();
-  }
-  
-  // Highlight drop area when dragging over it
-  ['dragenter', 'dragover'].forEach(eventName => {
-    uploadArea.addEventListener(eventName, () => {
-      uploadArea.classList.add('dragover');
-    }, false);
-  });
-  
-  ['dragleave', 'drop'].forEach(eventName => {
-    uploadArea.addEventListener(eventName, () => {
-      uploadArea.classList.remove('dragover');
-    }, false);
-  });
-  
-  // Handle dropped files
-  uploadArea.addEventListener('drop', handleDrop, false);
-}
-
-function handleDrop(e) {
-  const dt = e.dataTransfer;
-  const files = dt.files;
-  if (files.length > 0) {
-    handleImageFile(files[0]);
-  }
-}
-
-function handleImageSelect(event) {
-  const file = event.target.files[0];
-  if (file) {
-    handleImageFile(file);
-  }
-}
-
-function handleImageFile(file) {
-  // Validate file type
-  if (!file.type.startsWith('image/')) {
-    showToast('请上传图片文件');
-    return;
-  }
-  
-  // Validate file size (max 5MB)
-  if (file.size > 5 * 1024 * 1024) {
-    showToast('图片大小不能超过5MB');
-    return;
-  }
-  
-  const reader = new FileReader();
-  reader.onload = function(e) {
-    currentImageBase64 = e.target.result;
-    showImagePreview(currentImageBase64);
-  };
-  reader.readAsDataURL(file);
-}
-
-function showImagePreview(base64) {
-  const uploadArea = document.getElementById('image-upload-area');
-  const placeholder = document.getElementById('upload-placeholder');
-  const previewImg = document.getElementById('preview-image');
-  const removeBtn = document.getElementById('remove-image-btn');
-  
-  uploadArea.classList.add('has-image');
-  placeholder.style.display = 'none';
-  previewImg.src = base64;
-  previewImg.style.display = 'block';
-  removeBtn.style.display = 'flex';
-}
-
-function removeImage(event) {
-  event.stopPropagation();
-  
-  currentImageBase64 = null;
-  
-  const uploadArea = document.getElementById('image-upload-area');
-  const placeholder = document.getElementById('upload-placeholder');
-  const previewImg = document.getElementById('preview-image');
-  const removeBtn = document.getElementById('remove-image-btn');
-  const fileInput = document.getElementById('food-image-input');
-  
-  uploadArea.classList.remove('has-image');
-  placeholder.style.display = 'flex';
-  previewImg.src = '';
-  previewImg.style.display = 'none';
-  removeBtn.style.display = 'none';
-  fileInput.value = '';
-}
-
-// AI Recognition Function
-async function recognizeFoodWithAI() {
-  const name = document.getElementById('food-name').value.trim();
-  const description = document.getElementById('food-desc').value.trim();
-  const btn = document.getElementById('ai-recognize-btn');
-  
-  if (!name && !description && !currentImageBase64) {
-    showToast('请输入食物名称、描述或上传图片');
-    return;
-  }
-  
-  // Disable button and show loading
-  btn.disabled = true;
-  btn.classList.add('loading');
-  btn.innerHTML = '<span>⏳</span><span>AI 识别中...</span>';
-  
-  try {
-    const calories = await callKimiAPI(name, description, currentImageBase64);
-    
-    if (calories && calories > 0) {
-      document.getElementById('food-calories').value = Math.round(calories);
-      showToast(`AI 识别完成！估算热量: ${Math.round(calories)} kcal`);
-    } else {
-      showToast('AI 识别失败，请手动输入热量');
-    }
-  } catch (error) {
-    console.error('AI recognition error:', error);
-    showToast('AI 识别出错: ' + error.message);
-  } finally {
-    // Re-enable button
-    btn.disabled = false;
-    btn.classList.remove('loading');
-    btn.innerHTML = '<span>✨</span><span>AI 智能识别热量</span>';
-  }
-}
-
-// Kimi API Call
-async function callKimiAPI(foodName, description, imageBase64) {
-  const API_KEY = 'sk-pkLWsDjQvOo3hh4UKWJZUH8uzC1tRITm4O0AVhQF8kapFHU4';
-  const API_URL = 'https://api.moonshot.cn/v1/chat/completions';
-  
-  // Build prompt
-  let userPrompt = '';
-  if (foodName) {
-    userPrompt += `食物名称: ${foodName}\n`;
-  }
-  if (description) {
-    userPrompt += `描述: ${description}\n`;
-  }
-  if (!foodName && !description) {
-    userPrompt = '请识别图片中的食物并估算热量。';
-  } else {
-    userPrompt += '\n请根据以上信息，估算这份食物的热量（单位：kcal）。\n\n请只返回一个数字，表示估算的热量值（单位：kcal）。如果无法估算，请返回 0。';
-  }
-  
-  // Build messages
-  const messages = [
-    {
-      role: 'system',
-      content: '你是一个专业的营养师，擅长估算食物热量。请根据用户提供的食物名称、描述和图片，准确估算食物的热量。只返回数字，不要有任何解释。'
-    }
-  ];
-  
-  if (imageBase64) {
-    // Remove data:image/xxx;base64, prefix if present
-    let base64Data = imageBase64;
-    if (base64Data.includes(',')) {
-      base64Data = base64Data.split(',')[1];
-    }
-    
-    messages.push({
-      role: 'user',
-      content: [
-        { type: 'text', text: userPrompt },
-        { type: 'image_url', image_url: { url: `data:image/jpeg;base64,${base64Data}` } }
-      ]
-    });
-  } else {
-    messages.push({
-      role: 'user',
-      content: userPrompt
-    });
-  }
-  
-  const response = await fetch(API_URL, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${API_KEY}`
-    },
-    body: JSON.stringify({
-      model: 'kimi-k2.5-2026-03-05',
-      messages: messages,
-      max_tokens: 100,
-      temperature: 0.3
-    })
-  });
-  
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
-    throw new Error(errorData.error?.message || `HTTP error! status: ${response.status}`);
-  }
-  
-  const data = await response.json();
-  const content = data.choices?.[0]?.message?.content || '';
-  
-  // Extract number from response
-  const match = content.match(/\d+/);
-  return match ? parseInt(match[0]) : 0;
 }
 
 // Main render function
@@ -873,8 +858,6 @@ function openFoodModal(mealType) {
   document.getElementById('food-name').value = '';
   document.getElementById('food-desc').value = '';
   document.getElementById('food-calories').value = '';
-  // Reset image
-  removeImage({ stopPropagation: () => {} });
 }
 
 function closeFoodModal() {
@@ -997,3 +980,403 @@ document.addEventListener('DOMContentLoaded', init);
 </script>
 </body>
 </html>
+
+// ========== 图片上传和AI识别功能 ==========
+
+// 图片上传状态
+let currentImageBase64 = null;
+
+// 初始化图片上传拖拽功能
+function initImageUpload() {
+  const uploadArea = document.getElementById('image-upload-area');
+  if (!uploadArea) return;
+  
+  ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+    uploadArea.addEventListener(eventName, preventDefaults, false);
+  });
+  
+  function preventDefaults(e) {
+    e.preventDefault();
+    e.stopPropagation();
+  }
+  
+  ['dragenter', 'dragover'].forEach(eventName => {
+    uploadArea.addEventListener(eventName, () => {
+      uploadArea.classList.add('dragover');
+    }, false);
+  });
+  
+  ['dragleave', 'drop'].forEach(eventName => {
+    uploadArea.addEventListener(eventName, () => {
+      uploadArea.classList.remove('dragover');
+    }, false);
+  });
+  
+  uploadArea.addEventListener('drop', handleDrop, false);
+}
+
+function handleDrop(e) {
+  const dt = e.dataTransfer;
+  const files = dt.files;
+  if (files.length > 0) {
+    handleImageFile(files[0]);
+  }
+}
+
+function handleImageSelect(event) {
+  const file = event.target.files[0];
+  if (file) {
+    handleImageFile(file);
+  }
+}
+
+function handleImageFile(file) {
+  if (!file.type.startsWith('image/')) {
+    showToast('请上传图片文件');
+    return;
+  }
+  
+  if (file.size > 5 * 1024 * 1024) {
+    showToast('图片大小不能超过5MB');
+    return;
+  }
+  
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    currentImageBase64 = e.target.result;
+    showImagePreview(currentImageBase64);
+  };
+  reader.readAsDataURL(file);
+}
+
+function showImagePreview(base64) {
+  const uploadArea = document.getElementById('image-upload-area');
+  const placeholder = document.getElementById('upload-placeholder');
+  const previewImg = document.getElementById('preview-image');
+  const removeBtn = document.getElementById('remove-image-btn');
+  
+  uploadArea.classList.add('has-image');
+  placeholder.style.display = 'none';
+  previewImg.src = base64;
+  previewImg.style.display = 'block';
+  removeBtn.style.display = 'flex';
+}
+
+function removeImage(event) {
+  event.stopPropagation();
+  
+  currentImageBase64 = null;
+  
+  const uploadArea = document.getElementById('image-upload-area');
+  const placeholder = document.getElementById('upload-placeholder');
+  const previewImg = document.getElementById('preview-image');
+  const removeBtn = document.getElementById('remove-image-btn');
+  const fileInput = document.getElementById('food-image-input');
+  
+  uploadArea.classList.remove('has-image');
+  placeholder.style.display = 'flex';
+  previewImg.src = '';
+  previewImg.style.display = 'none';
+  removeBtn.style.display = 'none';
+  fileInput.value = '';
+}
+
+// AI 识别功能
+async function recognizeFoodWithAI() {
+  const name = document.getElementById('food-name').value.trim();
+  const description = document.getElementById('food-desc').value.trim();
+  const btn = document.getElementById('ai-recognize-btn');
+  
+  if (!name && !description && !currentImageBase64) {
+    showToast('请输入食物名称、描述或上传图片');
+    return;
+  }
+  
+  btn.disabled = true;
+  btn.classList.add('loading');
+  btn.innerHTML = '<span>⏳</span><span>AI 识别中...</span>';
+  
+  try {
+    const calories = await callKimiAPI(name, description, currentImageBase64);
+    
+    if (calories && calories > 0) {
+      document.getElementById('food-calories').value = Math.round(calories);
+      showToast('AI 识别完成！估算热量: ' + Math.round(calories) + ' kcal');
+    } else {
+      showToast('AI 识别失败，请手动输入热量');
+    }
+  } catch (error) {
+    console.error('AI recognition error:', error);
+    showToast('AI 识别出错: ' + error.message);
+  } finally {
+    btn.disabled = false;
+    btn.classList.remove('loading');
+    btn.innerHTML = '<span>✨</span><span>AI 智能识别热量</span>';
+  }
+}
+
+// 调用 Kimi API
+async function callKimiAPI(foodName, description, imageBase64) {
+  const API_KEY = 'sk-pkLWsDjQvOo3hh4UKWJZUH8uzC1tRITm4O0AVhQF8kapFHU4';
+  const API_URL = 'https://api.moonshot.cn/v1/chat/completions';
+  
+  let userPrompt = '';
+  if (foodName) {
+    userPrompt += '食物名称: ' + foodName + '\n';
+  }
+  if (description) {
+    userPrompt += '描述: ' + description + '\n';
+  }
+  if (!foodName && !description) {
+    userPrompt = '请识别图片中的食物并估算热量。';
+  } else {
+    userPrompt += '\n请根据以上信息，估算这份食物的热量（单位：kcal）。\n\n请只返回一个数字，表示估算的热量值（单位：kcal）。如果无法估算，请返回 0。';
+  }
+  
+  const messages = [
+    {
+      role: 'system',
+      content: '你是一个专业的营养师，擅长估算食物热量。请根据用户提供的食物名称、描述和图片，准确估算食物的热量。只返回数字，不要有任何解释。'
+    }
+  ];
+  
+  if (imageBase64) {
+    let base64Data = imageBase64;
+    if (base64Data.includes(',')) {
+      base64Data = base64Data.split(',')[1];
+    }
+    
+    messages.push({
+      role: 'user',
+      content: [
+        { type: 'text', text: userPrompt },
+        { type: 'image_url', image_url: { url: 'data:image/jpeg;base64,' + base64Data } }
+      ]
+    });
+  } else {
+    messages.push({
+      role: 'user',
+      content: userPrompt
+    });
+  }
+  
+  const response = await fetch(API_URL, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + API_KEY
+    },
+    body: JSON.stringify({
+      model: 'kimi-k2.5-2026-03-05',
+      messages: messages,
+      max_tokens: 100,
+      temperature: 0.3
+    })
+  });
+  
+  if (
+
+// ========== 图片上传和AI识别功能 ==========
+
+// 图片上传状态
+let currentImageBase64 = null;
+
+// 初始化图片上传拖拽功能
+function initImageUpload() {
+  const uploadArea = document.getElementById('image-upload-area');
+  if (!uploadArea) return;
+  
+  ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+    uploadArea.addEventListener(eventName, preventDefaults, false);
+  });
+  
+  function preventDefaults(e) {
+    e.preventDefault();
+    e.stopPropagation();
+  }
+  
+  ['dragenter', 'dragover'].forEach(eventName => {
+    uploadArea.addEventListener(eventName, () => {
+      uploadArea.classList.add('dragover');
+    }, false);
+  });
+  
+  ['dragleave', 'drop'].forEach(eventName => {
+    uploadArea.addEventListener(eventName, () => {
+      uploadArea.classList.remove('dragover');
+    }, false);
+  });
+  
+  uploadArea.addEventListener('drop', handleDrop, false);
+}
+
+function handleDrop(e) {
+  const dt = e.dataTransfer;
+  const files = dt.files;
+  if (files.length > 0) {
+    handleImageFile(files[0]);
+  }
+}
+
+function handleImageSelect(event) {
+  const file = event.target.files[0];
+  if (file) {
+    handleImageFile(file);
+  }
+}
+
+function handleImageFile(file) {
+  if (!file.type.startsWith('image/')) {
+    showToast('请上传图片文件');
+    return;
+  }
+  
+  if (file.size > 5 * 1024 * 1024) {
+    showToast('图片大小不能超过5MB');
+    return;
+  }
+  
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    currentImageBase64 = e.target.result;
+    showImagePreview(currentImageBase64);
+  };
+  reader.readAsDataURL(file);
+}
+
+function showImagePreview(base64) {
+  const uploadArea = document.getElementById('image-upload-area');
+  const placeholder = document.getElementById('upload-placeholder');
+  const previewImg = document.getElementById('preview-image');
+  const removeBtn = document.getElementById('remove-image-btn');
+  
+  uploadArea.classList.add('has-image');
+  placeholder.style.display = 'none';
+  previewImg.src = base64;
+  previewImg.style.display = 'block';
+  removeBtn.style.display = 'flex';
+}
+
+function removeImage(event) {
+  event.stopPropagation();
+  
+  currentImageBase64 = null;
+  
+  const uploadArea = document.getElementById('image-upload-area');
+  const placeholder = document.getElementById('upload-placeholder');
+  const previewImg = document.getElementById('preview-image');
+  const removeBtn = document.getElementById('remove-image-btn');
+  const fileInput = document.getElementById('food-image-input');
+  
+  uploadArea.classList.remove('has-image');
+  placeholder.style.display = 'flex';
+  previewImg.src = '';
+  previewImg.style.display = 'none';
+  removeBtn.style.display = 'none';
+  fileInput.value = '';
+}
+
+// AI 识别功能
+async function recognizeFoodWithAI() {
+  const name = document.getElementById('food-name').value.trim();
+  const description = document.getElementById('food-desc').value.trim();
+  const btn = document.getElementById('ai-recognize-btn');
+  
+  if (!name && !description && !currentImageBase64) {
+    showToast('请输入食物名称、描述或上传图片');
+    return;
+  }
+  
+  btn.disabled = true;
+  btn.classList.add('loading');
+  btn.innerHTML = '<span>⏳</span><span>AI 识别中...</span>';
+  
+  try {
+    const calories = await callKimiAPI(name, description, currentImageBase64);
+    
+    if (calories && calories > 0) {
+      document.getElementById('food-calories').value = Math.round(calories);
+      showToast('AI 识别完成！估算热量: ' + Math.round(calories) + ' kcal');
+    } else {
+      showToast('AI 识别失败，请手动输入热量');
+    }
+  } catch (error) {
+    console.error('AI recognition error:', error);
+    showToast('AI 识别出错: ' + error.message);
+  } finally {
+    btn.disabled = false;
+    btn.classList.remove('loading');
+    btn.innerHTML = '<span>✨</span><span>AI 智能识别热量</span>';
+  }
+}
+
+// 调用 Kimi API
+async function callKimiAPI(foodName, description, imageBase64) {
+  const API_KEY = 'sk-pkLWsDjQvOo3hh4UKWJZUH8uzC1tRITm4O0AVhQF8kapFHU4';
+  const API_URL = 'https://api.moonshot.cn/v1/chat/completions';
+  
+  let userPrompt = '';
+  if (foodName) {
+    userPrompt += '食物名称: ' + foodName + '\n';
+  }
+  if (description) {
+    userPrompt += '描述: ' + description + '\n';
+  }
+  if (!foodName && !description) {
+    userPrompt = '请识别图片中的食物并估算热量。';
+  } else {
+    userPrompt += '\n请根据以上信息，估算这份食物的热量（单位：kcal）。\n\n请只返回一个数字，表示估算的热量值（单位：kcal）。如果无法估算，请返回 0。';
+  }
+  
+  const messages = [
+    {
+      role: 'system',
+      content: '你是一个专业的营养师，擅长估算食物热量。请根据用户提供的食物名称、描述和图片，准确估算食物的热量。只返回数字，不要有任何解释。'
+    }
+  ];
+  
+  if (imageBase64) {
+    let base64Data = imageBase64;
+    if (base64Data.includes(',')) {
+      base64Data = base64Data.split(',')[1];
+    }
+    
+    messages.push({
+      role: 'user',
+      content: [
+        { type: 'text', text: userPrompt },
+        { type: 'image_url', image_url: { url: 'data:image/jpeg;base64,' + base64Data } }
+      ]
+    });
+  } else {
+    messages.push({
+      role: 'user',
+      content: userPrompt
+    });
+  }
+  
+  const response = await fetch(API_URL, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + API_KEY
+    },
+    body: JSON.stringify({
+      model: 'kimi-k2.5-2026-03-05',
+      messages: messages,
+      max_tokens: 100,
+      temperature: 0.3
+    })
+  });
+  
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.error?.message || 'HTTP error! status: ' + response.status);
+  }
+  
+  const data = await response.json();
+  const responseContent = data.choices?.[0]?.message?.content || '';
+  
+  const match = responseContent.match(/\d+/);
+  return match ? parseInt(match[0]) : 0;
+}
