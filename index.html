@@ -272,7 +272,21 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
     </div>
     <div class="modal-body">
       <div class="form-group">
-        <label class="form-label">食物名称</label>
+              <div class="form-group">
+        <label class="form-label">食物图片</label>
+        <div class="image-upload-area" id="image-upload-area" onclick="document.getElementById('food-image-input').click()">
+          <div class="upload-placeholder" id="upload-placeholder">
+            <div class="upload-icon">📷</div>
+            <div class="upload-text">点击或拖拽上传图片</div>
+            <div class="upload-hint">支持 JPG、PNG 格式，最大 5MB</div>
+          </div>
+          <img class="preview-image" id="preview-image" style="display: none;" alt="食物图片">
+          <button class="remove-image-btn" id="remove-image-btn" style="display: none;" onclick="removeImage(event)" title="删除图片">×</button>
+        </div>
+        <input type="file" id="food-image-input" accept="image/*" style="display: none;" onchange="handleImageSelect(event)">
+      </div>
+
+<label class="form-label">食物名称</label>
         <input type="text" class="form-input" id="food-name" placeholder="例如：鸡胸肉沙拉">
       </div>
       <div class="form-group">
@@ -711,6 +725,100 @@ document.addEventListener('DOMContentLoaded', init);
     }
   });
 });
+
+// ========== 图片上传功能 ==========
+let currentImageBase64 = null;
+
+function handleImageSelect(event) {
+  const file = event.target.files[0];
+  if (file) {
+    handleImageFile(file);
+  }
+}
+
+function handleImageFile(file) {
+  if (!file.type.startsWith('image/')) {
+    showToast('请上传图片文件');
+    return;
+  }
+  if (file.size > 5 * 1024 * 1024) {
+    showToast('图片大小不能超过5MB');
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    currentImageBase64 = e.target.result;
+    showImagePreview(currentImageBase64);
+  };
+  reader.readAsDataURL(file);
+}
+
+function showImagePreview(base64) {
+  const uploadArea = document.getElementById('image-upload-area');
+  const placeholder = document.getElementById('upload-placeholder');
+  const previewImg = document.getElementById('preview-image');
+  const removeBtn = document.getElementById('remove-image-btn');
+  
+  uploadArea.classList.add('has-image');
+  placeholder.style.display = 'none';
+  previewImg.src = base64;
+  previewImg.style.display = 'block';
+  removeBtn.style.display = 'flex';
+}
+
+function removeImage(event) {
+  event.stopPropagation();
+  currentImageBase64 = null;
+  
+  const uploadArea = document.getElementById('image-upload-area');
+  const placeholder = document.getElementById('upload-placeholder');
+  const previewImg = document.getElementById('preview-image');
+  const removeBtn = document.getElementById('remove-image-btn');
+  const fileInput = document.getElementById('food-image-input');
+  
+  uploadArea.classList.remove('has-image');
+  placeholder.style.display = 'flex';
+  previewImg.src = '';
+  previewImg.style.display = 'none';
+  removeBtn.style.display = 'none';
+  fileInput.value = '';
+}
 </script>
 </body>
 </html>
+
+// 拖拽功能修复
+function initDragAndDrop() {
+  const uploadArea = document.getElementById('image-upload-area');
+  if (!uploadArea) return;
+  
+  ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+    uploadArea.addEventListener(eventName, (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+    }, false);
+  });
+  
+  uploadArea.addEventListener('dragenter', () => {
+    uploadArea.classList.add('dragover');
+  });
+  
+  uploadArea.addEventListener('dragleave', () => {
+    uploadArea.classList.remove('dragover');
+  });
+  
+  uploadArea.addEventListener('drop', (e) => {
+    uploadArea.classList.remove('dragover');
+    const files = e.dataTransfer.files;
+    if (files.length > 0) {
+      handleImageFile(files[0]);
+    }
+  });
+}
+
+// 确保在打开食物弹窗时初始化拖拽
+const originalOpenFoodModal = openFoodModal;
+openFoodModal = function(mealType) {
+  originalOpenFoodModal(mealType);
+  setTimeout(initDragAndDrop, 100);
+};
