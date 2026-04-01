@@ -68,201 +68,63 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .upload-hint { font-size: 12px; color: var(--text-secondary); }
 .preview-image { width: 100%; max-height: 300px; object-fit: cover; display: block; }
 .remove-image-btn { position: absolute; top: 8px; right: 8px; width: 32px; height: 32px; border-radius: 50%; border: none; background: rgba(239, 83, 80, 0.9); color: white; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 10; }
-.ai-result-section { background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); border-radius: 16px; padding: 24px; margin-top: 20px; display: none; }
-.ai-result-section.show { display: block; }
-.result-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
-.confidence-badge { background: var(--primary); color: white; padding: 4px 12px; border-radius: 20px; font-size: 12px; }
-.detected-foods { background: white; border-radius: 12px; padding: 16px; margin-bottom: 16px; }
-.detected-food-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--divider); }
-.detected-food-item:last-child { border-bottom: none; }
-.food-name { font-weight: 500; }
-.food-weight { color: var(--text-secondary); font-size: 14px; }
-.food-calories { font-weight: 600; color: var(--primary); }
-.total-calories { text-align: center; padding: 16px; background: white; border-radius: 12px; }
-.total-number { font-size: 36px; font-weight: 800; color: var(--primary); }
-.total-label { color: var(--text-secondary); font-size: 14px; }
-.modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; z-index: 1000; padding: 20px; }
-.modal-overlay.active { display: flex; }
-.modal { background: var(--surface); border-radius: 20px; width: 100%; max-width: 500px; max-height: 90vh; overflow-y: auto; animation: slideUp 0.3s ease; }
-@keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-.modal-header { padding: 20px 24px; border-bottom: 1px solid var(--divider); display: flex; justify-content: space-between; align-items: center; }
-.modal-title { font-size: 18px; font-weight: 600; }
-.modal-close { width: 32px; height: 32px; border-radius: 50%; border: none; background: var(--background); cursor: pointer; font-size: 18px; }
-.modal-body { padding: 24px; }
-.form-group { margin-bottom: 20px; }
-.form-label { display: block; font-size: 14px; font-weight: 500; margin-bottom: 8px; }
-.form-label .required { color: #EF5350; margin-left: 4px; }
-.form-input { width: 100%; padding: 12px 16px; border: 2px solid var(--divider); border-radius: 12px; font-size: 14px; transition: all 0.3s; }
-.form-input:focus { outline: none; border-color: var(--primary); }
-.form-input.calories-input { background: var(--primary-light); border-color: var(--primary); font-weight: 600; }
-.form-select { width: 100%; padding: 12px 16px; border: 2px solid var(--divider); border-radius: 12px; font-size: 14px; background: white; cursor: pointer; }
-.form-select:focus { outline: none; border-color: var(--primary); }
-.submit-btn { width: 100%; padding: 16px; background: var(--primary); color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s; }
-.submit-btn:hover { background: var(--primary-dark); }
-.submit-btn.exercise { background: linear-gradient(135deg, #FF6B6B 0%, #FF8E8E 100%); }
-.submit-btn.exercise:hover { background: linear-gradient(135deg, #FF5252 0%, #FF7E7E 100%); }
-#toast { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%) translateY(100px); background: rgba(0,0,0,0.8); color: white; padding: 12px 24px; border-radius: 24px; font-size: 14px; opacity: 0; transition: all 0.3s; z-index: 2000; }
 
-/* Exercise Section */
-.exercise-section { background: linear-gradient(135deg, #FF6B6B 0%, #FF8E8E 100%); border-radius: 16px; padding: 20px; margin-bottom: 16px; color: white; box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3); }
-.exercise-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
-.exercise-title { font-size: 16px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
-.exercise-calories { font-size: 14px; opacity: 0.9; }
-.exercise-add-btn { width: 32px; height: 32px; border-radius: 50%; border: none; background: rgba(255,255,255,0.3); color: white; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s; }
-.exercise-add-btn:hover { background: white; color: #FF6B6B; }
-.exercise-list { display: flex; flex-direction: column; gap: 10px; }
-.exercise-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; background: rgba(255,255,255,0.2); border-radius: 10px; backdrop-filter: blur(10px); }
-.exercise-item-info { display: flex; flex-direction: column; gap: 2px; }
-.exercise-item-name { font-size: 14px; font-weight: 500; }
-.exercise-item-detail { font-size: 12px; opacity: 0.8; }
-.exercise-item-calories { font-size: 14px; font-weight: 600; }
-.exercise-delete-btn { width: 20px; height: 20px; border-radius: 50%; border: none; background: rgba(255,255,255,0.3); color: white; font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; margin-left: 8px; opacity: 0; transition: all 0.3s; }
-.exercise-item:hover .exercise-delete-btn { opacity: 1; }
-.exercise-delete-btn:hover { background: white; color: #FF6B6B; }
-
-/* Calendar Styles */
-.calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding: 0 10px; }
-.calendar-nav-btn { width: 36px; height: 36px; border-radius: 50%; border: none; background: var(--primary-light); color: var(--primary); font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-.calendar-title { font-size: 20px; font-weight: 600; color: var(--text-primary); }
-.calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
-.calendar-weekday { text-align: center; font-size: 12px; font-weight: 500; color: var(--text-secondary); padding: 8px; }
-.calendar-day { aspect-ratio: 1; border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; background: var(--surface); border: 2px solid transparent; transition: all 0.3s; position: relative; }
-.calendar-day:hover { border-color: var(--primary); }
-.calendar-day.selected { background: var(--primary); color: white; }
-.calendar-day.today { border-color: var(--primary); font-weight: 600; }
-.calendar-day-number { font-size: 16px; font-weight: 500; }
-.calendar-day-calories { font-size: 10px; margin-top: 2px; opacity: 0.8; }
-.calendar-day.selected .calendar-day-calories { color: white; }
-
-/* Weight View */
-.weight-card { background: var(--surface); border-radius: 16px; padding: 24px; margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
-.weight-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
-.weight-value { font-size: 48px; font-weight: 700; color: var(--primary); }
-.weight-unit { font-size: 20px; color: var(--text-secondary); margin-left: 4px; }
-.weight-btn { padding: 8px 16px; background: var(--primary); color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; }
-.weight-chart { height: 200px; background: var(--background); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--text-secondary); }
-
-/* Hidden by default */
-.view { display: none; }
-.view.active { display: block; }
-
-/* AI 识别按钮样式 */
-.ai-recognize-btn {
-  width: 100%;
-  padding: 12px 16px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  border: none;
-  border-radius: 12px;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  transition: all 0.3s;
-  margin: 12px 0;
-}
-.ai-recognize-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
-}
-.ai-recognize-btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-  transform: none;
-}
-.ai-recognize-btn .spinner {
-  width: 16px;
-  height: 16px;
-  border: 2px solid rgba(255,255,255,0.3);
-  border-top-color: white;
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-}
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-
-/* AI 识别结果区域 */
-.ai-result-container {
+/* 纯文本编辑区域样式 */
+.ai-text-result-container {
   margin-top: 16px;
   padding: 16px;
   background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
   border-radius: 12px;
   display: none;
 }
-.ai-result-container.show {
+.ai-text-result-container.show {
   display: block;
   animation: fadeIn 0.3s ease;
 }
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-.ai-result-title {
-  font-size: 16px;
-  font-weight: 600;
-  color: var(--text-primary);
-  margin-bottom: 12px;
-  text-align: center;
-}
-.ai-food-list {
-  background: white;
+.ai-text-edit-area {
+  width: 100%;
+  min-height: 150px;
+  border: 1px solid var(--divider);
   border-radius: 8px;
   padding: 12px;
-  margin-bottom: 12px;
-}
-.ai-food-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 8px 0;
-  border-bottom: 1px solid var(--divider);
-}
-.ai-food-item:last-child {
-  border-bottom: none;
-}
-.ai-food-info {
-  flex: 1;
-}
-.ai-food-name {
-  font-weight: 500;
   font-size: 14px;
-  color: var(--text-primary);
+  font-family: inherit;
+  resize: vertical;
+  line-height: 1.6;
+  background: white;
 }
-.ai-food-weight {
-  font-size: 12px;
-  color: var(--text-secondary);
-  margin-top: 2px;
+.ai-text-edit-area:focus {
+  outline: none;
+  border-color: var(--primary);
 }
-.ai-food-calories {
-  font-weight: 600;
+.ai-calc-btn {
+  width: 100%;
+  padding: 10px;
+  background: var(--primary-light);
   color: var(--primary);
-  font-size: 14px;
-  white-space: nowrap;
+  border: none;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: all 0.3s;
 }
-.ai-total-section {
+.ai-calc-btn:hover {
+  background: var(--primary);
+  color: white;
+}
+.ai-total-display {
+  text-align: center;
+  padding: 16px;
   background: white;
   border-radius: 8px;
-  padding: 16px;
-  text-align: center;
+  margin-top: 12px;
 }
-.ai-total-label {
-  font-size: 14px;
-  color: var(--text-secondary);
-  margin-bottom: 4px;
-}
-.ai-total-calories {
+.ai-total-number {
   font-size: 32px;
   font-weight: 700;
   color: var(--primary);
-}
-.ai-total-unit {
-  font-size: 14px;
-  color: var(--text-secondary);
-  margin-left: 4px;
 }
 .ai-apply-btn {
   width: 100%;
@@ -279,6 +141,11 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 }
 .ai-apply-btn:hover {
   background: var(--primary-dark);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 </style>
 </head>
@@ -300,63 +167,62 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
     <div class="daily-goal-card">
       <div class="daily-goal-header">
         <span class="daily-goal-title">每日目标</span>
-        <button class="daily-goal-edit" onclick="editDailyGoal()">编辑</button>
+        <button class="daily-goal-edit" onclick="editDailyGoal()">调整</button>
       </div>
       <div class="daily-goal-value"><span id="current-calories">0</span> / <span id="goal-calories">2000</span> kcal</div>
-      <div class="daily-goal-progress"><div class="daily-goal-progress-fill" id="goal-progress-fill" style="width: 0%"></div></div>
-      <div class="daily-goal-stats">
-        <span>已摄入: <span id="stat-intake">0</span> kcal</span>
-        <span>已运动: <span id="stat-exercise">0</span> kcal</span>
-        <span>剩余: <span id="stat-remaining">2000</span> kcal</span>
+      <div class="daily-goal-progress">
+        <div class="daily-goal-progress-fill" id="goal-progress-fill" style="width: 0%"></div>
       </div>
+      <div class="daily-goal-stats">
+        <span>摄入: <span id="stat-intake">0</span></span>
+        <span>运动: -<span id="stat-exercise">0</span></span>
+        <span>剩余: <span id="stat-remaining">2000</span></span>
+      </div>
+    </div>
+
+    <!-- Breakfast -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-title"><span>🍳</span> 早餐 <span class="section-calories" id="breakfast-calories">0 kcal</span></div>
+        <button class="add-btn" onclick="openFoodModal('breakfast')">+</button>
+      </div>
+      <div class="items-list" id="breakfast-list"></div>
+    </div>
+
+    <!-- Lunch -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-title"><span>🍱</span> 午餐 <span class="section-calories" id="lunch-calories">0 kcal</span></div>
+        <button class="add-btn" onclick="openFoodModal('lunch')">+</button>
+      </div>
+      <div class="items-list" id="lunch-list"></div>
+    </div>
+
+    <!-- Dinner -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-title"><span>🥗</span> 晚餐 <span class="section-calories" id="dinner-calories">0 kcal</span></div>
+        <button class="add-btn" onclick="openFoodModal('dinner')">+</button>
+      </div>
+      <div class="items-list" id="dinner-list"></div>
+    </div>
+
+    <!-- Snack -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-title"><span>🍪</span> 加餐 <span class="section-calories" id="snack-calories">0 kcal</span></div>
+        <button class="add-btn" onclick="openFoodModal('snack')">+</button>
+      </div>
+      <div class="items-list" id="snack-list"></div>
     </div>
 
     <!-- Exercise Section -->
-    <div class="exercise-section" id="exercise-section">
+    <div class="exercise-section">
       <div class="exercise-header">
-        <div class="exercise-title">🏃 运动消耗</div>
-        <div class="exercise-calories" id="exercise-total">0 kcal</div>
+        <div class="exercise-title"><span>🏃</span> 运动消耗 <span id="exercise-total">0 kcal</span></div>
         <button class="exercise-add-btn" onclick="openExerciseModal()">+</button>
       </div>
-      <div class="exercise-list" id="exercise-list">
-        <div class="empty-item" style="color: rgba(255,255,255,0.8);">点击 + 添加运动记录</div>
-      </div>
-    </div>
-
-    <div class="section" id="breakfast-section">
-      <div class="section-header">
-        <div class="section-title">🌅 早餐</div>
-        <div class="section-calories" id="breakfast-calories">0 kcal</div>
-        <button class="add-btn" onclick="openFoodModal('breakfast')">+</button>
-      </div>
-      <div class="items-list" id="breakfast-items"><div class="empty-item">点击 + 添加早餐记录</div></div>
-    </div>
-
-    <div class="section" id="lunch-section">
-      <div class="section-header">
-        <div class="section-title">🌞 午餐</div>
-        <div class="section-calories" id="lunch-calories">0 kcal</div>
-        <button class="add-btn" onclick="openFoodModal('lunch')">+</button>
-      </div>
-      <div class="items-list" id="lunch-items"><div class="empty-item">点击 + 添加午餐记录</div></div>
-    </div>
-
-    <div class="section" id="dinner-section">
-      <div class="section-header">
-        <div class="section-title">🌙 晚餐</div>
-        <div class="section-calories" id="dinner-calories">0 kcal</div>
-        <button class="add-btn" onclick="openFoodModal('dinner')">+</button>
-      </div>
-      <div class="items-list" id="dinner-items"><div class="empty-item">点击 + 添加晚餐记录</div></div>
-    </div>
-
-    <div class="section" id="snack-section">
-      <div class="section-header">
-        <div class="section-title">🍿 加餐</div>
-        <div class="section-calories" id="snack-calories">0 kcal</div>
-        <button class="add-btn" onclick="openFoodModal('snack')">+</button>
-      </div>
-      <div class="items-list" id="snack-items"><div class="empty-item">点击 + 添加加餐记录</div></div>
+      <div class="exercise-list" id="exercise-list"></div>
     </div>
   </div>
 
@@ -365,10 +231,10 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
     <div class="section">
       <div class="calendar-header">
         <button class="calendar-nav-btn" onclick="changeMonth(-1)">‹</button>
-        <div class="calendar-title" id="calendar-title">2024年1月</div>
+        <div class="calendar-title" id="calendar-title">2026年4月</div>
         <button class="calendar-nav-btn" onclick="changeMonth(1)">›</button>
       </div>
-      <div class="calendar-grid" id="calendar-weekdays">
+      <div class="calendar-grid">
         <div class="calendar-weekday">日</div>
         <div class="calendar-weekday">一</div>
         <div class="calendar-weekday">二</div>
@@ -377,7 +243,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
         <div class="calendar-weekday">五</div>
         <div class="calendar-weekday">六</div>
       </div>
-      <div class="calendar-grid" id="calendar-days" style="margin-top: 8px;"></div>
+      <div class="calendar-grid" id="calendar-days"></div>
     </div>
   </div>
 
@@ -387,12 +253,12 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
       <div class="weight-header">
         <div>
           <div style="font-size: 14px; color: var(--text-secondary); margin-bottom: 4px;">当前体重</div>
-          <div class="weight-value"><span id="current-weight">65.0</span><span class="weight-unit">kg</span></div>
+          <div class="weight-value"><span id="current-weight">--</span><span class="weight-unit">kg</span></div>
         </div>
         <button class="weight-btn" onclick="recordWeight()">记录体重</button>
       </div>
-      <div class="weight-chart" id="weight-chart">
-        <span>体重趋势图表</span>
+      <div class="weight-chart">
+        <span>体重趋势图表 (功能开发中)</span>
       </div>
     </div>
   </div>
@@ -406,53 +272,53 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
       <button class="modal-close" onclick="closeFoodModal()">×</button>
     </div>
     <div class="modal-body">
+      <!-- 图片上传区域 -->
       <div class="form-group">
-              <div class="form-group">
-        <label class="form-label">食物图片</label>
+        <label class="form-label">食物照片</label>
         <div class="image-upload-area" id="image-upload-area" onclick="document.getElementById('food-image-input').click()">
           <div class="upload-placeholder" id="upload-placeholder">
             <div class="upload-icon">📷</div>
             <div class="upload-text">点击或拖拽上传图片</div>
             <div class="upload-hint">支持 JPG、PNG 格式，最大 5MB</div>
           </div>
-          <img class="preview-image" id="preview-image" style="display: none;" alt="食物图片">
-          <button class="remove-image-btn" id="remove-image-btn" style="display: none;" onclick="removeImage(event)" title="删除图片">×</button>
+          <img class="preview-image" id="preview-image" style="display: none;" />
+          <button class="remove-image-btn" id="remove-image-btn" style="display: none;" onclick="removeImage(event)">×</button>
         </div>
-        <input type="file" id="food-image-input" accept="image/*" style="display: none;" onchange="handleImageSelect(event)">
+        <input type="file" id="food-image-input" accept="image/*" style="display: none;" onchange="handleImageSelect(event)" />
       </div>
 
-<label class="form-label">食物名称</label>
-        <input type="text" class="form-input" id="food-name" placeholder="例如：鸡胸肉沙拉">
+      <div class="form-group">
+        <label class="form-label">食物名称 <span class="required">*</span></label>
+        <input type="text" class="form-input" id="food-name" placeholder="例如：牛肉面">
       </div>
       <div class="form-group">
         <label class="form-label">描述（可选）</label>
-        <input type="text" class="form-input" id="food-desc" placeholder="例如：200g鸡肉+生菜+番茄">
+        <input type="text" class="form-input" id="food-desc" placeholder="例如：少油、多蔬菜">
       </div>
-      <div class="form-group" style="margin-top: 20px;">
-        
+
       <!-- AI 识别按钮 -->
       <button class="ai-recognize-btn" id="ai-recognize-btn" onclick="recognizeCaloriesWithAI()">
         <span>✨</span>
         <span>AI 智能识别热量</span>
       </button>
-      
-      <!-- AI 识别结果展示区域 -->
-      <div class="ai-result-container" id="ai-result-container">
-        <div class="ai-result-title">🤖 AI 识别结果</div>
-        <div class="ai-food-list" id="ai-food-list">
-          <!-- 动态生成的食物列表 -->
+
+      <!-- AI 纯文本结果编辑区域 -->
+      <div class="ai-text-result-container" id="ai-text-result-container">
+        <div style="font-size: 14px; font-weight: 600; margin-bottom: 12px; color: var(--text-primary);">📝 AI 识别结果（可编辑）</div>
+        <div class="ai-text-edit-container">
+          <textarea class="ai-text-edit-area" id="ai-text-edit-area" placeholder="AI 将在这里生成食物分析报告..."></textarea>
+          <button class="ai-calc-btn" onclick="calculateTotalFromText()">🧮 自动计算总热量</button>
         </div>
-        <div class="ai-total-section">
-          <div class="ai-total-label">总热量</div>
-          <div>
-            <span class="ai-total-calories" id="ai-total-calories">0</span>
-            <span class="ai-total-unit">千卡 (kcal)</span>
-          </div>
+        <div class="ai-total-display" id="ai-total-display" style="display: none;">
+          <div class="ai-total-number" id="ai-total-number">0</div>
+          <div class="ai-calculated-label">千卡</div>
         </div>
-        <button class="ai-apply-btn" onclick="applyAIResult()">✓ 应用此结果到热量输入</button>
+        <button class="ai-apply-btn" onclick="applyAITextResult()">✓ 应用此热量值</button>
       </div>
-<label class="form-label">热量 (kcal)</label>
-        <input type="number" class="form-input calories-input" id="food-calories" placeholder="0">
+
+      <div class="form-group">
+        <label class="form-label">热量 (kcal) <span class="required">*</span></label>
+        <input type="number" class="form-input calories-input" id="food-calories" placeholder="例如：350">
       </div>
       <button class="submit-btn" onclick="saveFood()">保存</button>
     </div>
@@ -468,77 +334,197 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
     </div>
     <div class="modal-body">
       <div class="form-group">
-        <label class="form-label">运动名称<span class="required">*</span></label>
-        <input type="text" class="form-input" id="exercise-name" placeholder="例如：晨跑、游泳、瑜伽">
+        <label class="form-label">运动名称 <span class="required">*</span></label>
+        <input type="text" class="form-input" id="exercise-name" placeholder="例如：跑步、游泳">
       </div>
       <div class="form-group">
-        <label class="form-label">运动类型（可选）</label>
+        <label class="form-label">运动类型</label>
         <select class="form-select" id="exercise-type" onchange="calculateExerciseCalories()">
-          <option value="">选择运动类型（用于自动计算热量）</option>
+          <option value="" data-calories="0">-- 选择运动类型 --</option>
           <option value="running" data-calories="10">跑步 (10 kcal/分钟)</option>
           <option value="walking" data-calories="4">快走 (4 kcal/分钟)</option>
           <option value="cycling" data-calories="8">骑行 (8 kcal/分钟)</option>
           <option value="swimming" data-calories="12">游泳 (12 kcal/分钟)</option>
           <option value="yoga" data-calories="3">瑜伽 (3 kcal/分钟)</option>
-          <option value="strength" data-calories="6">力量训练 (6 kcal/分钟)</option>
           <option value="hiit" data-calories="15">HIIT (15 kcal/分钟)</option>
-          <option value="dancing" data-calories="7">跳舞 (7 kcal/分钟)</option>
-          <option value="hiking" data-calories="9">徒步 (9 kcal/分钟)</option>
+          <option value="weightlifting" data-calories="6">力量训练 (6 kcal/分钟)</option>
         </select>
       </div>
       <div class="form-group">
-        <label class="form-label">运动时长 (分钟)</label>
-        <input type="number" class="form-input" id="exercise-duration" placeholder="30" oninput="calculateExerciseCalories()">
+        <label class="form-label">运动时长 (分钟) <span class="required">*</span></label>
+        <input type="number" class="form-input" id="exercise-duration" placeholder="例如：30" onchange="calculateExerciseCalories()">
       </div>
       <div class="form-group">
         <label class="form-label">消耗热量 (kcal)</label>
-        <input type="number" class="form-input calories-input" id="exercise-calories" placeholder="0" style="background: linear-gradient(135deg, #FF6B6B20 0%, #FF8E8E20 100%); border-color: #FF6B6B;">
+        <input type="number" class="form-input calories-input" id="exercise-calories" placeholder="自动计算或手动输入">
       </div>
-      <button class="submit-btn exercise" onclick="saveExercise()">添加运动</button>
+      <button class="submit-btn exercise" onclick="saveExercise()">保存</button>
     </div>
   </div>
 </div>
 
 <script>
-// Data storage
-let records = {};
-let dailyGoal = 2000;
+// ========== 全局变量 ==========
 let currentDate = new Date();
-let currentMealType = '';
 let calendarDate = new Date();
+let currentMealType = '';
+let currentImageBase64 = null;
+let currentAIResult = null;
 
-// Initialize
+const KIMI_API_KEY = 'sk-pkLWsDjQvOo3hh4UKWJZUH8uzC1tRITm4O0AVhQF8kapFHU4';
+const KIMI_API_URL = 'https://api.moonshot.cn/v1/chat/completions';
+
+// ========== 初始化 ==========
 function init() {
   loadData();
   renderAll();
   updateTodayTabTitle();
+  
+  // 阻止全局拖拽默认行为
+  ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+    document.body.addEventListener(eventName, (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+    }, false);
+  });
 }
 
-// Data persistence
-function saveData() {
-  localStorage.setItem('calorieTrackerData', JSON.stringify({
-    records,
-    dailyGoal
-  }));
-}
+// ========== 数据管理 ==========
+let records = {};
+let dailyGoal = 2000;
 
 function loadData() {
-  const saved = localStorage.getItem('calorieTrackerData');
+  const saved = localStorage.getItem('calorieTracker');
   if (saved) {
     const data = JSON.parse(saved);
     records = data.records || {};
     dailyGoal = data.dailyGoal || 2000;
   }
+  const savedWeight = localStorage.getItem('currentWeight');
+  if (savedWeight) {
+    document.getElementById('current-weight').textContent = savedWeight;
+  }
 }
 
-// Utility functions
+function saveData() {
+  localStorage.setItem('calorieTracker', JSON.stringify({ records, dailyGoal }));
+}
+
+// ========== 视图切换 ==========
+function switchView(view) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  
+  document.getElementById(view + '-view').classList.add('active');
+  document.getElementById('tab-' + view).classList.add('active');
+  
+  if (view === 'calendar') renderCalendar();
+}
+
+// ========== 渲染 ==========
+function renderAll() {
+  const dateKey = formatDateKey(currentDate);
+  const dayRecords = records[dateKey] || { breakfast: [], lunch: [], dinner: [], snack: [], exercises: [] };
+  
+  renderMealList('breakfast', dayRecords.breakfast || []);
+  renderMealList('lunch', dayRecords.lunch || []);
+  renderMealList('dinner', dayRecords.dinner || []);
+  renderMealList('snack', dayRecords.snack || []);
+  renderExerciseList(dayRecords.exercises || []);
+  
+  updateSummary(dayRecords);
+}
+
+function renderMealList(mealType, items) {
+  const container = document.getElementById(mealType + '-list');
+  const caloriesEl = document.getElementById(mealType + '-calories');
+  
+  let totalCalories = 0;
+  container.innerHTML = '';
+  
+  if (items.length === 0) {
+    container.innerHTML = '<div class="empty-item">点击 + 添加食物</div>';
+  } else {
+    items.forEach((item, index) => {
+      totalCalories += item.calories || 0;
+      const div = document.createElement('div');
+      div.className = 'item';
+      div.innerHTML = `
+        <div class="item-icon">🍽️</div>
+        <div class="item-info">
+          <div class="item-name">${escapeHtml(item.name)}</div>
+          <div class="item-detail">${escapeHtml(item.description || '')}</div>
+        </div>
+        <div class="item-calories">${item.calories} kcal</div>
+        <button class="delete-btn" onclick="deleteFoodItem('${mealType}', ${index})">×</button>
+      `;
+      container.appendChild(div);
+    });
+  }
+  
+  if (caloriesEl) caloriesEl.textContent = totalCalories + ' kcal';
+}
+
+function renderExerciseList(exercises) {
+  const container = document.getElementById('exercise-list');
+  const totalEl = document.getElementById('exercise-total');
+  
+  let totalCalories = 0;
+  container.innerHTML = '';
+  
+  if (!exercises || exercises.length === 0) {
+    container.innerHTML = '<div style="text-align: center; padding: 20px; opacity: 0.7;">点击 + 添加运动记录</div>';
+  } else {
+    exercises.forEach((item, index) => {
+      totalCalories += item.calories || 0;
+      const div = document.createElement('div');
+      div.className = 'exercise-item';
+      div.innerHTML = `
+        <div class="exercise-item-info">
+          <div class="exercise-item-name">${escapeHtml(item.name)}</div>
+          <div class="exercise-item-detail">${item.duration} 分钟</div>
+        </div>
+        <div style="display: flex; align-items: center;">
+          <div class="exercise-item-calories">-${item.calories} kcal</div>
+          <button class="exercise-delete-btn" onclick="deleteExerciseItem(${index})">×</button>
+        </div>
+      `;
+      container.appendChild(div);
+    });
+  }
+  
+  if (totalEl) totalEl.textContent = totalCalories + ' kcal';
+}
+
+function updateSummary(dayRecords) {
+  let totalIntake = 0;
+  ['breakfast', 'lunch', 'dinner', 'snack'].forEach(mealType => {
+    const items = dayRecords[mealType] || [];
+    items.forEach(item => { totalIntake += item.calories || 0; });
+  });
+  
+  let totalExercise = 0;
+  (dayRecords.exercises || []).forEach(item => { totalExercise += item.calories || 0; });
+  
+  const netCalories = totalIntake - totalExercise;
+  const remaining = Math.max(dailyGoal - netCalories, 0);
+  
+  document.getElementById('current-calories').textContent = netCalories;
+  document.getElementById('goal-calories').textContent = dailyGoal;
+  document.getElementById('goal-progress-fill').style.width = `${Math.min((netCalories / dailyGoal) * 100, 100)}%`;
+  document.getElementById('stat-intake').textContent = totalIntake;
+  document.getElementById('stat-exercise').textContent = totalExercise;
+  document.getElementById('stat-remaining').textContent = remaining;
+}
+
+// ========== 工具函数 ==========
 function formatDateKey(date) {
-  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+  return date.getFullYear() + '-' + String(date.getMonth() + 1).padStart(2, '0') + '-' + String(date.getDate()).padStart(2, '0');
 }
 
-function getMealName(type) {
-  const names = { breakfast: '早餐', lunch: '午餐', dinner: '晚餐', snack: '加餐' };
-  return names[type] || type;
+function escapeHtml(text) {
+  if (!text) return '';
+  return text.replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[m]);
 }
 
 function showToast(message) {
@@ -549,245 +535,38 @@ function showToast(message) {
   setTimeout(() => {
     toast.style.opacity = '0';
     toast.style.transform = 'translateX(-50%) translateY(100px)';
-  }, 2500);
+  }, 2000);
 }
 
-// View switching
-function switchView(view) {
-  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-  document.getElementById(`${view}-view`).classList.add('active');
-  
-  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-  document.getElementById(`tab-${view}`).classList.add('active');
-  
-  if (view === 'today') renderAll();
-  if (view === 'calendar') renderCalendar();
-}
-
-function updateTodayTabTitle() {
-  const tab = document.getElementById('tab-today');
-  const today = new Date();
-  const isToday = formatDateKey(currentDate) === formatDateKey(today);
-  tab.textContent = isToday ? '今日' : `${currentDate.getMonth() + 1}.${currentDate.getDate()}`;
-}
-
-// Daily goal
-function editDailyGoal() {
-  const newGoal = prompt('请输入每日目标热量 (kcal):', dailyGoal);
-  if (newGoal && !isNaN(newGoal) && parseInt(newGoal) > 0) {
-    dailyGoal = parseInt(newGoal);
-    saveData();
-    renderAll();
-    showToast(`每日目标已更新: ${dailyGoal} kcal`);
-  }
-}
-
-// Main render function
-function renderAll() {
-  const dateKey = formatDateKey(currentDate);
-  const dayRecords = records[dateKey] || { breakfast: [], lunch: [], dinner: [], snack: [], exercises: [] };
-  
-  // Calculate totals
-  let totalIntake = 0;
-  let totalExercise = 0;
-  
-  // Render meals
-  ['breakfast', 'lunch', 'dinner', 'snack'].forEach(mealType => {
-    const items = dayRecords[mealType] || [];
-    let mealCalories = 0;
-    items.forEach(item => { mealCalories += item.calories || 0; });
-    totalIntake += mealCalories;
-    
-    const caloriesEl = document.getElementById(`${mealType}-calories`);
-    const itemsEl = document.getElementById(`${mealType}-items`);
-    
-    if (caloriesEl) caloriesEl.textContent = `${mealCalories} kcal`;
-    
-    if (itemsEl) {
-      if (items.length === 0) {
-        itemsEl.innerHTML = `<div class="empty-item">点击 + 添加${getMealName(mealType)}记录</div>`;
-      } else {
-        itemsEl.innerHTML = items.map((item, index) => `
-          <div class="item">
-            <div class="item-icon">🍽️</div>
-            <div class="item-info">
-              <div class="item-name">${item.name || '未命名'}</div>
-              <div class="item-detail">${item.description || ''}</div>
-            </div>
-            <div class="item-calories">${item.calories || 0} kcal</div>
-            <button class="delete-btn" onclick="deleteFoodItem('${mealType}', ${index})" title="删除">×</button>
-          </div>
-        `).join('');
-      }
-    }
-  });
-  
-  // Render exercises
-  const exercises = dayRecords.exercises || [];
-  totalExercise = exercises.reduce((sum, ex) => sum + (ex.calories || 0), 0);
-  
-  const exerciseTotalEl = document.getElementById('exercise-total');
-  const exerciseListEl = document.getElementById('exercise-list');
-  
-  if (exerciseTotalEl) exerciseTotalEl.textContent = `${totalExercise} kcal`;
-  
-  if (exerciseListEl) {
-    if (exercises.length === 0) {
-      exerciseListEl.innerHTML = '<div class="empty-item" style="color: rgba(255,255,255,0.8);">点击 + 添加运动记录</div>';
-    } else {
-      exerciseListEl.innerHTML = exercises.map((ex, index) => `
-        <div class="exercise-item">
-          <div class="exercise-item-info">
-            <div class="exercise-item-name">${ex.name || '未命名运动'}</div>
-            <div class="exercise-item-detail">${ex.duration || 0} 分钟${ex.typeName ? ' · ' + ex.typeName : ''}</div>
-          </div>
-          <div style="display: flex; align-items: center;">
-            <div class="exercise-item-calories">${ex.calories || 0} kcal</div>
-            <button class="exercise-delete-btn" onclick="deleteExerciseItem(${index})" title="删除">×</button>
-          </div>
-        </div>
-      `).join('');
-    }
-  }
-  
-  // Update daily goal display
-  const netCalories = totalIntake - totalExercise;
-  const remaining = Math.max(dailyGoal - netCalories, 0);
-  
-  document.getElementById('current-calories').textContent = netCalories;
-  document.getElementById('goal-calories').textContent = dailyGoal;
-  document.getElementById('goal-progress-fill').style.width = `${Math.min((netCalories / dailyGoal) * 100, 100)}%`;
-  document.getElementById('stat-intake').textContent = totalIntake;
-  document.getElementById('stat-exercise').textContent = totalExercise;
-  document.getElementById('stat-remaining').textContent = remaining;
-  
-  updateTodayTabTitle();
-}
-
-// Delete functions
-function deleteFoodItem(mealType, index) {
-  if (!confirm('确定要删除这条记录吗？')) return;
-  
-  const dateKey = formatDateKey(currentDate);
-  if (records[dateKey] && records[dateKey][mealType]) {
-    records[dateKey][mealType].splice(index, 1);
-    saveData();
-    renderAll();
-    showToast('已删除');
-  }
-}
-
-function deleteExerciseItem(index) {
-  if (!confirm('确定要删除这条运动记录吗？')) return;
-  
-  const dateKey = formatDateKey(currentDate);
-  if (records[dateKey] && records[dateKey].exercises) {
-    records[dateKey].exercises.splice(index, 1);
-    saveData();
-    renderAll();
-    showToast('运动记录已删除');
-  }
-}
-
-// Exercise functions
-function openExerciseModal() {
-  document.getElementById('exercise-modal').classList.add('active');
-  // Reset form
-  document.getElementById('exercise-name').value = '';
-  document.getElementById('exercise-type').value = '';
-  document.getElementById('exercise-duration').value = '';
-  document.getElementById('exercise-calories').value = '';
-}
-
-function closeExerciseModal() {
-  document.getElementById('exercise-modal').classList.remove('active');
-}
-
-function calculateExerciseCalories() {
-  const typeSelect = document.getElementById('exercise-type');
-  const duration = parseInt(document.getElementById('exercise-duration').value) || 0;
-  const selectedOption = typeSelect.options[typeSelect.selectedIndex];
-  const caloriesPerMinute = parseInt(selectedOption.dataset.calories) || 0;
-  
-  const totalCalories = caloriesPerMinute * duration;
-  document.getElementById('exercise-calories').value = totalCalories > 0 ? totalCalories : '';
-}
-
-function saveExercise() {
-  const name = document.getElementById('exercise-name').value.trim();
-  const typeSelect = document.getElementById('exercise-type');
-  const typeValue = typeSelect.value;
-  const typeName = typeSelect.options[typeSelect.selectedIndex].text.split(' ')[0] || '';
-  const duration = parseInt(document.getElementById('exercise-duration').value) || 0;
-  const calories = parseInt(document.getElementById('exercise-calories').value) || 0;
-  
-  // 验证运动名称（必填）
-  if (!name) {
-    showToast('请输入运动名称');
-    return;
-  }
-  if (duration <= 0) {
-    showToast('请输入有效的运动时长');
-    return;
-  }
-  
-  const dateKey = formatDateKey(currentDate);
-  if (!records[dateKey]) {
-    records[dateKey] = { breakfast: [], lunch: [], dinner: [], snack: [], exercises: [] };
-  }
-  if (!records[dateKey].exercises) {
-    records[dateKey].exercises = [];
-  }
-  
-  records[dateKey].exercises.push({
-    name: name,
-    type: typeValue,
-    typeName: typeValue ? typeName : '',
-    duration: duration,
-    calories: calories,
-    timestamp: Date.now()
-  });
-  
-  saveData();
-  closeExerciseModal();
-  renderAll();
-  showToast('运动记录已添加');
-}
-
-// Food functions
+// ========== 食物管理 ==========
 function openFoodModal(mealType) {
   currentMealType = mealType;
   document.getElementById('modal-title').textContent = `添加${getMealName(mealType)}`;
   document.getElementById('food-modal').classList.add('active');
-  // Reset form
+  
+  // 重置表单
   document.getElementById('food-name').value = '';
   document.getElementById('food-desc').value = '';
   document.getElementById('food-calories').value = '';
   
-  // 重置图片上传
-  currentImageBase64 = null;
-  const uploadArea = document.getElementById('image-upload-area');
-  const placeholder = document.getElementById('upload-placeholder');
-  const previewImg = document.getElementById('preview-image');
-  const removeBtn = document.getElementById('remove-image-btn');
-  const fileInput = document.getElementById('food-image-input');
+  // 重置图片
+  resetImageUpload();
   
-  if (uploadArea) uploadArea.classList.remove('has-image');
-  if (placeholder) placeholder.style.display = 'flex';
-  if (previewImg) {
-    previewImg.src = '';
-    previewImg.style.display = 'none';
-  }
-  if (removeBtn) removeBtn.style.display = 'none';
-  if (fileInput) fileInput.value = '';
+  // 重置AI结果区域
+  resetAIResult();
   
-  // 初始化拖拽上传
+  // 初始化拖拽
   setTimeout(initDragAndDrop, 100);
 }
 
 function closeFoodModal() {
   document.getElementById('food-modal').classList.remove('active');
   currentMealType = '';
+}
+
+function getMealName(type) {
+  const names = { breakfast: '早餐', lunch: '午餐', dinner: '晚餐', snack: '加餐' };
+  return names[type] || '食物';
 }
 
 function saveFood() {
@@ -822,7 +601,330 @@ function saveFood() {
   showToast('食物已添加');
 }
 
-// Calendar functions
+// ========== 图片上传功能 ==========
+function handleImageSelect(event) {
+  const file = event.target.files[0];
+  if (file) handleImageFile(file);
+}
+
+function handleImageFile(file) {
+  if (!file.type.startsWith('image/')) {
+    showToast('请上传图片文件');
+    return;
+  }
+  if (file.size > 5 * 1024 * 1024) {
+    showToast('图片大小不能超过5MB');
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    currentImageBase64 = e.target.result;
+    showImagePreview(currentImageBase64);
+  };
+  reader.readAsDataURL(file);
+}
+
+function showImagePreview(base64) {
+  document.getElementById('image-upload-area').classList.add('has-image');
+  document.getElementById('upload-placeholder').style.display = 'none';
+  document.getElementById('preview-image').src = base64;
+  document.getElementById('preview-image').style.display = 'block';
+  document.getElementById('remove-image-btn').style.display = 'flex';
+}
+
+function removeImage(event) {
+  event.stopPropagation();
+  resetImageUpload();
+}
+
+function resetImageUpload() {
+  currentImageBase64 = null;
+  document.getElementById('image-upload-area').classList.remove('has-image');
+  document.getElementById('upload-placeholder').style.display = 'flex';
+  document.getElementById('preview-image').src = '';
+  document.getElementById('preview-image').style.display = 'none';
+  document.getElementById('remove-image-btn').style.display = 'none';
+  document.getElementById('food-image-input').value = '';
+}
+
+function initDragAndDrop() {
+  const uploadArea = document.getElementById('image-upload-area');
+  if (!uploadArea) return;
+  
+  ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+    uploadArea.addEventListener(eventName, (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+    }, false);
+  });
+  
+  uploadArea.addEventListener('dragenter', () => uploadArea.classList.add('drag-over'));
+  uploadArea.addEventListener('dragleave', (e) => {
+    if (!uploadArea.contains(e.relatedTarget)) uploadArea.classList.remove('drag-over');
+  });
+  uploadArea.addEventListener('drop', (e) => {
+    uploadArea.classList.remove('drag-over');
+    const files = e.dataTransfer.files;
+    if (files.length > 0) handleImageFile(files[0]);
+  });
+}
+
+// ========== AI 识别功能（纯文本格式） ==========
+async function recognizeCaloriesWithAI() {
+  const name = document.getElementById('food-name').value.trim();
+  const description = document.getElementById('food-desc').value.trim();
+  const btn = document.getElementById('ai-recognize-btn');
+  
+  if (!name && !description && !currentImageBase64) {
+    showToast('请至少输入食物名称、描述或上传图片');
+    return;
+  }
+  
+  btn.disabled = true;
+  btn.innerHTML = '<div class="spinner"></div><span>AI 识别中...</span>';
+  
+  try {
+    let promptText = "你是一个专业营养师。请分析这份食物，列出每样食材的名称、估算重量和对应热量。\n\n";
+    
+    if (name) promptText += "食物名称: " + name + "\n";
+    if (description) promptText += "食材描述: " + description + "\n";
+    
+    promptText += "\n请按以下格式返回分析结果（参考《中国食物成分表》数据，按常规餐厅/食堂份量估算）：\n\n";
+    promptText += "### 食物热量分析\n\n";
+    promptText += "| 食材名称 | 估算重量 | 热量(千卡) |\n";
+    promptText += "|---------|---------|-----------|\n";
+    promptText += "| 米饭 | 150g | 195 |\n";
+    promptText += "| 鸡胸肉 | 100g | 133 |\n";
+    promptText += "| ... | ... | ... |\n\n";
+    promptText += "**总热量：约 XXX 千卡**\n\n";
+    promptText += "估算说明：\n";
+    promptText += "- 主食类按熟重计算\n";
+    promptText += "- 肉类按可食部分计算\n";
+    promptText += "- 蔬菜类热量较低\n";
+    promptText += "- 烹饪用油已计入\n\n";
+    promptText += "请根据实际图片和描述，给出最合理的估算。";
+
+    let messages = [{
+      role: "system",
+      content: "你是一个专业的营养师，擅长分析食物成分和计算热量。请用清晰的表格格式列出每样食材的热量分析。"
+    }];
+    
+    if (currentImageBase64) {
+      messages.push({
+        role: "user",
+        content: [
+          { type: "image_url", image_url: { url: currentImageBase64 } },
+          { type: "text", text: promptText }
+        ]
+      });
+    } else {
+      messages.push({ role: "user", content: promptText });
+    }
+    
+    let response = await fetch(KIMI_API_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + KIMI_API_KEY
+      },
+      body: JSON.stringify({
+        model: "kimi-k2.5",
+        messages: messages,
+        max_tokens: 2000
+      })
+    });
+    
+    if (!response.ok) {
+      let errorText = await response.text();
+      console.error("API 错误:", errorText);
+      throw new Error("API 请求失败: " + response.status);
+    }
+    
+    let data = await response.json();
+    let aiResponse = data.choices[0].message.content;
+    
+    // 显示纯文本结果
+    displayAITextResult(aiResponse);
+    showToast("AI 识别完成！");
+    
+  } catch (error) {
+    console.error("AI 识别失败:", error);
+    showToast("AI 识别失败: " + error.message);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '<span>✨</span><span>AI 智能识别热量</span>';
+  }
+}
+
+// 显示纯文本AI结果
+function displayAITextResult(text) {
+  const container = document.getElementById('ai-text-result-container');
+  const textarea = document.getElementById('ai-text-edit-area');
+  
+  textarea.value = text;
+  container.classList.add('show');
+  
+  // 尝试自动计算总热量
+  calculateTotalFromText();
+}
+
+// 从文本中计算总热量
+function calculateTotalFromText() {
+  const text = document.getElementById('ai-text-edit-area').value;
+  const totalDisplay = document.getElementById('ai-total-display');
+  const totalNumber = document.getElementById('ai-total-number');
+  
+  // 尝试从文本中提取总热量
+  // 匹配格式：总热量：约 XXX 千卡 或 总计.*XXX.*千卡
+  let total = 0;
+  
+  // 查找"总热量"或"总计"
+  const totalMatch = text.match(/总[热量计].*?[:：]\s*约?\s*(\d+)/i);
+  if (totalMatch) {
+    total = parseInt(totalMatch[1]);
+  } else {
+    // 尝试匹配表格中的热量列并求和
+    const calorieMatches = text.match(/(\d+)\s*kcal/gi);
+    if (calorieMatches) {
+      total = calorieMatches.reduce((sum, match) => {
+        const num = parseInt(match.match(/\d+/)[0]);
+        return sum + num;
+      }, 0);
+    }
+  }
+  
+  if (total > 0) {
+    totalNumber.textContent = total;
+    totalDisplay.style.display = 'block';
+    currentAIResult = { totalCalories: total };
+  } else {
+    totalDisplay.style.display = 'none';
+  }
+}
+
+// 应用AI文本结果
+function applyAITextResult() {
+  const totalNumber = document.getElementById('ai-total-number');
+  const total = parseInt(totalNumber.textContent) || 0;
+  
+  if (total <= 0) {
+    showToast('请先计算总热量');
+    return;
+  }
+  
+  const caloriesInput = document.getElementById('food-calories');
+  caloriesInput.value = total;
+  
+  // 高亮显示
+  caloriesInput.style.background = 'var(--primary-light)';
+  setTimeout(() => {
+    caloriesInput.style.background = '';
+  }, 500);
+  
+  showToast('AI 识别结果已应用：' + total + ' 千卡');
+}
+
+// 重置AI结果区域
+function resetAIResult() {
+  currentAIResult = null;
+  const container = document.getElementById('ai-text-result-container');
+  const textarea = document.getElementById('ai-text-edit-area');
+  const totalDisplay = document.getElementById('ai-total-display');
+  
+  if (container) container.classList.remove('show');
+  if (textarea) textarea.value = '';
+  if (totalDisplay) totalDisplay.style.display = 'none';
+}
+
+// ========== 删除功能 ==========
+function deleteFoodItem(mealType, index) {
+  if (!confirm('确定要删除这条记录吗？')) return;
+  
+  const dateKey = formatDateKey(currentDate);
+  if (records[dateKey] && records[dateKey][mealType]) {
+    records[dateKey][mealType].splice(index, 1);
+    saveData();
+    renderAll();
+    showToast('已删除');
+  }
+}
+
+function deleteExerciseItem(index) {
+  if (!confirm('确定要删除这条运动记录吗？')) return;
+  
+  const dateKey = formatDateKey(currentDate);
+  if (records[dateKey] && records[dateKey].exercises) {
+    records[dateKey].exercises.splice(index, 1);
+    saveData();
+    renderAll();
+    showToast('运动记录已删除');
+  }
+}
+
+// ========== 运动功能 ==========
+function openExerciseModal() {
+  document.getElementById('exercise-modal').classList.add('active');
+  document.getElementById('exercise-name').value = '';
+  document.getElementById('exercise-type').value = '';
+  document.getElementById('exercise-duration').value = '';
+  document.getElementById('exercise-calories').value = '';
+}
+
+function closeExerciseModal() {
+  document.getElementById('exercise-modal').classList.remove('active');
+}
+
+function calculateExerciseCalories() {
+  const typeSelect = document.getElementById('exercise-type');
+  const duration = parseInt(document.getElementById('exercise-duration').value) || 0;
+  const selectedOption = typeSelect.options[typeSelect.selectedIndex];
+  const caloriesPerMinute = parseInt(selectedOption.dataset.calories) || 0;
+  
+  const totalCalories = caloriesPerMinute * duration;
+  document.getElementById('exercise-calories').value = totalCalories > 0 ? totalCalories : '';
+}
+
+function saveExercise() {
+  const name = document.getElementById('exercise-name').value.trim();
+  const typeSelect = document.getElementById('exercise-type');
+  const typeValue = typeSelect.value;
+  const typeName = typeSelect.options[typeSelect.selectedIndex].text.split(' ')[0] || '';
+  const duration = parseInt(document.getElementById('exercise-duration').value) || 0;
+  const calories = parseInt(document.getElementById('exercise-calories').value) || 0;
+  
+  if (!name) {
+    showToast('请输入运动名称');
+    return;
+  }
+  if (duration <= 0) {
+    showToast('请输入有效的运动时长');
+    return;
+  }
+  
+  const dateKey = formatDateKey(currentDate);
+  if (!records[dateKey]) {
+    records[dateKey] = { breakfast: [], lunch: [], dinner: [], snack: [], exercises: [] };
+  }
+  if (!records[dateKey].exercises) {
+    records[dateKey].exercises = [];
+  }
+  
+  records[dateKey].exercises.push({
+    name: name,
+    type: typeValue,
+    typeName: typeValue ? typeName : '',
+    duration: duration,
+    calories: calories,
+    timestamp: Date.now()
+  });
+  
+  saveData();
+  closeExerciseModal();
+  renderAll();
+  showToast('运动记录已添加');
+}
+
+// ========== 日历功能 ==========
 function renderCalendar() {
   const year = calendarDate.getFullYear();
   const month = calendarDate.getMonth();
@@ -835,13 +937,11 @@ function renderCalendar() {
   const daysContainer = document.getElementById('calendar-days');
   daysContainer.innerHTML = '';
   
-  // Empty cells for days before the first day of month
   for (let i = 0; i < firstDay; i++) {
     const emptyCell = document.createElement('div');
     daysContainer.appendChild(emptyCell);
   }
   
-  // Days of the month
   const today = new Date();
   const todayKey = formatDateKey(today);
   
@@ -879,10 +979,10 @@ function selectDate(date) {
   switchView('today');
 }
 
-// Weight function
+// ========== 体重功能 ==========
 function recordWeight() {
   const currentWeight = document.getElementById('current-weight').textContent;
-  const newWeight = prompt('请输入当前体重 (kg):', currentWeight);
+  const newWeight = prompt('请输入当前体重 (kg):', currentWeight === '--' ? '' : currentWeight);
   if (newWeight && !isNaN(newWeight) && parseFloat(newWeight) > 0) {
     document.getElementById('current-weight').textContent = parseFloat(newWeight).toFixed(1);
     localStorage.setItem('currentWeight', newWeight);
@@ -890,408 +990,24 @@ function recordWeight() {
   }
 }
 
-// Initialize
+// ========== 每日目标 ==========
+function editDailyGoal() {
+  const newGoal = prompt('请输入每日目标热量 (kcal):', dailyGoal);
+  if (newGoal && !isNaN(newGoal) && parseInt(newGoal) > 0) {
+    dailyGoal = parseInt(newGoal);
+    saveData();
+    renderAll();
+    showToast(`每日目标已更新为: ${dailyGoal} kcal`);
+  }
+}
+
+// ========== 点击外部关闭弹窗 ==========
+document.getElementById('food-modal').addEventListener('click', function(e) {
+  if (e.target === this) closeFoodModal();
+});
+document.getElementById('exercise-modal').addEventListener('click', function(e) {
+  if (e.target === this) closeExerciseModal();
+});
+
+// ========== 初始化 ==========
 document.addEventListener('DOMContentLoaded', init);
-
-// 阻止全局拖拽默认行为，防止浏览器打开拖入的图片
-['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-  document.body.addEventListener(eventName, (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-  }, false);
-});
-// 阻止全局拖拽默认行为，防止浏览器打开拖入的图片
-['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-  document.body.addEventListener(eventName, (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-  }, false);
-});
-
-
-// Close modals when clicking outside
-['food-modal', 'exercise-modal'].forEach(id => {
-  document.getElementById(id).addEventListener('click', function(e) {
-    if (e.target === this) {
-      if (id === 'food-modal') closeFoodModal();
-      if (id === 'exercise-modal') closeExerciseModal();
-    }
-  });
-});
-
-// ========== 图片上传功能 ==========
-let currentImageBase64 = null;
-
-function handleImageSelect(event) {
-  const file = event.target.files[0];
-  if (file) {
-    handleImageFile(file);
-  }
-}
-
-function handleImageFile(file) {
-  if (!file.type.startsWith('image/')) {
-    showToast('请上传图片文件');
-    return;
-  }
-  if (file.size > 5 * 1024 * 1024) {
-    showToast('图片大小不能超过5MB');
-    return;
-  }
-  const reader = new FileReader();
-  reader.onload = function(e) {
-    currentImageBase64 = e.target.result;
-    showImagePreview(currentImageBase64);
-  };
-  reader.readAsDataURL(file);
-}
-
-function showImagePreview(base64) {
-  const uploadArea = document.getElementById('image-upload-area');
-  const placeholder = document.getElementById('upload-placeholder');
-  const previewImg = document.getElementById('preview-image');
-  const removeBtn = document.getElementById('remove-image-btn');
-  
-  uploadArea.classList.add('has-image');
-  placeholder.style.display = 'none';
-  previewImg.src = base64;
-  previewImg.style.display = 'block';
-  removeBtn.style.display = 'flex';
-}
-
-function removeImage(event) {
-  event.stopPropagation();
-  currentImageBase64 = null;
-  
-  const uploadArea = document.getElementById('image-upload-area');
-  const placeholder = document.getElementById('upload-placeholder');
-  const previewImg = document.getElementById('preview-image');
-  const removeBtn = document.getElementById('remove-image-btn');
-  const fileInput = document.getElementById('food-image-input');
-  
-  uploadArea.classList.remove('has-image');
-  placeholder.style.display = 'flex';
-  previewImg.src = '';
-  previewImg.style.display = 'none';
-  removeBtn.style.display = 'none';
-  fileInput.value = '';
-}
-// 初始化拖拽上传功能
-function initDragAndDrop() {
-  const uploadArea = document.getElementById('image-upload-area');
-  if (!uploadArea) return;
-  
-  // 阻止默认拖拽行为
-  ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-    uploadArea.addEventListener(eventName, (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-    }, false);
-  });
-  
-  // 拖拽进入效果
-  uploadArea.addEventListener('dragenter', () => {
-    uploadArea.classList.add('drag-over');
-  });
-  
-  // 拖拽离开效果
-  uploadArea.addEventListener('dragleave', (e) => {
-    // 检查是否真的离开了元素
-    if (!uploadArea.contains(e.relatedTarget)) {
-      uploadArea.classList.remove('drag-over');
-    }
-  });
-  
-  // 处理拖放的文件
-  uploadArea.addEventListener('drop', (e) => {
-    uploadArea.classList.remove('drag-over');
-    const files = e.dataTransfer.files;
-    if (files.length > 0) {
-      handleImageFile(files[0]);
-    }
-  });
-}
-
-
-// ========== AI 识别热量功能 ==========
-const KIMI_API_KEY = 'sk-pkLWsDjQvOo3hh4UKWJZUH8uzC1tRITm4O0AVhQF8kapFHU4';
-const KIMI_API_URL = 'https://api.moonshot.cn/v1/chat/completions';
-
-let currentAIResult = null;
-
-// 初始化拖拽上传功能
-function initDragAndDrop() {
-  const uploadArea = document.getElementById('image-upload-area');
-  if (!uploadArea) return;
-  
-  ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-    uploadArea.addEventListener(eventName, (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-    }, false);
-  });
-  
-  uploadArea.addEventListener('dragenter', () => {
-    uploadArea.classList.add('drag-over');
-  });
-  
-  uploadArea.addEventListener('dragleave', (e) => {
-    if (!uploadArea.contains(e.relatedTarget)) {
-      uploadArea.classList.remove('drag-over');
-    }
-  });
-  
-  uploadArea.addEventListener('drop', (e) => {
-    uploadArea.classList.remove('drag-over');
-    const files = e.dataTransfer.files;
-    if (files.length > 0) {
-      handleImageFile(files[0]);
-    }
-  });
-}
-
-// 处理图片选择
-function handleImageSelect(event) {
-  const file = event.target.files[0];
-  if (file) {
-    handleImageFile(file);
-  }
-}
-
-// 处理图片文件
-function handleImageFile(file) {
-  if (!file.type.startsWith('image/')) {
-    showToast('请上传图片文件');
-    return;
-  }
-  if (file.size > 5 * 1024 * 1024) {
-    showToast('图片大小不能超过5MB');
-    return;
-  }
-  const reader = new FileReader();
-  reader.onload = function(e) {
-    currentImageBase64 = e.target.result;
-    showImagePreview(currentImageBase64);
-  };
-  reader.readAsDataURL(file);
-}
-
-// 显示图片预览
-function showImagePreview(base64) {
-  const uploadArea = document.getElementById('image-upload-area');
-  const placeholder = document.getElementById('upload-placeholder');
-  const previewImg = document.getElementById('preview-image');
-  const removeBtn = document.getElementById('remove-image-btn');
-  
-  uploadArea.classList.add('has-image');
-  placeholder.style.display = 'none';
-  previewImg.src = base64;
-  previewImg.style.display = 'block';
-  removeBtn.style.display = 'flex';
-}
-
-// 删除图片
-function removeImage(event) {
-  event.stopPropagation();
-  currentImageBase64 = null;
-  
-  const uploadArea = document.getElementById('image-upload-area');
-  const placeholder = document.getElementById('upload-placeholder');
-  const previewImg = document.getElementById('preview-image');
-  const removeBtn = document.getElementById('remove-image-btn');
-  const fileInput = document.getElementById('food-image-input');
-  
-  uploadArea.classList.remove('has-image');
-  placeholder.style.display = 'flex';
-  previewImg.src = '';
-  previewImg.style.display = 'none';
-  removeBtn.style.display = 'none';
-  fileInput.value = '';
-}
-
-// AI 识别热量
-async function recognizeCaloriesWithAI() {
-  const name = document.getElementById('food-name').value.trim();
-  const description = document.getElementById('food-desc').value.trim();
-  const btn = document.getElementById('ai-recognize-btn');
-  
-  if (!name && !description && !currentImageBase64) {
-    showToast('请至少输入食物名称、描述或上传图片');
-    return;
-  }
-  
-  btn.disabled = true;
-  btn.innerHTML = '<div class="spinner"></div><span>AI 识别中...</span>';
-  
-  try {
-    // 构建提示词
-    var promptText = "你是一个专业营养师。请分析这份食物，按常规午餐/晚餐份量估算每种食材的重量，并计算热量。\n\n";
-    
-    if (name) {
-      promptText += "食物名称: " + name + "\n";
-    }
-    
-    if (description) {
-      promptText += "食材描述: " + description + "\n";
-    }
-    
-    promptText += "\n请按以下JSON格式返回，参考《中国食物成分表》数据，按常规餐厅/食堂份量估算：\n";
-    promptText += "{\n";
-    promptText += "  \"foods\": [\n";
-    promptText += "    {\n";
-    promptText += "      \"name\": \"食材名称(如: 米饭、鸡胸肉、青菜等)\",\n";
-    promptText += "      \"weight\": \"估算重量(如: 150g、100g等)\",\n";
-    promptText += "      \"calories\": 热量数值(整数)\n";
-    promptText += "    }\n";
-    promptText += "  ],\n";
-    promptText += "  \"totalCalories\": 总热量数值(整数),\n";
-    promptText += "  \"confidence\": 置信度(70-100)\n";
-    promptText += "}\n";
-    promptText += "\n估算参考：\n";
-    promptText += "- 主食(米饭/面条): 熟重约150g=195千卡\n";
-    promptText += "- 肉类(鸡胸/瘦肉): 100g=130-150千卡\n";
-    promptText += "- 蔬菜: 100g=20-30千卡\n";
-    promptText += "- 油脂: 每勺(10g)约90千卡";
-
-    // 准备消息
-    var messages = [
-      {
-        role: "system",
-        content: "你是一个专业的营养师，擅长分析食物成分和计算热量。请准确识别食物种类、估算重量并计算热量。"
-      }
-    ];
-    
-    // 如果有图片，添加图片
-    if (currentImageBase64) {
-      var imageUrl = currentImageBase64;
-      if (imageUrl.indexOf("data:") !== 0) {
-        imageUrl = "data:image/jpeg;base64," + imageUrl;
-      }
-      
-      messages.push({
-        role: "user",
-        content: [
-          {
-            type: "image_url",
-            image_url: { url: imageUrl }
-          },
-          { type: "text", text: promptText }
-        ]
-      });
-    } else {
-      messages.push({
-        role: "user",
-        content: promptText
-      });
-    }
-    
-    // 发送请求
-    var response = await fetch(KIMI_API_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer " + KIMI_API_KEY
-      },
-      body: JSON.stringify({
-        model: "kimi-k2.5",
-        messages: messages,
-        
-        max_tokens: 2000
-      })
-    });
-    
-    if (!response.ok) {
-      var errorText = await response.text();
-      console.error("API 错误:", errorText);
-      throw new Error("API 请求失败: " + response.status);
-    }
-    
-    var data = await response.json();
-    var aiResponse = data.choices[0].message.content;
-    
-    // 解析 JSON
-    var result;
-    try {
-      var jsonMatch = aiResponse.match(/\{[\s\S]*\}/);
-      if (jsonMatch) {
-        result = JSON.parse(jsonMatch[0]);
-      } else {
-        throw new Error("无法解析 AI 响应");
-      }
-    } catch (e) {
-      console.error("解析失败:", e);
-      showToast("AI 响应解析失败，请手动输入热量");
-      return;
-    }
-    
-    currentAIResult = result;
-    displayAIResult(result);
-    showToast("AI 识别完成！");
-    
-  } catch (error) {
-    console.error("AI 识别失败:", error);
-    showToast("AI 识别失败: " + error.message);
-  } finally {
-    btn.disabled = false;
-    btn.innerHTML = "<span>✨</span><span>AI 智能识别热量</span>";
-  }
-}
-
-// 显示 AI 识别结果
-function displayAIResult(result) {
-  var container = document.getElementById('ai-result-container');
-  var foodList = document.getElementById('ai-food-list');
-  var totalCalories = document.getElementById('ai-total-calories');
-  
-  foodList.innerHTML = '';
-  
-  if (result.foods && result.foods.length > 0) {
-    result.foods.forEach(function(food) {
-      var item = document.createElement('div');
-      item.className = 'ai-food-item';
-      item.innerHTML = 
-        '<div class="ai-food-info">' +
-          '<div class="ai-food-name">' + food.name + '</div>' +
-          '<div class="ai-food-weight">' + (food.weight || '标准份量') + '</div>' +
-        '</div>' +
-        '<div class="ai-food-calories">' + food.calories + ' kcal</div>';
-      foodList.appendChild(item);
-    });
-  }
-  
-  totalCalories.textContent = result.totalCalories || 0;
-  container.classList.add('show');
-}
-
-// 应用 AI 结果到热量输入
-function applyAIResult() {
-  if (!currentAIResult) {
-    showToast('请先进行 AI 识别');
-    return;
-  }
-  
-  var caloriesInput = document.getElementById('food-calories');
-  caloriesInput.value = currentAIResult.totalCalories || 0;
-  
-  caloriesInput.style.background = 'var(--primary-light)';
-  setTimeout(function() {
-    caloriesInput.style.background = '';
-  }, 500);
-  
-  showToast('AI 识别结果已应用到热量输入');
-}
-
-// 关闭弹窗时重置 AI 结果
-const originalCloseFoodModal = closeFoodModal;
-closeFoodModal = function() {
-  originalCloseFoodModal();
-  
-  currentAIResult = null;
-  var container = document.getElementById('ai-result-container');
-  if (container) {
-    container.classList.remove('show');
-  }
-};
-</script>
-</body>
-</html>
