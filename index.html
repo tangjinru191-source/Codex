@@ -145,6 +145,141 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 /* Hidden by default */
 .view { display: none; }
 .view.active { display: block; }
+
+/* AI 识别按钮样式 */
+.ai-recognize-btn {
+  width: 100%;
+  padding: 12px 16px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.3s;
+  margin-top: 12px;
+}
+.ai-recognize-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+.ai-recognize-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+.ai-recognize-btn .spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* AI 识别结果区域 */
+.ai-result-container {
+  margin-top: 16px;
+  padding: 16px;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  border-radius: 12px;
+  display: none;
+}
+.ai-result-container.show {
+  display: block;
+  animation: fadeIn 0.3s ease;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.ai-result-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+.ai-result-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+.ai-confidence {
+  font-size: 12px;
+  color: var(--primary);
+  background: white;
+  padding: 4px 10px;
+  border-radius: 20px;
+}
+.ai-food-list {
+  background: white;
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 12px;
+}
+.ai-food-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--divider);
+}
+.ai-food-item:last-child {
+  border-bottom: none;
+}
+.ai-food-name {
+  font-weight: 500;
+  font-size: 14px;
+}
+.ai-food-detail {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+.ai-food-calories {
+  font-weight: 600;
+  color: var(--primary);
+  font-size: 14px;
+}
+.ai-total-calories {
+  text-align: center;
+  padding: 12px;
+  background: white;
+  border-radius: 8px;
+}
+.ai-total-number {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--primary);
+}
+.ai-total-label {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-top: 4px;
+}
+.ai-apply-btn {
+  width: 100%;
+  padding: 10px;
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 12px;
+  transition: all 0.3s;
+}
+.ai-apply-btn:hover {
+  background: var(--primary-dark);
+}
 </style>
 </head>
 <body>
@@ -294,7 +429,28 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
         <input type="text" class="form-input" id="food-desc" placeholder="例如：200g鸡肉+生菜+番茄">
       </div>
       <div class="form-group" style="margin-top: 20px;">
-        <label class="form-label">热量 (kcal)</label>
+        
+      <button class="ai-recognize-btn" id="ai-recognize-btn" onclick="recognizeCaloriesWithAI()">
+        <span>✨</span>
+        <span>AI 智能识别热量</span>
+      </button>
+      
+      <!-- AI 识别结果展示区域 -->
+      <div class="ai-result-container" id="ai-result-container">
+        <div class="ai-result-header">
+          <span class="ai-result-title">🤖 AI 识别结果</span>
+          <span class="ai-confidence" id="ai-confidence">置信度: 95%</span>
+        </div>
+        <div class="ai-food-list" id="ai-food-list">
+          <!-- 动态生成的食物列表 -->
+        </div>
+        <div class="ai-total-calories">
+          <div class="ai-total-number" id="ai-total-calories">0</div>
+          <div class="ai-total-label">千卡 (kcal)</div>
+        </div>
+        <button class="ai-apply-btn" onclick="applyAIResult()">✓ 应用此结果到热量输入</button>
+      </div>
+<label class="form-label">热量 (kcal)</label>
         <input type="number" class="form-input calories-input" id="food-calories" placeholder="0">
       </div>
       <button class="submit-btn" onclick="saveFood()">保存</button>
@@ -845,6 +1001,237 @@ function initDragAndDrop() {
   });
 }
 
+
+// ========== AI 识别热量功能 ==========
+const KIMI_API_KEY = 'sk-pkLWsDjQvOo3hh4UKWJZUH8uzC1tRITm4O0AVhQF8kapFHU4';
+const KIMI_API_URL = 'https://api.moonshot.cn/v1/chat/completions';
+
+let currentAIResult = null;
+
+async function recognizeCaloriesWithAI() {
+  const name = document.getElementById('food-name').value.trim();
+  const description = document.getElementById('food-desc').value.trim();
+  const btn = document.getElementById('ai-recognize-btn');
+  const resultContainer = document.getElementById('ai-result-container');
+  
+  if (!name && !description && !currentImageBase64) {
+    showToast('请至少输入食物名称、描述或上传图片');
+    return;
+  }
+  
+  // 显示加载状态
+  btn.disabled = true;
+  btn.innerHTML = '<div class="spinner"></div><span>AI 识别中...</span>';
+  
+  try {
+    // 构建提示词
+    let promptText = "请分析以下食物信息，识别其中的食物种类、估算重量，并计算总热量。请按JSON格式返回结果。\n\n";
+    
+    if (name) {
+      promptText += "食物名称: " + name + "\n";
+    }
+    
+    if (description) {
+      promptText += "食物描述: " + description + "\n";
+    }
+    
+    promptText += "\n请返回以下JSON格式:\n";
+    promptText += '{\n';
+    promptText += '  "foods": [\n';
+    promptText += '    {\n';
+    promptText += '      "name": "食物名称",\n';
+    promptText += '      "weight": "估算重量(如: 200g)",\n';
+    promptText += '      "calories": 热量数值\n';
+    promptText += '    }\n';
+    promptText += '  ],\n';
+    promptText += '  "totalCalories": 总热量数值,\n';
+    promptText += '  "confidence": 置信度(0-100)\n';
+    promptText += '}\n';
+    promptText += "\n注意:\n";
+    promptText += "1. 请根据描述中的重量信息或常见份量估算重量\n";
+    promptText += "2. 如果没有重量信息，请按常见份量估算\n";
+    promptText += "3. 热量计算要准确，参考标准食物热量表\n";
+    promptText += "4. 置信度根据信息完整度评估";
+
+    // 准备消息内容
+    let messages = [
+      {
+        role: "system",
+        content: "你是一个专业的营养师，擅长分析食物成分和计算热量。请准确识别食物种类、估算重量并计算热量。返回JSON格式结果。"
+      }
+    ];
+    
+    // 如果有图片，构建包含图片的消息
+    if (currentImageBase64) {
+      let imageUrl = currentImageBase64;
+      // 确保 base64 格式正确
+      if (imageUrl.indexOf('data:') !== 0) {
+        imageUrl = 'data:image/jpeg;base64,' + imageUrl;
+      }
+      
+      messages.push({
+        role: "user",
+        content: [
+          {
+            type: "image_url",
+            image_url: {
+              url: imageUrl
+            }
+          },
+          {
+            type: "text",
+            text: promptText
+          }
+        ]
+      });
+    } else {
+      // 没有图片，纯文本消息
+      messages.push({
+        role: "user",
+        content: promptText
+      });
+    }
+    
+    // 构建请求体
+    const requestBody = {
+      model: "kimi-k2.5",
+      messages: messages,
+      temperature: 0.3,
+      max_tokens: 2000
+    };
+    
+    console.log("请求体:", JSON.stringify(requestBody, null, 2));
+    
+    // 调用 API
+    const response = await fetch(KIMI_API_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + KIMI_API_KEY
+      },
+      body: JSON.stringify(requestBody)
+    });
+    
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      console.error("API 错误响应:", errorData);
+      throw new Error("API 请求失败: " + response.status + " - " + (errorData.error?.message || response.statusText));
+    }
+    
+    const data = await response.json();
+    const aiResponse = data.choices[0].message.content;
+    
+    console.log("AI 响应:", aiResponse);
+    
+    // 解析 JSON 结果
+    let result;
+    try {
+      const jsonMatch = aiResponse.match(/\{[\s\S]*\}/);
+      if (jsonMatch) {
+        result = JSON.parse(jsonMatch[0]);
+      } else {
+        throw new Error("无法从 AI 响应中提取 JSON");
+      }
+    } catch (e) {
+      console.error("解析 AI 响应失败:", e);
+      showToast("AI 响应解析失败，请手动输入热量");
+      return;
+    }
+    
+    currentAIResult = result;
+    displayAIResult(result);
+    showToast("AI 识别完成！");
+    
+  } catch (error) {
+    console.error("AI 识别失败:", error);
+    
+    if (error.message.includes("400")) {
+      showToast("API 请求格式错误 (400): 请检查请求参数格式，或尝试不上传图片进行测试");
+    } else if (error.message.includes("401")) {
+      showToast("API 认证失败 (401): 请检查 API Key 是否正确");
+    } else if (error.message.includes("404")) {
+      showToast("API 请求失败 (404): 请检查模型名称是否正确");
+    } else if (error.message.includes("429")) {
+      showToast("API 请求过于频繁 (429): 请稍后再试");
+    } else {
+      showToast("AI 识别失败: " + error.message);
+    }
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = "<span>✨</span><span>AI 智能识别热量</span>";
+  }
+}
+
+function displayAIResult(result) {
+  const container = document.getElementById('ai-result-container');
+  const foodList = document.getElementById('ai-food-list');
+  const totalCalories = document.getElementById('ai-total-calories');
+  const confidence = document.getElementById('ai-confidence');
+  
+  // 清空列表
+  foodList.innerHTML = '';
+  
+  // 显示食物列表
+  if (result.foods && result.foods.length > 0) {
+    result.foods.forEach(food => {
+      const item = document.createElement('div');
+      item.className = 'ai-food-item';
+      item.innerHTML = `
+        <div>
+          <div class="ai-food-name">${food.name}</div>
+          <div class="ai-food-detail">${food.weight || '标准份量'}</div>
+        </div>
+        <div class="ai-food-calories">${food.calories} kcal</div>
+      `;
+      foodList.appendChild(item);
+    });
+  }
+  
+  // 显示总热量
+  totalCalories.textContent = result.totalCalories || 0;
+  
+  // 显示置信度
+  if (result.confidence) {
+    confidence.textContent = `置信度: ${result.confidence}%`;
+    confidence.style.display = 'inline-block';
+  } else {
+    confidence.style.display = 'none';
+  }
+  
+  // 显示结果容器
+  container.classList.add('show');
+}
+
+function applyAIResult() {
+  if (!currentAIResult) {
+    showToast('请先进行 AI 识别');
+    return;
+  }
+  
+  const caloriesInput = document.getElementById('food-calories');
+  caloriesInput.value = currentAIResult.totalCalories || 0;
+  
+  // 添加视觉反馈
+  caloriesInput.style.background = 'var(--primary-light)';
+  setTimeout(() => {
+    caloriesInput.style.background = '';
+  }, 500);
+  
+  showToast('AI 识别结果已应用到热量输入');
+}
+
+// 修改 closeFoodModal 函数，重置 AI 相关状态
+const originalCloseFoodModal = closeFoodModal;
+closeFoodModal = function() {
+  originalCloseFoodModal();
+  
+  // 重置 AI 结果
+  currentAIResult = null;
+  const container = document.getElementById('ai-result-container');
+  if (container) {
+    container.classList.remove('show');
+  }
+};
 </script>
 </body>
 </html>
