@@ -736,22 +736,12 @@ function recordWeight() {
 // Initialize
 document.addEventListener('DOMContentLoaded', init);
 
-// 阻止全局拖拽默认行为，防止浏览器打开拖入的图片
 ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
   document.body.addEventListener(eventName, (e) => {
     e.preventDefault();
     e.stopPropagation();
   }, false);
 });
-// 阻止全局拖拽默认行为，防止浏览器打开拖入的图片
-['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-  document.body.addEventListener(eventName, (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-  }, false);
-});
-
-
 // Close modals when clicking outside
 ['food-modal', 'exercise-modal'].forEach(id => {
   document.getElementById(id).addEventListener('click', function(e) {
