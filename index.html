@@ -855,6 +855,211 @@ function initDragAndDrop() {
   });
 }
 
+
+// ========== AI 识别功能 ==========
+const KIMI_API_KEY = 'sk-pkLWsDjQvOo3hh4UKWJZUH8uzC1tRITm4O0AVhQF8kapFHU4';
+const KIMI_API_URL = 'https://api.moonshot.cn/v1/chat/completions';
+
+async function recognizeCaloriesWithAI() {
+  const name = document.getElementById('food-name').value.trim();
+  const description = document.getElementById('food-desc').value.trim();
+  const btn = document.getElementById('ai-recognize-btn');
+  
+  if (!name && !description && !currentImageBase64) {
+    showToast('请至少输入食物名称、描述或上传图片');
+    return;
+  }
+  
+  btn.disabled = true;
+  btn.innerHTML = '<div class="spinner"></div><span>AI 识别中...</span>';
+  
+  try {
+    let promptText = "你是一个专业营养师。请分析这份食物，列出每样食材的名称、估算重量和对应热量。\n\n";
+    
+    if (name) promptText += "食物名称: " + name + "\n";
+    if (description) promptText += "食材描述: " + description + "\n";
+    
+    promptText += "\n请只返回以下内容，不要任何分析说明：\n\n";
+    promptText += "| 食材名称 | 估算重量 | 热量(千卡) |\n";
+    promptText += "|---------|---------|-----------|\n";
+    promptText += "| 食材1 | 重量 | 热量 |\n";
+    promptText += "| 食材2 | 重量 | 热量 |\n";
+    promptText += "| ... | ... | ... |\n";
+    promptText += "| **合计** | - | **约 XXX** |\n\n";
+    promptText += "**总热量：约 XXX 千卡**\n\n";
+    promptText += "参考《中国食物成分表》数据，按常规餐厅/食堂份量估算。";
+
+    let messages = [{
+      role: "system",
+      content: "你是一个专业的营养师，擅长分析食物成分和计算热量。请用清晰的表格格式列出每样食材的热量分析。"
+    }];
+    
+    if (currentImageBase64) {
+      messages.push({
+        role: "user",
+        content: [
+          { type: "image_url", image_url: { url: currentImageBase64 } },
+          { type: "text", text: promptText }
+        ]
+      });
+    } else {
+      messages.push({ role: "user", content: promptText });
+    }
+    
+    let response = await fetch(KIMI_API_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + KIMI_API_KEY
+      },
+      body: JSON.stringify({
+        model: "kimi-k2.5",
+        messages: messages,
+        max_tokens: 2000
+      })
+    });
+    
+    if (!response.ok) {
+      let errorText = await response.text();
+      console.error("API 错误:", errorText);
+      throw new Error("API 请求失败: " + response.status);
+    }
+    
+    let data = await response.json();
+    let aiResponse = data.choices[0].message.content;
+    
+    // 显示纯文本结果
+    displayAITextResult(aiResponse);
+    showToast("AI 识别完成！");
+    
+  } catch (error) {
+    console.error("AI 识别失败:", error);
+    showToast("AI 识别失败: " + error.message);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '<span>✨</span><span>AI 智能识别热量</span>';
+  }
+}
+
+// 显示纯文本AI结果
+function displayAITextResult(text) {
+  console.log("[DEBUG] displayAITextResult called");
+  console.log("[DEBUG] text length:", text ? text.length : 0);
+  
+  if (!text) {
+    console.error("[ERROR] text is empty");
+    alert("AI 返回结果为空");
+    return;
+  }
+  
+  const container = document.getElementById('ai-text-result-container');
+  const textarea = document.getElementById('ai-text-edit-area');
+  const totalDisplay = document.getElementById('ai-total-display');
+  const totalNumber = document.getElementById('ai-total-number');
+  
+  if (!container || !textarea) {
+    console.error("[ERROR] Elements not found");
+    alert("页面元素未找到");
+    return;
+  }
+  
+  // 显示容器
+  container.classList.add('show');
+  
+  // 设置文本内容
+  setTimeout(function() {
+    textarea.value = text;
+    console.log("[DEBUG] Text set to textarea");
+    
+    // 提取总热量
+    let total = 0;
+    const totalMatch = text.match(/总[热量计].*?[:：]\s*约?\s*(\d+)/i);
+    if (totalMatch) {
+      total = parseInt(totalMatch[1]);
+      console.log("[DEBUG] Extracted total calories:", total);
+    }
+    
+    if (total > 0 && totalNumber && totalDisplay) {
+      totalNumber.textContent = total;
+      totalDisplay.style.display = 'block';
+      currentAIResult = { totalCalories: total };
+    } else if (totalDisplay) {
+      totalDisplay.style.display = 'none';
+    }
+  }, 50);
+}
+
+// 从文本中提取总热量
+function extractTotalCalories(text) {
+  if (!text) return 0;
+  
+  const totalMatch = text.match(/总[热量计].*?[:：]\s*约?\s*(\d+)/i);
+  if (totalMatch) {
+    return parseInt(totalMatch[1]);
+  }
+  
+  const totalRowMatch = text.match(/\*\*合计\*\*.*?(\d+)/i);
+  if (totalRowMatch) {
+    return parseInt(totalRowMatch[1]);
+  }
+  
+  return 0;
+}
+
+// 从文本中计算总热量（用于手动重新计算）
+function calculateTotalFromText() {
+  const text = document.getElementById('ai-text-edit-area').value;
+  const totalDisplay = document.getElementById('ai-total-display');
+  const totalNumber = document.getElementById('ai-total-number');
+  
+  const total = extractTotalCalories(text);
+  
+  if (total > 0) {
+    totalNumber.textContent = total;
+    totalDisplay.style.display = 'block';
+    currentAIResult = { totalCalories: total };
+  } else {
+    totalDisplay.style.display = 'none';
+  }
+}
+
+// 应用AI文本结果
+function applyAITextResult() {
+  const totalNumber = document.getElementById('ai-total-number');
+  const total = parseInt(totalNumber.textContent) || 0;
+  
+  if (total <= 0) {
+    showToast('未能识别有效热量，请检查AI结果');
+    return;
+  }
+  
+  // 获取食物热量输入框并填充值
+  const caloriesInput = document.getElementById('food-calories');
+  if (caloriesInput) {
+    caloriesInput.value = total;
+    
+    // 高亮显示以提示用户已填充
+    caloriesInput.style.background = 'var(--primary-light)';
+    setTimeout(() => {
+      caloriesInput.style.background = '';
+    }, 800);
+  }
+  
+  showToast('AI 识别结果已应用：' + total + ' 千卡');
+}
+
+// 重置AI结果区域
+function resetAIResult() {
+  currentAIResult = null;
+  const container = document.getElementById('ai-text-result-container');
+  const textarea = document.getElementById('ai-text-edit-area');
+  const totalDisplay = document.getElementById('ai-total-display');
+  
+  if (container) container.classList.remove('show');
+  if (textarea) textarea.value = '';
+  if (totalDisplay) totalDisplay.style.display = 'none';
+}
+
 </script>
 </body>
 </html>
