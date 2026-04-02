@@ -1040,72 +1040,65 @@ async function recognizeCaloriesWithAI() {
   btn.innerHTML = '<div class="spinner"></div><span>AI 识别中...</span>';
   
   try {
-    let promptText = "你是一个专业营养师。请分析这份食物，列出每样食材的名称、估算重量和对应热量。\n\n";
+    // Build prompt
+    let userContent = '';
+    if (name) userContent += '食物名称: ' + name + '\n';
+    if (description) userContent += '食材描述: ' + description + '\n';
     
-    if (name) promptText += "食物名称: " + name + "\n";
-    if (description) promptText += "食材描述: " + description + "\n";
-    
-    promptText += "\n请按以下格式返回分析结果（参考《中国食物成分表》数据，按常规餐厅/食堂份量估算）：\n\n";
-    promptText += "### 食物热量分析\n\n";
-    promptText += "| 食材名称 | 估算重量 | 热量(千卡) |\n";
-    promptText += "|---------|---------|-----------|\n";
-    promptText += "| 米饭 | 150g | 195 |\n";
-    promptText += "| 鸡胸肉 | 100g | 133 |\n";
-    promptText += "| ... | ... | ... |\n\n";
-    promptText += "**总热量：约 XXX 千卡**\n\n";
-    promptText += "估算说明：\n";
-    promptText += "- 主食类按熟重计算\n";
-    promptText += "- 肉类按可食部分计算\n";
-    promptText += "- 蔬菜类热量较低\n";
-    promptText += "- 烹饪用油已计入\n\n";
-    promptText += "请根据实际图片和描述，给出最合理的估算。";
+    const promptText = '请分析这份食物，列出每样食材的名称、估算重量和对应热量。\n\n' + userContent + '\n请严格按以下表格格式返回（只返回表格和总热量，不要其他分析内容）：\n\n| 食材名称 | 估算重量 | 热量(千卡) |\n|---------|---------|-----------|\n| 食材1 | 重量 | 热量 |\n| 食材2 | 重量 | 热量 |\n| ... | ... | ... |\n\n**总热量：约 XXX 千卡**\n\n参考《中国食物成分表》数据，按常规餐厅/食堂份量估算。';
 
     let messages = [{
-      role: "system",
-      content: "你是一个专业的营养师，擅长分析食物成分和计算热量。请用清晰的表格格式列出每样食材的热量分析。"
+      role: 'system',
+      content: '你是一个专业的营养师，擅长分析食物成分和计算热量。请用清晰的表格格式列出每样食材的热量分析，只返回表格和总热量，不要其他内容。'
     }];
     
     if (currentImageBase64) {
       messages.push({
-        role: "user",
+        role: 'user',
         content: [
-          { type: "image_url", image_url: { url: currentImageBase64 } },
-          { type: "text", text: promptText }
+          { type: 'image_url', image_url: { url: currentImageBase64 } },
+          { type: 'text', text: promptText }
         ]
       });
     } else {
-      messages.push({ role: "user", content: promptText });
+      messages.push({ role: 'user', content: promptText });
     }
     
-    let response = await fetch(KIMI_API_URL, {
-      method: "POST",
+    const response = await fetch('https://api.moonshot.cn/v1/chat/completions', {
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer " + KIMI_API_KEY
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer sk-pkLWsDjQvOo3hh4UKWJZUH8uzC1tRITm4O0AVhQF8kapFHU4'
       },
       body: JSON.stringify({
-        model: "kimi-k2.5",
+        model: 'kimi-k2.5',
         messages: messages,
         max_tokens: 2000
       })
     });
     
     if (!response.ok) {
-      let errorText = await response.text();
-      console.error("API 错误:", errorText);
-      throw new Error("API 请求失败: " + response.status);
+      const errorText = await response.text();
+      console.error('API 错误:', errorText);
+      throw new Error('API 请求失败: ' + response.status);
     }
     
-    let data = await response.json();
-    let aiResponse = data.choices[0].message.content;
+    const data = await response.json();
+    const aiResponse = data.choices[0].message.content;
     
-    // 显示纯文本结果
+    // 显示结果并自动计算总热量
     displayAITextResult(aiResponse);
-    showToast("AI 识别完成！");
+    
+    // 自动计算总热量
+    setTimeout(() => {
+      calculateTotalFromText();
+    }, 100);
+    
+    showToast('AI 识别完成！');
     
   } catch (error) {
-    console.error("AI 识别失败:", error);
-    showToast("AI 识别失败: " + error.message);
+    console.error('AI 识别失败:', error);
+    showToast('AI 识别失败: ' + error.message);
   } finally {
     btn.disabled = false;
     btn.innerHTML = '<span>✨</span><span>AI 智能识别热量</span>';
@@ -1113,6 +1106,77 @@ async function recognizeCaloriesWithAI() {
 }
 
 // 显示纯文本AI结果
+function displayAITextResult(text) {
+  const container = document.getElementById('ai-text-result-container');
+  const textarea = document.getElementById('ai-text-edit-area');
+  
+  textarea.value = text;
+  container.classList.add('show');
+}
+
+// 从文本中计算总热量
+function calculateTotalFromText() {
+  const text = document.getElementById('ai-text-edit-area').value;
+  const totalDisplay = document.getElementById('ai-total-display');
+  const totalNumber = document.getElementById('ai-total-number');
+  
+  let total = 0;
+  
+  // 查找"总热量"
+  const totalMatch = text.match(/总热量[:：]?s*约?s*(d+)/i);
+  if (totalMatch) {
+    total = parseInt(totalMatch[1]);
+  } else {
+    // 尝试匹配表格中的kcal数值并求和
+    const calorieMatches = text.match(/(d+)s*kcal/gi);
+    if (calorieMatches) {
+      total = calorieMatches.reduce((sum, match) => {
+        const num = parseInt(match.match(/d+/)[0]);
+        return sum + num;
+      }, 0);
+    }
+  }
+  
+  if (total > 0) {
+    totalNumber.textContent = total;
+    totalDisplay.style.display = 'block';
+  } else {
+    totalDisplay.style.display = 'none';
+  }
+}
+
+// 应用AI文本结果
+function applyAITextResult() {
+  const totalNumber = document.getElementById('ai-total-number');
+  const total = parseInt(totalNumber.textContent) || 0;
+  
+  if (total <= 0) {
+    showToast('请先计算总热量');
+    return;
+  }
+  
+  const caloriesInput = document.getElementById('food-calories');
+  caloriesInput.value = total;
+  
+  // 高亮显示
+  caloriesInput.style.background = 'var(--primary-light)';
+  setTimeout(() => {
+    caloriesInput.style.background = '';
+  }, 500);
+  
+  showToast('AI 识别结果已应用：' + total + ' 千卡');
+}
+
+// 重置AI结果区域
+function resetAIResult() {
+  const container = document.getElementById('ai-text-result-container');
+  const textarea = document.getElementById('ai-text-edit-area');
+  const totalDisplay = document.getElementById('ai-total-display');
+  
+  if (container) container.classList.remove('show');
+  if (textarea) textarea.value = '';
+  if (totalDisplay) totalDisplay.style.display = 'none';
+}
 function displayAITextResult(text) {
   const container = document.getElementById('ai-text-result-container');
   const textarea = document.getElementById('ai-text-edit-area');
