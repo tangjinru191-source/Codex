@@ -1109,29 +1109,43 @@ async function recognizeCaloriesWithAI() {
 
 // 显示纯文本AI结果
 function displayAITextResult(text) {
-  const container = document.getElementById('ai-text-result-container');
-  const textarea = document.getElementById('ai-text-edit-area');
+  alert("[DEBUG] displayAITextResult called\nText length: " + (text ? text.length : 0));
   
-  // 先设置内容
-  textarea.value = text;
-  
-  // 计算总热量（在显示前完成计算）
-  const total = extractTotalCalories(text);
-  
-  // 更新显示
-  const totalDisplay = document.getElementById('ai-total-display');
-  const totalNumber = document.getElementById('ai-total-number');
-  
-  if (total > 0) {
-    totalNumber.textContent = total;
-    totalDisplay.style.display = 'block';
-    currentAIResult = { totalCalories: total };
-  } else {
-    totalDisplay.style.display = 'none';
+  if (!text) {
+    alert("[ERROR] text is empty!");
+    return;
   }
   
-  // 最后显示容器（确保内容已准备好）
+  var container = document.getElementById('ai-text-result-container');
+  var textarea = document.getElementById('ai-text-edit-area');
+  
+  if (!container || !textarea) {
+    alert("[ERROR] Elements not found!\nContainer: " + !!container + "\nTextarea: " + !!textarea);
+    return;
+  }
+  
+  // Show container
   container.classList.add('show');
+  alert("[DEBUG] Container shown");
+  
+  // Set text with delay
+  setTimeout(function() {
+    textarea.value = text;
+    alert("[DEBUG] Text set! Length: " + text.length + "\nFirst 50 chars: " + text.substring(0, 50));
+    
+    // Extract calories
+    var totalMatch = text.match(/总[热量计].*?[:：]\s*约?\s*(\d+)/i);
+    if (totalMatch) {
+      var total = parseInt(totalMatch[1]);
+      var totalNum = document.getElementById('ai-total-number');
+      var totalDisp = document.getElementById('ai-total-display');
+      if (totalNum && totalDisp) {
+        totalNum.textContent = total;
+        totalDisp.style.display = 'block';
+        currentAIResult = { totalCalories: total };
+      }
+    }
+  }, 100);
 }
 
 // 从文本中提取总热量
