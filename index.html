@@ -1045,20 +1045,15 @@ async function recognizeCaloriesWithAI() {
     if (name) promptText += "食物名称: " + name + "\n";
     if (description) promptText += "食材描述: " + description + "\n";
     
-    promptText += "\n请按以下格式返回分析结果（参考《中国食物成分表》数据，按常规餐厅/食堂份量估算）：\n\n";
-    promptText += "### 食物热量分析\n\n";
+    promptText += "\n请只返回以下内容，不要任何分析说明：\n\n";
     promptText += "| 食材名称 | 估算重量 | 热量(千卡) |\n";
     promptText += "|---------|---------|-----------|\n";
-    promptText += "| 米饭 | 150g | 195 |\n";
-    promptText += "| 鸡胸肉 | 100g | 133 |\n";
-    promptText += "| ... | ... | ... |\n\n";
+    promptText += "| 食材1 | 重量 | 热量 |\n";
+    promptText += "| 食材2 | 重量 | 热量 |\n";
+    promptText += "| ... | ... | ... |\n";
+    promptText += "| **合计** | - | **约 XXX** |\n\n";
     promptText += "**总热量：约 XXX 千卡**\n\n";
-    promptText += "估算说明：\n";
-    promptText += "- 主食类按熟重计算\n";
-    promptText += "- 肉类按可食部分计算\n";
-    promptText += "- 蔬菜类热量较低\n";
-    promptText += "- 烹饪用油已计入\n\n";
-    promptText += "请根据实际图片和描述，给出最合理的估算。";
+    promptText += "参考《中国食物成分表》数据，按常规餐厅/食堂份量估算。";
 
     let messages = [{
       role: "system",
@@ -1117,37 +1112,54 @@ function displayAITextResult(text) {
   const container = document.getElementById('ai-text-result-container');
   const textarea = document.getElementById('ai-text-edit-area');
   
+  // 先设置内容
   textarea.value = text;
-  container.classList.add('show');
   
-  // 尝试自动计算总热量
-  calculateTotalFromText();
+  // 计算总热量（在显示前完成计算）
+  const total = extractTotalCalories(text);
+  
+  // 更新显示
+  const totalDisplay = document.getElementById('ai-total-display');
+  const totalNumber = document.getElementById('ai-total-number');
+  
+  if (total > 0) {
+    totalNumber.textContent = total;
+    totalDisplay.style.display = 'block';
+    currentAIResult = { totalCalories: total };
+  } else {
+    totalDisplay.style.display = 'none';
+  }
+  
+  // 最后显示容器（确保内容已准备好）
+  container.classList.add('show');
 }
 
-// 从文本中计算总热量
+// 从文本中提取总热量
+function extractTotalCalories(text) {
+  if (!text) return 0;
+  
+  // 匹配格式：**总热量：约 XXX 千卡** 或 总热量：约 XXX 千卡
+  const totalMatch = text.match(/总[热量计].*?[:：]\s*约?\s*(\d+)/i);
+  if (totalMatch) {
+    return parseInt(totalMatch[1]);
+  }
+  
+  // 尝试匹配 **合计** 行的数字
+  const totalRowMatch = text.match(/\*\*合计\*\*.*?(\d+)/i);
+  if (totalRowMatch) {
+    return parseInt(totalRowMatch[1]);
+  }
+  
+  return 0;
+}
+
+// 从文本中计算总热量（用于手动重新计算）
 function calculateTotalFromText() {
   const text = document.getElementById('ai-text-edit-area').value;
   const totalDisplay = document.getElementById('ai-total-display');
   const totalNumber = document.getElementById('ai-total-number');
   
-  // 尝试从文本中提取总热量
-  // 匹配格式：总热量：约 XXX 千卡 或 总计.*XXX.*千卡
-  let total = 0;
-  
-  // 查找"总热量"或"总计"
-  const totalMatch = text.match(/总[热量计].*?[:：]s*约?s*(d+)/i);
-  if (totalMatch) {
-    total = parseInt(totalMatch[1]);
-  } else {
-    // 尝试匹配表格中的热量列并求和
-    const calorieMatches = text.match(/(d+)s*kcal/gi);
-    if (calorieMatches) {
-      total = calorieMatches.reduce((sum, match) => {
-        const num = parseInt(match.match(/d+/)[0]);
-        return sum + num;
-      }, 0);
-    }
-  }
+  const total = extractTotalCalories(text);
   
   if (total > 0) {
     totalNumber.textContent = total;
@@ -1164,18 +1176,21 @@ function applyAITextResult() {
   const total = parseInt(totalNumber.textContent) || 0;
   
   if (total <= 0) {
-    showToast('请先计算总热量');
+    showToast('未能识别有效热量，请检查AI结果');
     return;
   }
   
+  // 获取食物热量输入框并填充值
   const caloriesInput = document.getElementById('food-calories');
-  caloriesInput.value = total;
-  
-  // 高亮显示
-  caloriesInput.style.background = 'var(--primary-light)';
-  setTimeout(() => {
-    caloriesInput.style.background = '';
-  }, 500);
+  if (caloriesInput) {
+    caloriesInput.value = total;
+    
+    // 高亮显示以提示用户已填充
+    caloriesInput.style.background = 'var(--primary-light)';
+    setTimeout(() => {
+      caloriesInput.style.background = '';
+    }, 800);
+  }
   
   showToast('AI 识别结果已应用：' + total + ' 千卡');
 }
