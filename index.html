@@ -1162,6 +1162,225 @@ function showError(message) {
   }, 5000);
 }
 
+
+// ========== 缺失的基础功能函数 ==========
+
+// 编辑每日目标
+function editDailyGoal() {
+  const newGoal = prompt('请输入每日目标热量 (kcal):', dailyGoal);
+  if (newGoal && !isNaN(newGoal) && parseInt(newGoal) > 0) {
+    dailyGoal = parseInt(newGoal);
+    saveData();
+    renderAll();
+    showToast(`每日目标已更新: ${dailyGoal} kcal`);
+  }
+}
+
+// 打开运动弹窗
+function openExerciseModal() {
+  document.getElementById('exercise-modal').classList.add('active');
+  // 重置表单
+  document.getElementById('exercise-name').value = '';
+  document.getElementById('exercise-type').value = '';
+  document.getElementById('exercise-duration').value = '';
+  document.getElementById('exercise-calories').value = '';
+}
+
+// 关闭运动弹窗
+function closeExerciseModal() {
+  document.getElementById('exercise-modal').classList.remove('active');
+}
+
+// 打开食物弹窗
+function openFoodModal(mealType) {
+  currentMealType = mealType;
+  document.getElementById('modal-title').textContent = `添加${getMealName(mealType)}`;
+  document.getElementById('food-modal').classList.add('active');
+  // 重置表单
+  document.getElementById('food-name').value = '';
+  document.getElementById('food-desc').value = '';
+  document.getElementById('food-calories').value = '';
+  
+  // 重置图片上传
+  currentImageBase64 = null;
+  const uploadArea = document.getElementById('image-upload-area');
+  const placeholder = document.getElementById('upload-placeholder');
+  const previewImg = document.getElementById('preview-image');
+  const removeBtn = document.getElementById('remove-image-btn');
+  const fileInput = document.getElementById('food-image-input');
+  
+  if (uploadArea) uploadArea.classList.remove('has-image');
+  if (placeholder) placeholder.style.display = 'flex';
+  if (previewImg) {
+    previewImg.src = '';
+    previewImg.style.display = 'none';
+  }
+  if (removeBtn) removeBtn.style.display = 'none';
+  if (fileInput) fileInput.value = '';
+  
+  // 初始化拖拽上传
+  setTimeout(initDragAndDrop, 100);
+}
+
+// 关闭食物弹窗
+function closeFoodModal() {
+  document.getElementById('food-modal').classList.remove('active');
+  currentMealType = '';
+}
+
+// 计算运动热量
+function calculateExerciseCalories() {
+  const typeSelect = document.getElementById('exercise-type');
+  const duration = parseInt(document.getElementById('exercise-duration').value) || 0;
+  const selectedOption = typeSelect.options[typeSelect.selectedIndex];
+  const caloriesPerMinute = parseInt(selectedOption.dataset.calories) || 0;
+  
+  const totalCalories = caloriesPerMinute * duration;
+  document.getElementById('exercise-calories').value = totalCalories > 0 ? totalCalories : '';
+}
+
+// 保存运动记录
+function saveExercise() {
+  const name = document.getElementById('exercise-name').value.trim();
+  const typeSelect = document.getElementById('exercise-type');
+  const typeValue = typeSelect.value;
+  const typeName = typeSelect.options[typeSelect.selectedIndex].text.split(' ')[0] || '';
+  const duration = parseInt(document.getElementById('exercise-duration').value) || 0;
+  const calories = parseInt(document.getElementById('exercise-calories').value) || 0;
+  
+  // 验证运动名称（必填）
+  if (!name) {
+    showToast('请输入运动名称');
+    return;
+  }
+  if (duration <= 0) {
+    showToast('请输入有效的运动时长');
+    return;
+  }
+  
+  const dateKey = formatDateKey(currentDate);
+  if (!records[dateKey]) {
+    records[dateKey] = { breakfast: [], lunch: [], dinner: [], snack: [], exercises: [] };
+  }
+  if (!records[dateKey].exercises) {
+    records[dateKey].exercises = [];
+  }
+  
+  records[dateKey].exercises.push({
+    name: name,
+    type: typeValue,
+    typeName: typeValue ? typeName : '',
+    duration: duration,
+    calories: calories,
+    timestamp: Date.now()
+  });
+  
+  saveData();
+  closeExerciseModal();
+  renderAll();
+  showToast('运动记录已添加');
+}
+
+// 保存食物记录
+function saveFood() {
+  const name = document.getElementById('food-name').value.trim();
+  const description = document.getElementById('food-desc').value.trim();
+  const calories = parseInt(document.getElementById('food-calories').value) || 0;
+  
+  if (!name) {
+    showToast('请输入食物名称');
+    return;
+  }
+  if (calories <= 0) {
+    showToast('请输入有效的热量');
+    return;
+  }
+  
+  const dateKey = formatDateKey(currentDate);
+  if (!records[dateKey]) {
+    records[dateKey] = { breakfast: [], lunch: [], dinner: [], snack: [], exercises: [] };
+  }
+  
+  records[dateKey][currentMealType].push({
+    name: name,
+    description: description,
+    calories: calories,
+    timestamp: Date.now()
+  });
+  
+  saveData();
+  closeFoodModal();
+  renderAll();
+  showToast('食物已添加');
+}
+
+// 日历相关函数
+function renderCalendar() {
+  const year = calendarDate.getFullYear();
+  const month = calendarDate.getMonth();
+  
+  document.getElementById('calendar-title').textContent = `${year}年${month + 1}月`;
+  
+  const firstDay = new Date(year, month, 1).getDay();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  
+  const daysContainer = document.getElementById('calendar-days');
+  daysContainer.innerHTML = '';
+  
+  // Empty cells for days before the first day of month
+  for (let i = 0; i < firstDay; i++) {
+    const emptyCell = document.createElement('div');
+    daysContainer.appendChild(emptyCell);
+  }
+  
+  // Days of the month
+  const today = new Date();
+  const todayKey = formatDateKey(today);
+  
+  for (let day = 1; day <= daysInMonth; day++) {
+    const date = new Date(year, month, day);
+    const dateKey = formatDateKey(date);
+    const dayRecords = records[dateKey] || { breakfast: [], lunch: [], dinner: [], snack: [], exercises: [] };
+    
+    let dayCalories = 0;
+    ['breakfast', 'lunch', 'dinner', 'snack'].forEach(mealType => {
+      const items = dayRecords[mealType] || [];
+      items.forEach(item => { dayCalories += item.calories || 0; });
+    });
+    
+    const cell = document.createElement('div');
+    cell.className = 'calendar-day';
+    if (dateKey === todayKey) cell.classList.add('today');
+    if (dateKey === formatDateKey(currentDate)) cell.classList.add('selected');
+    
+    cell.innerHTML = `<div class="calendar-day-number">${day}</div>${dayCalories > 0 ? `<div class="calendar-day-calories">${dayCalories}</div>` : ''}`;
+    
+    cell.onclick = () => selectDate(date);
+    daysContainer.appendChild(cell);
+  }
+}
+
+function changeMonth(delta) {
+  calendarDate.setMonth(calendarDate.getMonth() + delta);
+  renderCalendar();
+}
+
+function selectDate(date) {
+  currentDate = new Date(date);
+  renderCalendar();
+  switchView('today');
+}
+
+function recordWeight() {
+  const currentWeight = document.getElementById('current-weight').textContent;
+  const newWeight = prompt('请输入当前体重 (kg):', currentWeight);
+  if (newWeight && !isNaN(newWeight) && parseFloat(newWeight) > 0) {
+    document.getElementById('current-weight').textContent = parseFloat(newWeight).toFixed(1);
+    localStorage.setItem('currentWeight', newWeight);
+    showToast(`体重已记录: ${newWeight} kg`);
+  }
+}
+
 </script>
 </body>
 </html>
