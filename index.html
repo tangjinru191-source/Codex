@@ -293,6 +293,15 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
         <label class="form-label">描述（可选）</label>
         <input type="text" class="form-input" id="food-desc" placeholder="例如：200g鸡肉+生菜+番茄">
       </div>
+      
+      <!-- AI 识别按钮 -->
+      <div class="form-group" style="margin-top: 16px;">
+        <button type="button" id="ai-recognize-btn" onclick="recognizeCaloriesWithAI()" style="width: 100%; padding: 12px 16px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 12px; font-size: 14px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.3s;">
+          <span>✨</span>
+          <span>AI 智能识别热量</span>
+        </button>
+      </div>
+
       <div class="form-group" style="margin-top: 20px;">
         <label class="form-label">热量 (kcal)</label>
         <input type="number" class="form-input calories-input" id="food-calories" placeholder="0">
